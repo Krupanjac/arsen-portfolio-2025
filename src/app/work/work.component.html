@@ -1,0 +1,18 @@
+<div class="relative flex" style="top:200%;">
+    <!-- Left label -->
+    <div class="absolute top-10 border-r-2" style="width:20%; height:100%;">
+      <p id="jumpWork" class="text-xl ml-[105%]">Work/></p>
+    </div>
+    <!-- Work grid -->
+    <div class="ProjectsRed flex justify-center items-center relative" style="width:70%; height:100%; top:30%; left:25%;">
+      <div class="image-row flex flex-wrap justify-between w-full">
+        <a *ngFor="let workItem of workItems"
+           [href]="workItem.link"
+           target="_blank"
+           class="ProjectsShowcase inline-block m-6 transition-transform hover:drop-shadow-xl">
+          <img [src]="workItem.img" [alt]="workItem.alt" class="w-full h-full rounded-sm" />
+        </a>
+      </div>
+    </div>
+  </div>
+  

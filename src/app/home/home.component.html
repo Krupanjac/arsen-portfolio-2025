@@ -1,0 +1,26 @@
+<!-- Loading Screen -->
+<div id="loading-screen" class="fixed inset-0 flex flex-col justify-center items-center z-50 bg-gray-100">
+    <div class="loader border-4 border-gray-100 border-t-blue-500 rounded-full w-12 h-12 animate-spin"></div>
+    <p class="mt-2 text-xl">Loading...</p>
+  </div>
+  
+  <!-- Background Canvas -->
+  <canvas id="canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"></canvas>
+  
+  <!-- (Optional) Particle container if you want to use additional particle effects -->
+  <div id="particle-container"></div>
+  
+  <!-- Main Content -->
+  <main class="relative z-10 flex flex-col items-start justify-center h-screen">
+    <div class="ProzorSredina">
+      <div class="Ime flex items-center space-x-4 text-3xl font-bold">
+        <h1>My name is</h1>
+        <h1 id="su" class="text-[#482268] font-bold">Arsen</h1>
+        <h1 id="su_name" class="text-[#482268] italic font-bold">Đuđev</h1>
+      </div>
+      <h1 class="text-5xl font-bold mt-4">I develop and engineer software</h1>
+    </div>
+  </main>
+  
+  <!-- Custom Cursor -->
+  <div class="custom-cursor fixed w-2.5 h-2.5 bg-black rounded-full pointer-events-none z-50"></div>

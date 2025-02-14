@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './header/header.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  standalone: true,
+  imports: [RouterOutlet, HeaderComponent],
+  template: `
+    <app-header></app-header>
+    <router-outlet></router-outlet>
+  `,
+  styles: []
 })
-export class AppComponent {
-  title = 'arsen-portfolio-2025';
-}
+export class AppComponent {}
