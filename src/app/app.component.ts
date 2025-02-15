@@ -3,13 +3,16 @@ import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './layout/header/header.component';
 import { LoaderComponent } from './layout/loader/loader.component';
 import { CommonModule } from '@angular/common';
+import { slideInAnimation } from './app.animation';
+import { HomeComponent } from "./home/home.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [HeaderComponent, LoaderComponent, CommonModule, RouterOutlet],
+  imports: [HeaderComponent, LoaderComponent, CommonModule, RouterOutlet, HomeComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  animations: [slideInAnimation]
 })
 export class AppComponent implements OnInit {
   loading = true;
@@ -22,7 +25,7 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         // Generate a random delay between 500ms and 1500ms
-        const delay = Math.floor(Math.random() * 1000) + 500;
+        const delay = Math.floor(Math.random() * 500) + 100;
         this.timerId = setTimeout(() => {
           this.loading = false;
         }, delay);
@@ -36,4 +39,8 @@ export class AppComponent implements OnInit {
       }
     });
   }
+  prepareRoute(outlet: RouterOutlet) {
+    return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+  }
+
 }
