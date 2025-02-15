@@ -1,0 +1,28 @@
+.nav-link {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    height: 2px; /* adjust the thickness as needed */
+    width: 0;
+    bottom: 0;
+    right: 0;
+    background-color: currentColor; /* uses the current text color */
+    transition: width 0.3s ease;
+  }
+  
+  .nav-link:hover::after {
+    width: 100%;
+    left: 0;
+    right: auto;
+  }
+  
+  /* Active route: keep underline visible */
+  .nav-link.active::after {
+    width: 100%;
+    left: 0;
+    right: auto;
+  }
