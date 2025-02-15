@@ -1,6 +1,8 @@
 <header class="fixed top-0 left-0 w-full bg-transparent flex items-center justify-between px-4 py-2 z-50 backdrop-blur-[2px]">
   <p id="header_naslov" class="text-3xl font-bold">
-    <span class="text-[#482268]">&lt;</span>Krupanjac.h<span class="text-[#482268]">&gt;</span>
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="flex items-center">
+      <span class="text-[#482268]">&lt;</span>Krupanjac.h<span class="text-[#482268]">&gt;</span>
+    </a>
   </p>
   <!-- Hamburger button: visible on mobile only -->
   <button class="md:hidden focus:outline-none" (click)="toggleNav()">
