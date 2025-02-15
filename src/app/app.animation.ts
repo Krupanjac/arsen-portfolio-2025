@@ -13,7 +13,7 @@ export const slideInAnimation = trigger('routeAnimations', [
     group([
       // Animate the entering element: start off-screen to the left and slide in
       query(':enter', [
-        style({ transform: 'translateY(100%)' }),
+        style({ transform: 'translateY(250%)' }),
         animate('0.2s ease-in-out', style({ transform: 'translateY(0%)' }))
       ], { optional: true }),
       // Animate the leaving element: slide out to the right
