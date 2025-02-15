@@ -1,18 +1,17 @@
-<div class="relative flex" style="top:200%;">
-    <!-- Left label -->
-    <div class="absolute top-0 border-r-2 h-screen" style="width:20%;">
-      <p class="text-xl ml-[105%]">Work/></p>
-    </div>
-    <!-- Work grid -->
-    <div class="ProjectsRed flex justify-center items-center relative" style="width:70%; height:100%; top:30%; left:25%;">
-      <div class="image-row flex flex-wrap justify-between w-full">
-        <a *ngFor="let workItem of workItems"
-           [href]="workItem.link"
-           target="_blank"
-           class="ProjectsShowcase inline-block m-6 transition-transform hover:drop-shadow-xl">
-          <img [src]="workItem.img" [alt]="workItem.alt" class="w-full h-full rounded-sm" />
-        </a>
-      </div>
+<div class="relative flex">
+  <!-- Left label -->
+  <div class="absolute top-0 border-r-2 h-screen ml-[-15%] md:ml-0" style="width:20%;">
+    <p class="text-xl ml-[105%]">Work/></p>
+  </div>
+  <!-- Work grid -->
+  <div class="flex justify-center items-center relative" style="width:70%; height:100%; top:30%; left:25%;">
+    <div class="grid grid-cols-3 gap-4 w-full">
+      <a *ngFor="let work of workItems"
+         [href]="work.link"
+         target="_blank"
+         class="transition-transform hover:drop-shadow-xl">
+        <img [src]="work.img" [alt]="work.alt" class="w-full h-48 object-cover rounded-sm" />
+      </a>
     </div>
   </div>
-  
+</div>

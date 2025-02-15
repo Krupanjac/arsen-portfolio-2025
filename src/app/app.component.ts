@@ -4,17 +4,18 @@ import { NavComponent } from './layout/nav/nav.component';
 import { LoaderComponent } from './layout/loader/loader.component';
 import { CommonModule } from '@angular/common';
 import { slideInAnimation } from './app.animation';
-import { HomeComponent } from "./layout/home/home.component";
+import { HeroComponent } from "./layout/hero/hero.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NavComponent, LoaderComponent, CommonModule, RouterOutlet, HomeComponent],
+  imports: [NavComponent, LoaderComponent, CommonModule, RouterOutlet, HeroComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   animations: [slideInAnimation]
 })
 export class AppComponent implements OnInit {
+  title = 'arsen-portfolio-2025';
   loading = true;
   private timerId: any = null;
 
