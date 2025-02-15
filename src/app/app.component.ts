@@ -4,7 +4,7 @@ import { NavComponent } from './layout/nav/nav.component';
 import { LoaderComponent } from './layout/loader/loader.component';
 import { CommonModule } from '@angular/common';
 import { slideInAnimation } from './app.animation';
-import { HomeComponent } from "./home/home.component";
+import { HomeComponent } from "./layout/home/home.component";
 
 @Component({
   selector: 'app-root',

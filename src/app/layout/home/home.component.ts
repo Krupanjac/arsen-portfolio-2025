@@ -11,16 +11,18 @@ import { isPlatformBrowser } from '@angular/common';
 export class HomeComponent implements OnInit, OnDestroy {
   private originalName = 'Đuđev';
   private animationFrameId: number | null = null;
-  private resizeCanvasFn: (() => void) | null = null;
   private randomSymbolsIntervalId: any = null;
+  private resizeCanvasFn: (() => void) | null = null;
   private mouseMoveListener: ((e: MouseEvent) => void) | null = null;
-  private trailListener: ((e: MouseEvent) => void) | null = null;
-  private lastDropletTime : number = 0;
+
+  // --- Properties for droplet trail effect ---
+  private currentMousePos = { x: 0, y: 0 };
+  private dropletAnimationId: number | null = null;
+  private dropletInterval = 500; // milliseconds between droplets
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit(): void {
-    // Ensure we run effects only in the browser
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
@@ -38,6 +40,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
     }
+    if (this.dropletAnimationId !== null) {
+      cancelAnimationFrame(this.dropletAnimationId);
+    }
     if (this.randomSymbolsIntervalId !== null) {
       clearInterval(this.randomSymbolsIntervalId);
     }
@@ -47,63 +52,28 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.mouseMoveListener) {
       document.removeEventListener('mousemove', this.mouseMoveListener);
     }
-    if (this.trailListener) {
-      document.removeEventListener('mousemove', this.trailListener);
-    }
   }
 
   private initializeEffects(): void {
-    // Exit if not in a browser environment
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    // Custom Cursor Effect (with fixed positioning)
+    // Custom Cursor Effect (and update mouse position for droplet trail)
     const customCursor = document.querySelector('.custom-cursor') as HTMLElement;
-    if (customCursor) {
-      this.mouseMoveListener = (e: MouseEvent) => {
+    this.mouseMoveListener = (e: MouseEvent) => {
+      // Update custom cursor if it exists.
+      if (customCursor) {
         customCursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-      };
-      document.addEventListener('mousemove', this.mouseMoveListener);
-    }
+      }
+      // Always update current mouse position.
+      this.currentMousePos.x = e.clientX;
+      this.currentMousePos.y = e.clientY;
+    };
+    document.addEventListener('mousemove', this.mouseMoveListener);
 
-   // Water Droplet Trail Effect - positioned where the custom cursor is
-   this.trailListener = (e: MouseEvent) => {
-    const currentTime = Date.now();
-    if (currentTime - this.lastDropletTime >= 100) { // 0.1s delay
-      this.lastDropletTime = currentTime;
-
-      const droplet = document.createElement('div');
-      const dropletSize = 8;
-
-      droplet.style.position = 'fixed';
-      droplet.style.width = `${dropletSize}px`;
-      droplet.style.height = `${dropletSize}px`;
-      droplet.style.left = `${e.clientX - dropletSize / 2}px`;
-      droplet.style.top = `${e.clientY - dropletSize / 2}px`;
-      droplet.style.borderRadius = '50%';
-      droplet.style.border = '1px solid black';
-      droplet.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-      // Set initial styles for transition
-      droplet.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-      droplet.style.transform = 'scale(1)';
-      droplet.style.opacity = '1';
-
-      document.body.appendChild(droplet);
-
-      // Trigger the expanding effect on the next frame
-      requestAnimationFrame(() => {
-        droplet.style.transform = 'scale(3)';
-        droplet.style.opacity = '0';
-      });
-
-      // Remove droplet after the animation completes (600ms)
-      setTimeout(() => {
-        droplet.remove();
-      }, 600);
-    }
-  };
-    document.addEventListener('mousemove', this.trailListener);
+    // Start the droplet trail animation loop (decoupled from mousemove)
+    this.startDropletTrailAnimation();
 
     // Name Randomization Effect
     this.randomSymbolsIntervalId = setInterval(() => this.randomSymbols(), 1000);
@@ -187,6 +157,51 @@ export class HomeComponent implements OnInit, OnDestroy {
     window.addEventListener('resize', this.resizeCanvasFn);
     this.resizeCanvasFn();
     animate();
+  }
+
+  // Animation loop that creates droplets at a fixed interval regardless of mousemove event frequency.
+  private startDropletTrailAnimation() {
+    let lastTime = Date.now();
+    const animate = () => {
+      const now = Date.now();
+      if (now - lastTime >= this.dropletInterval) {
+        lastTime = now;
+        this.createDroplet(this.currentMousePos.x, this.currentMousePos.y);
+      }
+      this.dropletAnimationId = requestAnimationFrame(animate);
+    };
+    animate();
+  }
+
+  private createDroplet(x: number, y: number) {
+    const droplet = document.createElement('div');
+    const dropletSize = 8;
+
+    droplet.style.position = 'fixed';
+    droplet.style.width = `${dropletSize}px`;
+    droplet.style.height = `${dropletSize}px`;
+    droplet.style.left = `${x - dropletSize / 2}px`;
+    droplet.style.top = `${y - dropletSize / 2}px`;
+    droplet.style.borderRadius = '50%';
+    droplet.style.border = '1px solid black';
+    droplet.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+    // Initial styles for the transition
+    droplet.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
+    droplet.style.transform = 'scale(1)';
+    droplet.style.opacity = '0.5';
+
+    document.body.appendChild(droplet);
+
+    // Trigger the expanding effect on the next frame.
+    requestAnimationFrame(() => {
+      droplet.style.transform = 'scale(3)';
+      droplet.style.opacity = '0';
+    });
+
+    // Remove droplet after the animation completes (600ms)
+    setTimeout(() => {
+      droplet.remove();
+    }, 600);
   }
 
   private randomSymbols(): void {
