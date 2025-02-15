@@ -6,11 +6,10 @@ import { AboutComponent } from './about/about.component';
 import { ContactComponent } from './contact/contact.component';
 
 export const appRoutes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'projects', component: ProjectsComponent },
-  { path: 'work', component: WorkComponent },
-  { path: 'about', component: AboutComponent },
-  { path: 'contact', component: ContactComponent },
-  // Fallback route:
+  { path: '', component: HomeComponent, data: { animation: 'HomePage' } },
+  { path: 'projects', component: ProjectsComponent, data: { animation: 'ProjectsPage' } },
+  { path: 'work', component: WorkComponent, data: { animation: 'WorkPage' } },
+  { path: 'about', component: AboutComponent, data: { animation: 'AboutPage' } },
+  { path: 'contact', component: ContactComponent, data: { animation: 'ContactPage' } },
   { path: '**', redirectTo: '' }
 ];
