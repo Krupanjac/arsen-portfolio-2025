@@ -18,7 +18,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   // --- Properties for droplet trail effect ---
   private currentMousePos = { x: 0, y: 0 };
   private dropletAnimationId: number | null = null;
-  private dropletInterval = 500; // milliseconds between droplets
+  private dropletInterval = 100; // milliseconds between droplets
+  private isMouseMoving = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -69,6 +70,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       // Always update current mouse position.
       this.currentMousePos.x = e.clientX;
       this.currentMousePos.y = e.clientY;
+      // Set mouse moving flag
+      this.isMouseMoving = true;
     };
     document.addEventListener('mousemove', this.mouseMoveListener);
 
@@ -164,9 +167,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     let lastTime = Date.now();
     const animate = () => {
       const now = Date.now();
-      if (now - lastTime >= this.dropletInterval) {
+      if (now - lastTime >= this.dropletInterval && this.isMouseMoving) {
         lastTime = now;
         this.createDroplet(this.currentMousePos.x, this.currentMousePos.y);
+        this.isMouseMoving = false; // Reset the flag after creating a droplet
       }
       this.dropletAnimationId = requestAnimationFrame(animate);
     };
