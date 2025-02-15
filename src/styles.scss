@@ -11,9 +11,13 @@ html, body {
   background-position: center;
   font-family: 'Open Sans', sans-serif;
   user-select: none;
-  cursor: default;
+  cursor: none;
 }
 
+a{
+  text-decoration: none;
+  cursor : none;
+}
 
 /* Optional: Border shadow style */
 .border-shadow {
