@@ -26,8 +26,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Custom Cursor Effect
     const customCursor = document.querySelector('.custom-cursor') as HTMLElement;
     document.addEventListener('mousemove', (e: MouseEvent) => {
-      customCursor.style.transform = `translate(${e.pageX}px, ${e.pageY}px)`;
+      customCursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+   
     });
+    
+    
 
     // Name Randomization Effect
     setInterval(() => this.randomSymbols(), 1000);
