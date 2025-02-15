@@ -1,8 +1,17 @@
-<header class="fixed top-0 left-0 flex items-center h-12 w-full bg-transparent transition-all z-999">
-  <p id="header_naslov" class="text-3xl font-bold ml-8 mt-2 hover:scale-110 transition-transform">
+<header class="fixed top-0 left-0 w-full bg-transparent flex items-center justify-between px-4 py-2 z-50 backdrop-blur-[2px]">
+  <p id="header_naslov" class="text-3xl font-bold">
     <span class="text-[#482268]">&lt;</span>Krupanjac.h<span class="text-[#482268]">&gt;</span>
   </p>
-  <nav class="absolute right-10 mt-4 flex gap-10">
+  <!-- Hamburger button: visible on mobile only -->
+  <button class="md:hidden focus:outline-none" (click)="toggleNav()">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+
+  <!-- Desktop navigation: visible on md and up -->
+  <nav class="hidden md:flex gap-10">
     <a routerLink="/" class="text-black opacity-70 hover:opacity-90">Start/</a>
     <a routerLink="/projects" class="text-black opacity-70 hover:opacity-90">Projects/</a>
     <a routerLink="/work" class="text-black opacity-70 hover:opacity-90">Work/</a>
@@ -10,3 +19,16 @@
     <a routerLink="/contact" class="text-black opacity-70 hover:opacity-90">Contact/</a>
   </nav>
 </header>
+
+<!-- Mobile dropdown navigation -->
+<div *ngIf="isNavOpen"
+     class="md:hidden fixed top-10 left-0 w-full bg-transparent backdrop-blur-[2px] z-60 shadow-md transition-all duration-300 ease-in-out transform pointer-events-auto"
+     [ngClass]="{'translate-y-0 opacity-100': isNavOpen, 'translate-y-[-20px] opacity-0': !isNavOpen}">
+  <nav class="flex flex-col items-center gap-4 p-4">
+    <a routerLink="/" (click)="toggleNav()" class="text-black font-bold opacity-70 hover:opacity-90 text-center">Start/</a>
+    <a routerLink="/projects" (click)="toggleNav()" class="text-black font-bold opacity-70 hover:opacity-90 text-center">Projects/</a>
+    <a routerLink="/work" (click)="toggleNav()" class="text-black font-bold opacity-70 hover:opacity-90 text-center">Work/</a>
+    <a routerLink="/about" (click)="toggleNav()" class="text-black font-bold opacity-70 hover:opacity-90 text-center">About/</a>
+    <a routerLink="/contact" (click)="toggleNav()" class="text-black font-bold opacity-70 hover:opacity-90 text-center">Contact/</a>
+  </nav>
+</div>

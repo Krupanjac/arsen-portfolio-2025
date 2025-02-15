@@ -11,23 +11,25 @@
 <!-- (Optional) Particle container -->
 <div id="particle-container"></div>
 
-<!-- Wrap sidebar and main content in a full‑height container -->
-<div class="relative flex h-[50vh]">
-  <!-- Custom Sidebar -->
-  <!-- Use Tailwind's h-screen for full viewport height and remove top-10 -->
-  <div class="absolute top-0 border-r-2 h-[100vh]" style="width:20%;">
+<!-- Responsive container: flex-col on mobile, flex-row on desktop -->
+<div class="relative flex flex-col md:flex-row min-h-screen">
+  <!-- Custom Sidebar (visible on md and up) -->
+  <div class="hidden md:block absolute top-0 border-r-2 h-screen" style="width:20%;">
     <p class="text-xl ml-[105%]">Home/></p>
   </div>
 
   <!-- Main Content -->
-  <main class="relative z-10 flex flex-col items-start justify-center h-[70vh] w-full">
-    <div class="ProzorSredina px-4 mx-auto max-w-4xl">
-      <div class="Ime flex items-center gap-4 text-7xl font-bold">
+  <main class="relative z-10 flex flex-col items-start justify-center flex-1 p-4">
+    <div class="ProzorSredina mx-auto max-w-4xl">
+      <div class="Ime flex flex-wrap items-center gap-2 text-4xl font-bold sm:text-5xl md:text-7xl">
         <h1>My name is</h1>
-        <h1 id="su" class="text-[#482268] font-bold">Arsen</h1>
-        <h1 id="su_name" class="text-[#482268] italic font-bold">Đuđev</h1>
+        <!-- On mobile, names stack; on larger screens they are inline -->
+        <div class="flex flex-col sm:flex-row items-center gap-1">
+          <h1 id="su" class="text-[#482268] font-bold">Arsen</h1>
+          <h1 id="su_name" class="text-[#482268] italic font-bold">Đuđev</h1>
+        </div>
       </div>
-      <h1 class="text-5xl font-bold mt-4">
+      <h1 class="text-3xl font-bold mt-4 sm:text-5xl">
         I develop and engineer software
       </h1>
     </div>
