@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -9,46 +10,75 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 export class HomeComponent implements OnInit, OnDestroy {
   private originalName = 'Đuđev';
   private animationFrameId: number | null = null;
+  private resizeCanvasFn: (() => void) | null = null;
+  private randomSymbolsIntervalId: any = null;
+  private mouseMoveListener: ((e: MouseEvent) => void) | null = null;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit(): void {
     // Random delay before initializing effects
     const delay = Math.random() * 500 + 100;
-    setTimeout(() => this.initializeEffects(), delay);
+    setTimeout(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        this.initializeEffects();
+      }
+    }, delay);
   }
 
   ngOnDestroy(): void {
-    if (this.animationFrameId) {
+    // Cancel animation frame if one was scheduled
+    if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
+    }
+
+    // Clear the random symbols interval
+    if (this.randomSymbolsIntervalId !== null) {
+      clearInterval(this.randomSymbolsIntervalId);
+    }
+
+    // Remove event listeners if in a browser
+    if (isPlatformBrowser(this.platformId)) {
+      if (this.resizeCanvasFn) {
+        window.removeEventListener('resize', this.resizeCanvasFn);
+      }
+      if (this.mouseMoveListener) {
+        document.removeEventListener('mousemove', this.mouseMoveListener);
+      }
     }
   }
 
   private initializeEffects(): void {
+    // Ensure that we are in a browser environment
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     // Custom Cursor Effect
     const customCursor = document.querySelector('.custom-cursor') as HTMLElement;
-    document.addEventListener('mousemove', (e: MouseEvent) => {
-      customCursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-   
-    });
-    
-    
+    if (customCursor) {
+      this.mouseMoveListener = (e: MouseEvent) => {
+        customCursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      };
+      document.addEventListener('mousemove', this.mouseMoveListener);
+    }
 
     // Name Randomization Effect
-    setInterval(() => this.randomSymbols(), 1000);
+    this.randomSymbolsIntervalId = setInterval(() => this.randomSymbols(), 1000);
 
     // Canvas Setup for Starfield Animation
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Resize canvas and generate stars
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      createStars();
-    };
+    if (!ctx) {
+      return;
+    }
 
     let stars: Array<{ x: number; y: number; radius: number; vx: number; vy: number }> = [];
+
+    // Function to create stars based on canvas size
     const createStars = () => {
       stars = [];
       const starCount =
@@ -67,11 +97,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     };
 
-    // Drawing function for stars and their connections
+    // Drawing function for stars and their connecting lines
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw each star
+      // Draw stars
       ctx.fillStyle = '#482268';
       stars.forEach(star => {
         ctx.beginPath();
@@ -97,13 +127,17 @@ export class HomeComponent implements OnInit, OnDestroy {
       ctx.stroke();
     };
 
-    // Update positions of stars for animation
+    // Update star positions for animation
     const update = () => {
       stars.forEach(star => {
         star.x += star.vx;
         star.y += star.vy;
-        if (star.x < 0 || star.x > canvas.width) star.vx *= -1;
-        if (star.y < 0 || star.y > canvas.height) star.vy *= -1;
+        if (star.x < 0 || star.x > canvas.width) {
+          star.vx *= -1;
+        }
+        if (star.y < 0 || star.y > canvas.height) {
+          star.vy *= -1;
+        }
       });
     };
 
@@ -114,18 +148,28 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Handle canvas resize
-    window.addEventListener('resize', resizeCanvas);
+    // Handle canvas resize by reinitializing canvas size and stars
+    this.resizeCanvasFn = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      createStars();
+    };
+    window.addEventListener('resize', this.resizeCanvasFn);
 
     // Initialize canvas and start animation
-    resizeCanvas();
+    this.resizeCanvasFn();
     animate();
   }
 
   private randomSymbols(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     const symbols = "!@#$%^&*()-_=+[]{}|;:,.<>?";
     const suNameEl = document.getElementById('su_name');
-    if (!suNameEl) return;
+    if (!suNameEl) {
+      return;
+    }
 
     const nameArray = this.originalName.split('');
     const indices = new Set<number>();
