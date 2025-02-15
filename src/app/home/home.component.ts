@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private originalName = 'Đuđev';
@@ -13,48 +14,51 @@ export class HomeComponent implements OnInit, OnDestroy {
   private resizeCanvasFn: (() => void) | null = null;
   private randomSymbolsIntervalId: any = null;
   private mouseMoveListener: ((e: MouseEvent) => void) | null = null;
+  private trailListener: ((e: MouseEvent) => void) | null = null;
+  private lastDropletTime : number = 0;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit(): void {
+    // Ensure we run effects only in the browser
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Random delay before initializing effects
     const delay = Math.random() * 500 + 100;
     setTimeout(() => {
-      if (isPlatformBrowser(this.platformId)) {
-        this.initializeEffects();
-      }
+      this.initializeEffects();
     }, delay);
   }
 
   ngOnDestroy(): void {
-    // Cancel animation frame if one was scheduled
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
     }
-
-    // Clear the random symbols interval
     if (this.randomSymbolsIntervalId !== null) {
       clearInterval(this.randomSymbolsIntervalId);
     }
-
-    // Remove event listeners if in a browser
-    if (isPlatformBrowser(this.platformId)) {
-      if (this.resizeCanvasFn) {
-        window.removeEventListener('resize', this.resizeCanvasFn);
-      }
-      if (this.mouseMoveListener) {
-        document.removeEventListener('mousemove', this.mouseMoveListener);
-      }
+    if (this.resizeCanvasFn) {
+      window.removeEventListener('resize', this.resizeCanvasFn);
+    }
+    if (this.mouseMoveListener) {
+      document.removeEventListener('mousemove', this.mouseMoveListener);
+    }
+    if (this.trailListener) {
+      document.removeEventListener('mousemove', this.trailListener);
     }
   }
 
   private initializeEffects(): void {
-    // Ensure that we are in a browser environment
+    // Exit if not in a browser environment
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    // Custom Cursor Effect
+    // Custom Cursor Effect (with fixed positioning)
     const customCursor = document.querySelector('.custom-cursor') as HTMLElement;
     if (customCursor) {
       this.mouseMoveListener = (e: MouseEvent) => {
@@ -62,6 +66,44 @@ export class HomeComponent implements OnInit, OnDestroy {
       };
       document.addEventListener('mousemove', this.mouseMoveListener);
     }
+
+   // Water Droplet Trail Effect - positioned where the custom cursor is
+   this.trailListener = (e: MouseEvent) => {
+    const currentTime = Date.now();
+    if (currentTime - this.lastDropletTime >= 100) { // 0.1s delay
+      this.lastDropletTime = currentTime;
+
+      const droplet = document.createElement('div');
+      const dropletSize = 8;
+
+      droplet.style.position = 'fixed';
+      droplet.style.width = `${dropletSize}px`;
+      droplet.style.height = `${dropletSize}px`;
+      droplet.style.left = `${e.clientX - dropletSize / 2}px`;
+      droplet.style.top = `${e.clientY - dropletSize / 2}px`;
+      droplet.style.borderRadius = '50%';
+      droplet.style.border = '1px solid black';
+      droplet.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+      // Set initial styles for transition
+      droplet.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
+      droplet.style.transform = 'scale(1)';
+      droplet.style.opacity = '1';
+
+      document.body.appendChild(droplet);
+
+      // Trigger the expanding effect on the next frame
+      requestAnimationFrame(() => {
+        droplet.style.transform = 'scale(3)';
+        droplet.style.opacity = '0';
+      });
+
+      // Remove droplet after the animation completes (600ms)
+      setTimeout(() => {
+        droplet.remove();
+      }, 600);
+    }
+  };
+    document.addEventListener('mousemove', this.trailListener);
 
     // Name Randomization Effect
     this.randomSymbolsIntervalId = setInterval(() => this.randomSymbols(), 1000);
@@ -77,15 +119,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     let stars: Array<{ x: number; y: number; radius: number; vx: number; vy: number }> = [];
-
-    // Function to create stars based on canvas size
     const createStars = () => {
       stars = [];
-      const starCount =
-        window.innerWidth > 500
-          ? Math.floor(Math.random() * 50 + 100)
-          : Math.floor(Math.random() * 40 + 20);
-
+      const starCount = window.innerWidth > 500
+        ? Math.floor(Math.random() * 50 + 100)
+        : Math.floor(Math.random() * 40 + 20);
       for (let i = 0; i < starCount; i++) {
         stars.push({
           x: Math.random() * canvas.width,
@@ -97,19 +135,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     };
 
-    // Drawing function for stars and their connecting lines
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw stars
       ctx.fillStyle = '#482268';
       stars.forEach(star => {
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
         ctx.fill();
       });
-
-      // Draw lines connecting stars within a certain distance
       ctx.beginPath();
       ctx.strokeStyle = '#48226893';
       ctx.lineWidth = 0.3;
@@ -127,7 +160,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       ctx.stroke();
     };
 
-    // Update star positions for animation
     const update = () => {
       stars.forEach(star => {
         star.x += star.vx;
@@ -141,22 +173,18 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
     };
 
-    // Animation loop
     const animate = () => {
       update();
       draw();
       this.animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Handle canvas resize by reinitializing canvas size and stars
     this.resizeCanvasFn = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       createStars();
     };
     window.addEventListener('resize', this.resizeCanvasFn);
-
-    // Initialize canvas and start animation
     this.resizeCanvasFn();
     animate();
   }
@@ -170,17 +198,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (!suNameEl) {
       return;
     }
-
     const nameArray = this.originalName.split('');
     const indices = new Set<number>();
     while (indices.size < 2) {
       indices.add(Math.floor(Math.random() * nameArray.length));
     }
-
     indices.forEach(i => {
       nameArray[i] = symbols[Math.floor(Math.random() * symbols.length)];
     });
-
     suNameEl.textContent = nameArray.join('');
   }
 }
