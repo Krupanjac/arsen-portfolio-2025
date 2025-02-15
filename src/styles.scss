@@ -5,7 +5,8 @@
 /* Global resets and custom styles */
 html, body {
   margin: 0;
-  overflow: hidden;
+  overflow: scroll;
+  overscroll-behavior: none;
   background-size: cover;
   background-position: center;
   font-family: 'Open Sans', sans-serif;
@@ -43,4 +44,11 @@ html, body {
 @keyframes expand {
   0% { transform: scale(1); opacity: 1; }
   100% { transform: scale(2); opacity: 0; }
+}
+
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
 }
