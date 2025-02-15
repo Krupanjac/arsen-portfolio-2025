@@ -17,8 +17,7 @@ main {
     will-change: transform; /* Optimize for animations */
 }
 
-/* Custom cursor adjustments */
+/* Custom cursor adjustments, needs to be centered where the mouse is */
 .custom-cursor {
-    transform: translate(-50%, -50%);
     transition: transform 0.05s linear;
 }
