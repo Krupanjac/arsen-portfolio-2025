@@ -1,0 +1,52 @@
+# robots.txt for arsen-portfolio-2025
+# Base policy: allow legitimate search indexing, but block AI training crawlers.
+
+# Block AI/LLM training crawlers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+# Default policy for other crawlers
+User-agent: *
+Allow: /
+
+# Explicitly list primary public routes (for clarity only)
+Allow: /$
+Allow: /projects
+Allow: /work
+Allow: /about
+Allow: /contact
+
+# Keep static resources crawlable so search engines can render pages
+Allow: /assets/
+Allow: /projectImg/
+Allow: /i18n/
+
+# Optional: add your sitemap URL when available
+# Sitemap: https://your-domain.example/sitemap.xml
