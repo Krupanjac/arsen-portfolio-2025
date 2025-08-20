@@ -39,5 +39,20 @@
     "HOME_LABEL": "Početna/>",
     "COPIED": "Kopirano: {{email}}",
     "COPY_FAILED": "Kopiranje nije uspelo."
+  },
+  "HOME": {
+    "LABEL": "Početna/>",
+    "TITLE": "Dobrodošli u moj portfolio",
+    "SUBTITLE": "Otkrijte moje projekte, veštine i iskustva. Pridružite se kreativnom putovanju dok delim svoj rad."
+  },
+  "PROJECTS": {
+    "LABEL": "Projekti/>"
+  },
+  "WORK": {
+    "LABEL": "Rad/>"
+  },
+  "HERO": {
+    "MY_NAME_IS": "Moje ime je",
+    "TAGLINE": "Razvijam i inženjerujem softver"
   }
 }

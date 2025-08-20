@@ -39,5 +39,20 @@
     "HOME_LABEL": "Home/>",
     "COPIED": "Copied: {{email}}",
     "COPY_FAILED": "Failed to copy text."
+  },
+  "HOME": {
+    "LABEL": "Home/>",
+    "TITLE": "Welcome to My Portfolio",
+    "SUBTITLE": "Discover my projects, skills, and experiences. Join me on a creative journey as I share my work."
+  },
+  "PROJECTS": {
+    "LABEL": "Projects/>"
+  },
+  "WORK": {
+    "LABEL": "Work/>"
+  },
+  "HERO": {
+    "MY_NAME_IS": "My name is",
+    "TAGLINE": "I develop and engineer software"
   }
 }

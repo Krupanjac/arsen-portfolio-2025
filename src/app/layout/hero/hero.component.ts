@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
+  imports: [TranslateModule],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css'],
   encapsulation: ViewEncapsulation.None

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; // <-- Add this line
+import { TranslateModule } from '@ngx-translate/core';
 
 interface Project {
   link: string;
@@ -10,7 +11,7 @@ interface Project {
 @Component({
   selector: 'app-projects',
   standalone: true, // Standalone component
-  imports: [CommonModule], // <-- Add CommonModule here
+  imports: [CommonModule, TranslateModule], // <-- Add CommonModule here
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.css']
 })
