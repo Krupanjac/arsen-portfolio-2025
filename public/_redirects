@@ -1,4 +1,6 @@
 # Pass-through for static assets and common file types
+/robots.txt         /robots.txt           200
+/sitemap.xml        /sitemap.xml          200
 /assets/*           /assets/:splat        200
 /projectImg/*       /projectImg/:splat    200
 /i18n/*             /i18n/:splat          200
@@ -19,8 +21,7 @@
 /*.woff2            /:splat.woff2         200
 /*.ttf              /:splat.ttf           200
 /*.eot              /:splat.eot           200
-/robots.txt         /robots.txt           200
-/sitemap.xml        /sitemap.xml          200
+
 
 # SPA fallback: everything else to index.html
 # Using root (/) instead of /index.html avoids Cloudflare's loop warning
