@@ -2,13 +2,13 @@ import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewEncapsulation } 
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-hero',
   standalone: true,
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
+  templateUrl: './hero.component.html',
+  styleUrls: ['./hero.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HeroComponent implements OnInit, OnDestroy {
   private originalName = 'Đuđev';
   private animationFrameId: number | null = null;
   private randomSymbolsIntervalId: any = null;

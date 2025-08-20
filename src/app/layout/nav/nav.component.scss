@@ -26,3 +26,13 @@
     left: 0;
     right: auto;
   }
+
+  #header_naslov{
+    transition : all 0.2s ease-out;
+  }
+
+  #header_naslov:hover{
+    transform : scale(1.1);
+
+    transition : all 0.2s ease-out;
+  }
