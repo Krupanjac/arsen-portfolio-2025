@@ -1,10 +1,10 @@
-<div class="grid min-h-screen grid-cols-[14%_1fr] md:grid-cols-[20%_1fr]">
-  <!-- Left rail with vertical line -->
-  <div class="border-r-2 border-black flex items-start justify-end pr-4 py-4">
+<div class="relative min-h-screen pl-[15vw] md:pl-[21vw]">
+  <!-- Independent absolute left rail (scrolls with section) -->
+  <div class="absolute top-0 left-0 h-full w-[14vw] md:w-[20vw] border-r-2 border-black flex items-start justify-end pr-4 py-4 pointer-events-none">
     <p class="text-xl whitespace-nowrap">{{ 'ABOUT.LABEL' | translate }}</p>
   </div>
-  <!-- CLI-like content -->
-  <div class="cli-container bg-gray-900 text-green-500 font-mono p-5 rounded-md col-start-2 mx-auto my-10 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%]">
+  <!-- Centered CLI-like content -->
+  <div class="cli-container bg-gray-900 text-green-500 font-mono p-5 rounded-md mx-40 my-10 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] pl-4">
   <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.L1' | translate }}</p>
   <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.L2' | translate }}</p>
   <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>

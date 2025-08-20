@@ -1,10 +1,10 @@
-<div class="grid min-h-screen grid-cols-[14%_1fr] md:grid-cols-[20%_1fr]">
-  <!-- Left rail with vertical line -->
-  <div class="border-r-2 border-black flex items-start justify-end pr-4 py-4">
+<div class="relative min-h-screen">
+  <!-- Independent absolute left rail (scrolls with section) -->
+  <div class="absolute top-0 left-0 h-full w-[14vw] md:w-[20vw] border-r-2 border-black flex items-start justify-end pr-4 py-4 pointer-events-none">
     <p class="text-xl whitespace-nowrap">{{ 'HOME.LABEL' | translate }}</p>
   </div>
   <!-- Centered content -->
-  <div class="flex flex-col items-center justify-start bg-transparent px-4 pt-12 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
+  <div class="flex flex-col items-center justify-start bg-transparent px-4 pt-12 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto pl-4">
     <header class="text-center">
       <h1 class="text-3xl md:text-4xl font-bold text-gray-800">{{ 'HOME.TITLE' | translate }}</h1>
       <p class="mt-4 text-md md:text-xl text-gray-600 backdrop-blur-[10px]">{{ 'HOME.SUBTITLE' | translate }}</p>

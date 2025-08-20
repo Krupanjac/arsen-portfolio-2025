@@ -1,11 +1,11 @@
-<!-- Responsive container for terminal with left rail -->
-<div class="grid min-h-screen grid-cols-[14%_1fr] md:grid-cols-[20%_1fr]">
-  <!-- Left rail with vertical line -->
-  <div class="border-r-2 border-black flex items-start justify-end pr-4 py-4">
+<!-- Responsive container with independent left rail -->
+<div class="relative min-h-screen pl-[15vw] md:pl-[21vw]">
+  <!-- Independent absolute left rail (scrolls with section) -->
+  <div class="absolute top-0 left-0 h-full w-[14vw] md:w-[20vw] border-r-2 border-black flex items-start justify-end pr-4 py-4 pointer-events-none">
     <p class="text-xl whitespace-nowrap">{{ 'CONTACT.HOME_LABEL' | translate }}</p>
   </div>
 
-  <div class="text-lg bg-black/90 text-green-500 font-mono border-2 shadow-[0_0_10px_rgba(0,255,0,0.8)] p-2.5 rounded-lg w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto my-10">
+  <div class="text-lg bg-black/90 text-green-500 font-mono border-2 shadow-[0_0_10px_rgba(0,255,0,0.8)] p-2.5 rounded-lg w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-40 my-10 pl-4">
     <div class="bg-[#003300] p-1.25 text-green-500 font-bold text-left">
       <span class="pl-1.25">{{ 'CONTACT.TERMINAL_USER' | translate }}</span>
     </div>
