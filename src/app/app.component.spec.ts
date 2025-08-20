@@ -16,14 +16,17 @@ describe('AppComponent', () => {
 
   it(`should have the 'arsen-portfolio-2025' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('arsen-portfolio-2025');
+    const app = fixture.componentInstance as AppComponent;
+    // The component exposes a title property; ensure it matches the project name
+    expect((app as any).title).toEqual('arsen-portfolio-2025');
   });
 
-  it('should render title', () => {
+  it('should render navigation and router outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, arsen-portfolio-2025');
+    // Basic sanity checks for key elements present in the template
+    expect(compiled.querySelector('app-nav')).toBeTruthy();
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });
