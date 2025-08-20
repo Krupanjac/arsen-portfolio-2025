@@ -1,0 +1,3 @@
+name = "arsen-portfolio-2025"
+# Tell Cloudflare Pages where the static build artifacts are
+pages_build_output_dir = "dist/arsen-portfolio-2025/browser"
