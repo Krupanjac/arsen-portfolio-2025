@@ -11,7 +11,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
   standalone: true,
   imports: [CommonModule, TranslateModule],
   templateUrl: './contact.component.html',
-  styleUrls: ['./contact.component.css'],
+  styleUrls: ['./contact.component.scss'],
   encapsulation: ViewEncapsulation.None, // Ensures CSS works on dynamically added elements
   animations: [
     trigger('modalAnimation', [

@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
   standalone: true,
   imports: [TranslateModule],
   templateUrl: './hero.component.html',
-  styleUrls: ['./hero.component.css'],
+  styleUrls: ['./hero.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 export class HeroComponent implements OnInit, OnDestroy {

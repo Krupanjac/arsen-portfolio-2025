@@ -1,11 +1,15 @@
-<div class="grid min-h-screen grid-cols-[14%_1fr] md:grid-cols-[20%_1fr]">
+<div class="grid min-h-screen grid-cols-[1fr] md:grid-cols-[20%_1fr]">
+  <!-- Mobile label under nav -->
+  <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
+    <p class="text-base font-semibold text-gray-800">{{ 'PROJECTS.LABEL' | translate }}</p>
+  </div>
   <!-- Left rail with vertical line -->
-  <div class="border-r-2 border-black flex items-start justify-end pr-4 py-4">
+  <div class="hidden md:flex border-r-2 border-black items-start justify-end pr-4 py-4">
     <p class="text-xl whitespace-nowrap">{{ 'PROJECTS.LABEL' | translate }}</p>
   </div>
   <!-- Projects grid -->
-  <div class="flex justify-center items-start py-10 -ml-[14%] md:-ml-[20%] pl-4">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%]">
+  <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
       <a *ngFor="let project of projects"
          [href]="project.link"
          target="_blank"

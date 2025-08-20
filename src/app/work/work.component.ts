@@ -13,7 +13,7 @@ interface WorkItem {
   standalone: true,
   imports: [CommonModule, TranslateModule],
   templateUrl: './work.component.html',
-  styleUrls: ['./work.component.css']
+  styleUrls: ['./work.component.scss']
 })
 export class WorkComponent {
   workItems: WorkItem[] = [

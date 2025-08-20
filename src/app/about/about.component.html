@@ -1,10 +1,14 @@
-<div class="relative min-h-screen pl-[15vw] md:pl-[21vw]">
+<div class="relative min-h-screen pl-4 md:pl-[21vw] pr-4">
+  <!-- Mobile label under nav -->
+  <div class="md:hidden pt-14 px-1 pb-2 border-b border-black/20">
+    <p class="text-base font-semibold text-gray-800">{{ 'ABOUT.LABEL' | translate }}</p>
+  </div>
   <!-- Independent absolute left rail (scrolls with section) -->
-  <div class="absolute top-0 left-0 h-full w-[14vw] md:w-[20vw] border-r-2 border-black flex items-start justify-end pr-4 py-4 pointer-events-none">
+  <div class="hidden md:flex absolute top-0 left-0 h-full w-[14vw] md:w-[20vw] border-r-2 border-black items-start justify-end pr-4 py-4 pointer-events-none">
     <p class="text-xl whitespace-nowrap">{{ 'ABOUT.LABEL' | translate }}</p>
   </div>
   <!-- Centered CLI-like content -->
-  <div class="cli-container bg-gray-900 text-green-500 font-mono p-5 rounded-md mx-40 my-10 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] pl-4">
+  <div class="cli-container bg-gray-900 text-green-500 font-mono p-5 rounded-md my-10 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
   <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.L1' | translate }}</p>
   <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.L2' | translate }}</p>
   <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>

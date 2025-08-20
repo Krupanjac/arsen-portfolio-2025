@@ -33,8 +33,8 @@
 
 <!-- Mobile dropdown navigation -->
 <div *ngIf="isNavOpen"
-     class="md:hidden fixed top-10 left-0 w-full bg-transparent backdrop-blur-[2px] z-60 shadow-md transition-all duration-300 ease-in-out transform pointer-events-auto"
-     [ngClass]="{'translate-y-0 opacity-100': isNavOpen, 'translate-y-[-20px] opacity-0': !isNavOpen}">
+  class="md:hidden fixed top-10 left-0 w-full bg-transparent backdrop-blur-[2px] z-[60] shadow-md transition-all duration-300 ease-in-out transform pointer-events-auto"
+  [ngClass]="{'translate-y-0 opacity-100': isNavOpen, 'translate-y-[-20px] opacity-0': !isNavOpen}">
   <nav class="flex flex-col items-center gap-4 p-4">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="toggleNav()" class="nav-link text-black font-bold opacity-70 hover:opacity-90 text-center">{{ 'NAV.START' | translate }}</a>
     <a routerLink="/projects" routerLinkActive="active" (click)="toggleNav()" class="nav-link text-black font-bold opacity-70 hover:opacity-90 text-center">{{ 'NAV.PROJECTS' | translate }}</a>
