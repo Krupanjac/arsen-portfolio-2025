@@ -1,1 +1,27 @@
-/*    /index.html   200
+# Pass-through for static assets and common file types
+/assets/*           /assets/:splat        200
+/projectImg/*       /projectImg/:splat    200
+/i18n/*             /i18n/:splat          200
+/*.js               /:splat.js            200
+/*.mjs              /:splat.mjs           200
+/*.css              /:splat.css           200
+/*.map              /:splat.map           200
+/*.ico              /:splat.ico           200
+/*.png              /:splat.png           200
+/*.jpg              /:splat.jpg           200
+/*.jpeg             /:splat.jpeg          200
+/*.webp             /:splat.webp          200
+/*.svg              /:splat.svg           200
+/*.txt              /:splat.txt           200
+/*.json             /:splat.json          200
+/*.xml              /:splat.xml           200
+/*.woff             /:splat.woff          200
+/*.woff2            /:splat.woff2         200
+/*.ttf              /:splat.ttf           200
+/*.eot              /:splat.eot           200
+/robots.txt         /robots.txt           200
+/sitemap.xml        /sitemap.xml          200
+
+# SPA fallback: everything else to index.html
+# Using root (/) instead of /index.html avoids Cloudflare's loop warning
+/*                  /                     200
