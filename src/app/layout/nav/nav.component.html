@@ -20,9 +20,13 @@
     <a routerLink="/about" routerLinkActive="active" class="nav-link text-black opacity-70 hover:opacity-90">{{ 'NAV.ABOUT' | translate }}</a>
     <a routerLink="/contact" routerLinkActive="active" class="nav-link text-black opacity-70 hover:opacity-90">{{ 'NAV.CONTACT' | translate }}</a>
     <div class="flex items-center gap-2 ml-4">
-      <button class="px-2 py-1 text-sm rounded border border-transparent hover:border-gray-400" (click)="setLang('en')">EN</button>
+      <button class="px-2 py-1 text-sm rounded border border-transparent hover:border-gray-400 disabled:opacity-50" [disabled]="isLangLoading" (click)="setLang('en')">EN</button>
       <span class="text-gray-400">|</span>
-      <button class="px-2 py-1 text-sm rounded border border-transparent hover:border-gray-400" (click)="setLang('sr')">SR</button>
+      <button class="px-2 py-1 text-sm rounded border border-transparent hover:border-gray-400 disabled:opacity-50" [disabled]="isLangLoading" (click)="setLang('sr')">SR</button>
+      <svg *ngIf="isLangLoading" class="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
     </div>
   </nav>
 </header>
@@ -37,9 +41,13 @@
     <a routerLink="/work" routerLinkActive="active" (click)="toggleNav()" class="nav-link text-black font-bold opacity-70 hover:opacity-90 text-center">{{ 'NAV.WORK' | translate }}</a>
     <a routerLink="/about" routerLinkActive="active" (click)="toggleNav()" class="nav-link text-black font-bold opacity-70 hover:opacity-90 text-center">{{ 'NAV.ABOUT' | translate }}</a>
     <a routerLink="/contact" routerLinkActive="active" (click)="toggleNav()" class="nav-link text-black font-bold opacity-70 hover:opacity-90 text-center">{{ 'NAV.CONTACT' | translate }}</a>
-    <div class="flex items-center gap-4 pt-2">
-      <button class="px-3 py-1 text-sm rounded border border-transparent hover:border-gray-400" (click)="setLang('en'); toggleNav()">EN</button>
-      <button class="px-3 py-1 text-sm rounded border border-transparent hover:border-gray-400" (click)="setLang('sr'); toggleNav()">SR</button>
+    <div class="flex items-center gap-3 pt-2">
+      <button class="px-3 py-1 text-sm rounded border border-transparent hover:border-gray-400 disabled:opacity-50" [disabled]="isLangLoading" (click)="setLang('en'); toggleNav()">EN</button>
+      <button class="px-3 py-1 text-sm rounded border border-transparent hover:border-gray-400 disabled:opacity-50" [disabled]="isLangLoading" (click)="setLang('sr'); toggleNav()">SR</button>
+      <svg *ngIf="isLangLoading" class="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
     </div>
   </nav>
 </div>

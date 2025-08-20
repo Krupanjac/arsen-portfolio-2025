@@ -13,6 +13,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class NavComponent {
   isNavOpen = false;
+  isLangLoading = false;
 
   toggleNav(): void {
     this.isNavOpen = !this.isNavOpen;
@@ -26,7 +27,19 @@ export class NavComponent {
   }
 
   setLang(lang: 'en' | 'sr') {
-    this.translate.use(lang);
-    try { localStorage.setItem('lang', lang); } catch {}
+    const current = (this.translate as any).getCurrentLang ? (this.translate as any).getCurrentLang() : null;
+    if (current === lang || this.isLangLoading) {
+      return;
+    }
+    this.isLangLoading = true;
+    this.translate.use(lang).subscribe({
+      next: () => {
+        this.isLangLoading = false;
+        try { localStorage.setItem('lang', lang); } catch {}
+      },
+      error: () => {
+        this.isLangLoading = false;
+      }
+    });
   }
 }
