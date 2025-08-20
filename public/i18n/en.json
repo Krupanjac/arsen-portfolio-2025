@@ -1,0 +1,13 @@
+{
+  "NAV": {
+    "START": "Start/",
+    "PROJECTS": "Projects/",
+    "WORK": "Work/",
+    "ABOUT": "About/",
+    "CONTACT": "Contact/",
+    "LANG": {
+      "EN": "English",
+      "SR": "Serbian"
+    }
+  }
+}

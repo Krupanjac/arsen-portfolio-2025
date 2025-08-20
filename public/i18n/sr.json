@@ -1,0 +1,13 @@
+{
+  "NAV": {
+    "START": "Početna/",
+    "PROJECTS": "Projekti/",
+    "WORK": "Rad/",
+    "ABOUT": "O meni/",
+    "CONTACT": "Kontakt/",
+    "LANG": {
+      "EN": "Engleski",
+      "SR": "Srpski"
+    }
+  }
+}

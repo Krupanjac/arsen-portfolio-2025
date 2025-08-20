@@ -1,5 +1,5 @@
 // Language: TypeScript
-import { Component, ChangeDetectorRef, ElementRef, Renderer2, AfterViewChecked, ViewEncapsulation, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, ElementRef, Renderer2, AfterViewChecked, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -25,7 +25,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
     ])
   ]
 })
-export class ContactComponent implements OnInit, AfterViewChecked {
+export class ContactComponent implements OnInit, AfterViewChecked, OnDestroy {
   contactLines: string[] = [];
   displayText: string = "";
   cursorVisible: boolean = false;
@@ -38,17 +38,21 @@ export class ContactComponent implements OnInit, AfterViewChecked {
   modalMessage: string = "";
   private modalTimeout: any;
 
+  private blinkIntervalId: any;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private elRef: ElementRef,
     private renderer: Renderer2,
     private sanitizer: DomSanitizer
   ) {
-    // Start the typewriter effect immediately
-    setInterval(() => {
-      this.cdr.detectChanges();
-      this.toggleCursorVisibility();
-    }, 500);
+    // Start the typewriter effect immediately (browser only)
+    if (typeof window !== 'undefined') {
+      this.blinkIntervalId = setInterval(() => {
+        this.cdr.detectChanges();
+        this.toggleCursorVisibility();
+      }, 500);
+    }
   }
 
   ngOnInit(): void {
@@ -57,11 +61,11 @@ export class ContactComponent implements OnInit, AfterViewChecked {
       `root@terminal:~$ E-MAIL - <span class="copyable" data-email="arsen.djurdjev@live.com">arsen.djurdjev@live.com</span>`,
       'root@terminal:~$ '
     ];
-    this.typeText();
+  this.typeText();
   }
 
   ngAfterViewChecked(): void {
-    if (this.isTypingFinished) {
+  if (this.isTypingFinished && typeof document !== 'undefined') {
       this.attachClickHandlers();
     }
   }
@@ -88,7 +92,8 @@ export class ContactComponent implements OnInit, AfterViewChecked {
 
   attachClickHandlers(): void {
     if (this.isTypingFinished) {
-      const copyableSpans = this.elRef.nativeElement.querySelectorAll('.copyable:not([data-listener-added])');
+  if (typeof document === 'undefined') return;
+  const copyableSpans = this.elRef.nativeElement.querySelectorAll('.copyable:not([data-listener-added])');
 
       copyableSpans.forEach((span: HTMLElement) => {
         const email = span.innerText.trim();
@@ -103,6 +108,9 @@ export class ContactComponent implements OnInit, AfterViewChecked {
   }
 
   copyToClipboard(email: string): void {
+    if (typeof navigator === 'undefined' || !navigator.clipboard) {
+      return;
+    }
     navigator.clipboard.writeText(email).then(() => {
       this.showModal(`📋 Kopirano: ${email}`);
     }).catch(err => {
@@ -128,6 +136,7 @@ export class ContactComponent implements OnInit, AfterViewChecked {
   }
 
   toggleCursorVisibility(): void {
+    if (typeof document === 'undefined') return;
     const cursorElement = this.elRef.nativeElement.querySelector('.cursor');
     if (cursorElement) {
       if (this.cursorVisible) {
@@ -135,6 +144,15 @@ export class ContactComponent implements OnInit, AfterViewChecked {
       } else {
         cursorElement.classList.remove('visible');
       }
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.blinkIntervalId) {
+      clearInterval(this.blinkIntervalId);
+    }
+    if (this.modalTimeout) {
+      clearTimeout(this.modalTimeout);
     }
   }
 }

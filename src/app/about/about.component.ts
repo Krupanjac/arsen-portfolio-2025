@@ -9,6 +9,10 @@ export class AboutComponent implements AfterViewInit {
   constructor(private renderer: Renderer2) {}
 
   ngAfterViewInit(): void {
+    // Skip on the server during SSR
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
     // Add click event to email address to copy to clipboard.
     const emailLink = document.getElementById('email-address');
     if (emailLink) {
