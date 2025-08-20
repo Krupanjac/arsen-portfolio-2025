@@ -10,4 +10,34 @@
       "SR": "Srpski"
     }
   }
+  ,
+  "ABOUT": {
+    "LABEL": "O meni/>",
+    "L1": "$echo \"Zdravo, ja sam Arsen Đuđev.\"",
+    "L2": "Zdravo, ja sam Arsen Đuđev.",
+    "DOTS": "...",
+    "WHOAMI": "$whoami",
+    "ROLE": "Ja sam full-stack programer.",
+    "SKILLS": "$veštine",
+    "SKILL_ALGO": "Algoritmi",
+    "SKILL_DS": "Strukture podataka",
+    "SKILL_BACKEND": "Bekend razvoj",
+    "SKILL_GAME": "Razvoj igara",
+    "SKILL_ML": "Mašinsko učenje",
+    "SKILL_FRONTEND": "Frondend razvoj",
+    "LANGS": "$jezici",
+    "TOOLS": "$alati",
+    "AI": "Veštačka inteligencija",
+    "CONTACT": "$kontakt",
+    "LINKEDIN": "LinkedIn <--klikni za prikaz",
+    "GITHUB": "GitHub <--klikni za prikaz",
+    "INSTAGRAM": "Instagram <--klikni za prikaz"
+  },
+  "CONTACT": {
+    "LABEL": "Kontakt/>",
+    "TERMINAL_USER": "root@terminal",
+    "HOME_LABEL": "Početna/>",
+    "COPIED": "Kopirano: {{email}}",
+    "COPY_FAILED": "Kopiranje nije uspelo."
+  }
 }

@@ -10,4 +10,34 @@
       "SR": "Serbian"
     }
   }
+  ,
+  "ABOUT": {
+    "LABEL": "About/>",
+    "L1": "$echo \"Hello, I'm Arsen Đuđev.\"",
+    "L2": "Hello, I'm Arsen Đuđev.",
+    "DOTS": "...",
+    "WHOAMI": "$whoami",
+    "ROLE": "I'm a Full-stack Developer.",
+    "SKILLS": "$skills",
+    "SKILL_ALGO": "Algorithms",
+    "SKILL_DS": "Data Structures",
+    "SKILL_BACKEND": "Back-end Development",
+    "SKILL_GAME": "Game Development",
+    "SKILL_ML": "Machine Learning",
+    "SKILL_FRONTEND": "Front-end Development",
+    "LANGS": "$languages",
+    "TOOLS": "$tools",
+    "AI": "Artificial intelligence",
+    "CONTACT": "$contact",
+    "LINKEDIN": "LinkedIn <--click to view",
+    "GITHUB": "GitHub <--click to view",
+    "INSTAGRAM": "Instagram <--click to view"
+  },
+  "CONTACT": {
+    "LABEL": "Contact/>",
+    "TERMINAL_USER": "root@terminal",
+    "HOME_LABEL": "Home/>",
+    "COPIED": "Copied: {{email}}",
+    "COPY_FAILED": "Failed to copy text."
+  }
 }

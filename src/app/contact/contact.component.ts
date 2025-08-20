@@ -2,12 +2,14 @@
 import { Component, ChangeDetectorRef, ElementRef, Renderer2, AfterViewChecked, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css'],
   encapsulation: ViewEncapsulation.None, // Ensures CSS works on dynamically added elements
@@ -44,7 +46,8 @@ export class ContactComponent implements OnInit, AfterViewChecked, OnDestroy {
     private cdr: ChangeDetectorRef,
     private elRef: ElementRef,
     private renderer: Renderer2,
-    private sanitizer: DomSanitizer
+  private sanitizer: DomSanitizer,
+  private translate: TranslateService
   ) {
     // Start the typewriter effect immediately (browser only)
     if (typeof window !== 'undefined') {
@@ -61,7 +64,13 @@ export class ContactComponent implements OnInit, AfterViewChecked, OnDestroy {
       `root@terminal:~$ E-MAIL - <span class="copyable" data-email="arsen.djurdjev@live.com">arsen.djurdjev@live.com</span>`,
       'root@terminal:~$ '
     ];
-  this.typeText();
+    // On the server, avoid timers to prevent SSR timeouts; render instantly
+    if (typeof window === 'undefined') {
+      this.displayText = this.contactLines.join('\n');
+      this.isTypingFinished = true;
+      return;
+    }
+    this.typeText();
   }
 
   ngAfterViewChecked(): void {
@@ -112,10 +121,12 @@ export class ContactComponent implements OnInit, AfterViewChecked, OnDestroy {
       return;
     }
     navigator.clipboard.writeText(email).then(() => {
-      this.showModal(`📋 Kopirano: ${email}`);
+      const msg = this.translate.instant('CONTACT.COPIED', { email });
+      this.showModal(`📋 ${msg}`);
     }).catch(err => {
       console.error('Failed to copy email:', err);
-      this.showModal('Failed to copy text.');
+      const msg = this.translate.instant('CONTACT.COPY_FAILED');
+      this.showModal(msg);
     });
   }
 
