@@ -48,5 +48,5 @@ Allow: /assets/
 Allow: /projectImg/
 Allow: /i18n/
 
-# Optional: add your sitemap URL when available
-# Sitemap: https://your-domain.example/sitemap.xml
+# Sitemap
+Sitemap: https://krupanjac.pages.dev/sitemap.xml
