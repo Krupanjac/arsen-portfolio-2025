@@ -1,26 +1,19 @@
-import { trigger, transition, query, style, animate, group } from '@angular/animations';
+import { trigger, transition, query, style, animate } from '@angular/animations';
 
-// This animation is used for route transitions (i.e. for routed content)
+// Reveal animation that visually mimics a scroll-in by revealing the entering
+// element from top to bottom using clip-path. Does not change layout or
+// element positioning so native scrolling remains unaffected.
 export const slideInAnimation = trigger('routeAnimations', [
   transition('* <=> *', [
-    // Set entering and leaving elements to fixed position for smooth transitions
-    query(':enter, :leave', [
-      style({
-        position: 'fixed',
-        width: '100%'
-      })
+    // Reveal the entering element from top to bottom
+    query(':enter', [
+      style({ opacity: 1, 'clip-path': 'inset(100% 0 0 0)' }),
+      animate('360ms cubic-bezier(.22,.9,.28,1)', style({ 'clip-path': 'inset(0% 0 0 0)' }))
     ], { optional: true }),
-    group([
-      // Animate the entering element: start off-screen to the left and slide in
-      query(':enter', [
-        style({ transform: 'translateY(150%)' }),
-        animate('0.2s ease-in-out', style({ transform: 'translateY(0%)' }))
-      ], { optional: true }),
-      // Animate the leaving element: slide out to the right
-      query(':leave', [
-        style({ transform: 'translateY(0%)' }),
-        animate('0.2s ease-in-out', style({ transform: 'translateY(-150%)' }))
-      ], { optional: true })
-    ])
+
+    // Fade out leaving element slightly for a smooth handoff
+    query(':leave', [
+      animate('200ms ease-in', style({ opacity: 0 }))
+    ], { optional: true })
   ])
 ]);
