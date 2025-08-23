@@ -1,125 +1,24 @@
 <app-loading *ngIf="loading"></app-loading>
 <app-nav></app-nav>
 
-<!-- Single page sections: home, projects, work, about, contact -->
-
-<!-- Home Section -->
+<!-- Single page layout now delegates each section to its own standalone component -->
 <section id="home" class="min-h-screen">
   <app-hero></app-hero>
-  <div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr]">
-    <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
-      <p class="text-base font-semibold text-gray-800">{{ 'HOME.LABEL' | translate }}</p>
-    </div>
-    <app-rail>
-      {{ 'HOME.LABEL' | translate }}
-    </app-rail>
-    <div class="flex flex-col items-center justify-start bg-transparent pt-12 md:-ml-[20%] pl-4">
-      <header class="text-center w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">{{ 'HOME.TITLE' | translate }}</h1>
-        <p class="mt-4 text-md md:text-xl text-gray-600 backdrop-blur-[10px]">{{ 'HOME.SUBTITLE' | translate }}</p>
-      </header>
-    </div>
-  </div>
+  <app-home></app-home>
 </section>
 
-<!-- Projects Section -->
 <section id="projects" class="min-h-screen">
-  <div class="grid min-h-screen grid-cols-[1fr] md:grid-cols-[20%_1fr]">
-    <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
-      <p class="text-base font-semibold text-gray-800">{{ 'PROJECTS.LABEL' | translate }}</p>
-    </div>
-    <app-rail>
-      {{ 'PROJECTS.LABEL' | translate }}
-    </app-rail>
-    <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
-        <a *ngFor="let project of projects"
-           [href]="project.link"
-           target="_blank"
-           class="transition-transform hover:drop-shadow-xl">
-          <img [src]="project.img" [alt]="project.alt" class="w-full h-48 object-cover rounded-sm" />
-        </a>
-      </div>
-    </div>
-  </div>
+  <app-projects></app-projects>
 </section>
 
-<!-- Work Section -->
 <section id="work" class="min-h-screen">
-  <div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr]">
-    <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
-      <p class="text-base font-semibold text-gray-800">{{ 'WORK.LABEL' | translate }}</p>
-    </div>
-    <app-rail>
-      {{ 'WORK.LABEL' | translate }}
-    </app-rail>
-    <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
-        <a *ngFor="let work of workItems"
-           [href]="work.link"
-           target="_blank"
-           class="transition-transform hover:drop-shadow-xl">
-          <img [src]="work.img" [alt]="work.alt" class="w-full h-48 object-cover rounded-sm" />
-        </a>
-      </div>
-    </div>
-  </div>
+  <app-work></app-work>
 </section>
 
-<!-- About Section -->
 <section id="about" class="min-h-screen">
-  <div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr]">
-    <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
-      <p class="text-base font-semibold text-gray-800">{{ 'ABOUT.LABEL' | translate }}</p>
-    </div>
-    <app-rail>
-      {{ 'ABOUT.LABEL' | translate }}
-    </app-rail>
-    <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
-      <div class="cli-container bg-gray-900 text-green-500 font-mono p-5 rounded-md my-10 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.L1' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.L2' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.WHOAMI' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.ROLE' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILLS' | translate }}</p>
-        <p class="cli-line">C:\Users\You; &gt; {{ 'ABOUT.SKILL_ALGO' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_DS' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_BACKEND' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_GAME' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_ML' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_FRONTEND' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.LANGS' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; Python</p>
-        <p class="cli-line">C:\Users\You&gt; Pascal</p>
-        <p class="cli-line">C:\Users\You&gt; C</p>
-        <p class="cli-line">C:\Users\You&gt; C++</p>
-        <p class="cli-line">C:\Users\You&gt; UML</p>
-        <p class="cli-line">C:\Users\You&gt; Java</p>
-        <p class="cli-line">C:\Users\You&gt; C#</p>
-        <p class="cli-line">C:\Users\You&gt; SQL</p>
-        <p class="cli-line">C:\Users\You&gt; JavaScript...</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.TOOLS' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; Git</p>
-        <p class="cli-line">C:\Users\You&gt; Docker</p>
-        <p class="cli-line">C:\Users\You; &gt; Visual Studio</p>
-        <p class="cli-line">C:\Users\You; &gt; BootStrap</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.AI' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-        <p class="cli-line" id="gas">C:\Users\You&gt; {{ 'ABOUT.CONTACT' | translate }}</p>
-        <p class="cli-line">C:\Users\You&gt; <a href="https://www.linkedin.com/in/arsendjurdjev/" class="text-green-500 hover:text-[#482268]">{{ 'ABOUT.LINKEDIN' | translate }}</a></p>
-        <p class="cli-line">C:\Users\You&gt; <a href="https://www.github.com/Krupanjac/" class="text-green-500 hover:text-[#482268]">{{ 'ABOUT.GITHUB' | translate }}</a></p>
-        <p class="cli-line">C:\Users\You&gt; <a href="https://www.instagram.com/arsendjurdjev/" class="text-green-500 hover:text-[#482268]">{{ 'ABOUT.INSTAGRAM' | translate }}</a></p>
-        <p class="cli-line">C:\Users\You&gt; <a href="#" id="email-address" class="text-green-500 hover:text-[#482268]">arsen.djurdjev&gt;live.com</a></p>
-      </div>
-    </div>
-  </div>
+  <app-about></app-about>
 </section>
 
-<!-- Contact Section -->
 <section id="contact" class="min-h-screen">
   <app-contact></app-contact>
 </section>

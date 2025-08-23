@@ -1,52 +1,31 @@
+<!-- Repurposed design: matches contact component terminal style -->
 <div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr]">
   <!-- Mobile label under nav -->
   <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
     <p class="text-base font-semibold text-gray-800">{{ 'ABOUT.LABEL' | translate }}</p>
   </div>
-  <!-- Left rail -->
-  <app-rail>
-    {{ 'ABOUT.LABEL' | translate }}
-  </app-rail>
-  <!-- Centered CLI-like content -->
+  <!-- Left rail (reuse existing rail component style) -->
+  <div class="hidden md:flex border-r-2 border-black items-start justify-end pr-4 py-4">
+    <p class="text-xl whitespace-nowrap">{{ 'ABOUT.LABEL' | translate }}</p>
+  </div>
+
+  <!-- Terminal styled content -->
   <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
-    <div class="cli-container bg-gray-900 text-green-500 font-mono p-5 rounded-md my-10 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.L1' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.L2' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.WHOAMI' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.ROLE' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILLS' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_ALGO' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_DS' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_BACKEND' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_GAME' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_ML' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.SKILL_FRONTEND' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.LANGS' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; Python</p>
-      <p class="cli-line">C:\Users\You&gt; Pascal</p>
-      <p class="cli-line">C:\Users\You&gt; C</p>
-      <p class="cli-line">C:\Users\You&gt; C++</p>
-      <p class="cli-line">C:\Users\You&gt; UML</p>
-      <p class="cli-line">C:\Users\You&gt; Java</p>
-      <p class="cli-line">C:\Users\You&gt; C#</p>
-      <p class="cli-line">C:\Users\You&gt; SQL</p>
-      <p class="cli-line">C:\Users\You&gt; JavaScript...</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.TOOLS' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; Git</p>
-      <p class="cli-line">C:\Users\You&gt; Docker</p>
-      <p class="cli-line">C:\Users\You&gt; Visual Studio</p>
-      <p class="cli-line">C:\Users\You&gt; BootStrap</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.AI' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.DOTS' | translate }}</p>
-      <p class="cli-line" id="gas">C:\Users\You&gt; {{ 'ABOUT.CONTACT' | translate }}</p>
-      <p class="cli-line">C:\Users\You&gt; <a href="https://www.linkedin.com/in/arsendjurdjev/" class="text-green-500 hover:text-[#482268]">{{ 'ABOUT.LINKEDIN' | translate }}</a></p>
-      <p class="cli-line">C:\Users\You&gt; <a href="https://www.github.com/Krupanjac/" class="text-green-500 hover:text-[#482268]">{{ 'ABOUT.GITHUB' | translate }}</a></p>
-      <p class="cli-line">C:\Users\You&gt; <a href="https://www.instagram.com/arsendjurdjev/" class="text-green-500 hover:text-[#482268]">{{ 'ABOUT.INSTAGRAM' | translate }}</a></p>
-      <p class="cli-line">C:\Users\You&gt; <a href="#" id="email-address" class="text-green-500 hover:text-[#482268]">arsen.djurdjev&gt;live.com</a></p>
+    <div class="text-base sm:text-lg bg-black/90 text-green-500 font-mono border-2 shadow-[0_0_10px_rgba(0,255,0,0.8)] p-2.5 rounded-lg w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto my-10">
+      <div class="bg-[#003300] p-1.25 text-green-500 font-bold text-left">
+        <span class="pl-1.25">{{ 'CONTACT.TERMINAL_USER' | translate }}</span>
+      </div>
+      <div class="p-2.5 min-h-[150px] terminal-output">
+        <pre class="whitespace-pre-wrap break-words" [innerHTML]="displayText"></pre>
+        <span *ngIf="cursorVisible" class="cursor">█</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal overlay for copy feedback -->
+  <div class="modal-overlay" *ngIf="modalVisible" @modalAnimation (click)="hideModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      {{ modalMessage }}
     </div>
   </div>
 </div>

@@ -21,12 +21,15 @@ describe('AppComponent', () => {
     expect((app as any).title).toEqual('arsen-portfolio-2025');
   });
 
-  it('should render navigation and router outlet', () => {
+  it('should render navigation and section components', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    // Basic sanity checks for key elements present in the template
     expect(compiled.querySelector('app-nav')).toBeTruthy();
-    expect(compiled.querySelector('router-outlet')).toBeTruthy();
+    expect(compiled.querySelector('app-home')).toBeTruthy();
+    expect(compiled.querySelector('app-projects')).toBeTruthy();
+    expect(compiled.querySelector('app-work')).toBeTruthy();
+    expect(compiled.querySelector('app-about')).toBeTruthy();
+    expect(compiled.querySelector('app-contact')).toBeTruthy();
   });
 });
