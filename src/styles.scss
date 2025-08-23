@@ -10,9 +10,7 @@ html, body {
   background-size: cover;
   background-position: center;
   font-family: 'Open Sans', sans-serif;
-  user-select: none;
-  cursor: none;
-}
+  user-select: none;}
 
 /* Smooth in-page scrolling for anchor links */
 html {
@@ -21,7 +19,7 @@ html {
 
 a{
   text-decoration: none;
-  cursor : none;
+  cursor : default;
 }
 
 /* Optional: Border shadow style */

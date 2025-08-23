@@ -15,13 +15,7 @@ export class HeroComponent implements OnInit, OnDestroy {
   private animationFrameId: number | null = null;
   private randomSymbolsIntervalId: any = null;
   private resizeCanvasFn: (() => void) | null = null;
-  private mouseMoveListener: ((e: MouseEvent) => void) | null = null;
-
-  // --- Properties for droplet trail effect ---
-  private currentMousePos = { x: 0, y: 0 };
-  private dropletAnimationId: number | null = null;
-  private dropletInterval = 100; // milliseconds between droplets
-  private isMouseMoving = false;
+  // Removed custom cursor & mouse trail properties
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -43,18 +37,13 @@ export class HeroComponent implements OnInit, OnDestroy {
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
     }
-    if (this.dropletAnimationId !== null) {
-      cancelAnimationFrame(this.dropletAnimationId);
-    }
     if (this.randomSymbolsIntervalId !== null) {
       clearInterval(this.randomSymbolsIntervalId);
     }
     if (this.resizeCanvasFn) {
       window.removeEventListener('resize', this.resizeCanvasFn);
     }
-    if (this.mouseMoveListener) {
-      document.removeEventListener('mousemove', this.mouseMoveListener);
-    }
+  // Removed mouse listeners and droplet animation cleanup
   }
 
   private initializeEffects(): void {
@@ -62,23 +51,7 @@ export class HeroComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Custom Cursor Effect (and update mouse position for droplet trail)
-    const customCursor = document.querySelector('.custom-cursor') as HTMLElement;
-    this.mouseMoveListener = (e: MouseEvent) => {
-      // Update custom cursor if it exists.
-      if (customCursor) {
-        customCursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-      }
-      // Always update current mouse position.
-      this.currentMousePos.x = e.clientX;
-      this.currentMousePos.y = e.clientY;
-      // Set mouse moving flag
-      this.isMouseMoving = true;
-    };
-    document.addEventListener('mousemove', this.mouseMoveListener);
-
-    // Start the droplet trail animation loop (decoupled from mousemove)
-    this.startDropletTrailAnimation();
+  // Removed custom cursor & droplet trail initialization
 
     // Name Randomization Effect
     this.randomSymbolsIntervalId = setInterval(() => this.randomSymbols(), 1000);
@@ -164,51 +137,7 @@ export class HeroComponent implements OnInit, OnDestroy {
     animate();
   }
 
-  // Animation loop that creates droplets at a fixed interval regardless of mousemove event frequency.
-  private startDropletTrailAnimation() {
-    let lastTime = Date.now();
-    const animate = () => {
-      const now = Date.now();
-      if (now - lastTime >= this.dropletInterval && this.isMouseMoving) {
-        lastTime = now;
-        this.createDroplet(this.currentMousePos.x, this.currentMousePos.y);
-        this.isMouseMoving = false; // Reset the flag after creating a droplet
-      }
-      this.dropletAnimationId = requestAnimationFrame(animate);
-    };
-    animate();
-  }
-
-  private createDroplet(x: number, y: number) {
-    const droplet = document.createElement('div');
-    const dropletSize = 8;
-
-    droplet.style.position = 'fixed';
-    droplet.style.width = `${dropletSize}px`;
-    droplet.style.height = `${dropletSize}px`;
-    droplet.style.left = `${x - dropletSize / 2}px`;
-    droplet.style.top = `${y - dropletSize / 2}px`;
-    droplet.style.borderRadius = '50%';
-    droplet.style.border = '1px solid black';
-    droplet.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-    // Initial styles for the transition
-    droplet.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
-    droplet.style.transform = 'scale(1)';
-    droplet.style.opacity = '0.5';
-
-    document.body.appendChild(droplet);
-
-    // Trigger the expanding effect on the next frame.
-    requestAnimationFrame(() => {
-      droplet.style.transform = 'scale(3)';
-      droplet.style.opacity = '0';
-    });
-
-    // Remove droplet after the animation completes (600ms)
-    setTimeout(() => {
-      droplet.remove();
-    }, 600);
-  }
+  // Removed droplet creation & animation methods
 
   private randomSymbols(): void {
     if (!isPlatformBrowser(this.platformId)) {
