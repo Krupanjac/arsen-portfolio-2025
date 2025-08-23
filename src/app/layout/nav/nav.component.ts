@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -23,11 +24,40 @@ export class NavComponent implements AfterViewInit, OnDestroy {
     this.isNavOpen = !this.isNavOpen;
   }
 
-  constructor(private translate: TranslateService) {
+  constructor(private translate: TranslateService, private router: Router) {
     // Ensure a language is set at startup
     const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : null;
     const lang = stored || 'en';
     this.translate.use(lang);
+  }
+
+  /**
+   * When the logo is clicked: if we're already on the site root, force a full reload
+   * to refresh the page. If not on root, navigate to root.
+   */
+  onLogoClick(event: Event) {
+    if (event) {
+      event.preventDefault();
+      try { (event as any).stopImmediatePropagation(); } catch {}
+    }
+    if (typeof window === 'undefined' || typeof location === 'undefined') return;
+
+    const currentPath = window.location.pathname || '/';
+    // Normalize trailing slash
+    const normalized = currentPath.endsWith('/') ? currentPath : currentPath;
+
+    if (normalized === '/' || normalized === '') {
+      // force a full reload
+      window.location.reload();
+    } else {
+      // navigate to root via the router for single-page transition
+      try {
+        this.router.navigateByUrl('/');
+      } catch {
+        // fallback: assign href
+        window.location.href = '/';
+      }
+    }
   }
 
   ngAfterViewInit(): void {
