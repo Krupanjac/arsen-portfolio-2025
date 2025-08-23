@@ -29,7 +29,9 @@ import { trigger, transition, style, animate } from '@angular/animations';
 })
 export class ContactComponent implements OnInit, AfterViewChecked, OnDestroy {
   contactLines: string[] = [];
-  displayText: string = "";
+  displayText: any = ""; // will hold SafeHtml from DomSanitizer during typing
+  // Raw HTML string we build as the typewriter runs. We'll sanitize before binding.
+  displayTextRaw: string = "";
   cursorVisible: boolean = false;
   private lineIndex = 0;
   private charIndex = 0;
@@ -66,7 +68,9 @@ export class ContactComponent implements OnInit, AfterViewChecked, OnDestroy {
     ];
     // On the server, avoid timers to prevent SSR timeouts; render instantly
     if (typeof window === 'undefined') {
-      this.displayText = this.contactLines.join('\n');
+      this.displayTextRaw = this.contactLines.join('\n');
+      // Sanitize server-side string for template binding
+      this.displayText = this.sanitizer.bypassSecurityTrustHtml(this.displayTextRaw);
       this.isTypingFinished = true;
       return;
     }
@@ -82,11 +86,15 @@ export class ContactComponent implements OnInit, AfterViewChecked, OnDestroy {
   typeText(): void {
     if (this.lineIndex < this.contactLines.length) {
       if (this.charIndex < this.contactLines[this.lineIndex].length) {
-        this.displayText += this.contactLines[this.lineIndex][this.charIndex];
+  // Append to raw HTML string (includes span tags)
+  this.displayTextRaw += this.contactLines[this.lineIndex][this.charIndex];
+  // Sanitize for binding to innerHTML so Angular doesn't strip tags
+  this.displayText = this.sanitizer.bypassSecurityTrustHtml(this.displayTextRaw);
         this.charIndex++;
         setTimeout(() => this.typeText(), 2);
       } else {
-        this.displayText += "\n";
+  this.displayTextRaw += "\n";
+  this.displayText = this.sanitizer.bypassSecurityTrustHtml(this.displayTextRaw);
         this.lineIndex++;
         this.charIndex = 0;
         setTimeout(() => this.typeText(), 10);
