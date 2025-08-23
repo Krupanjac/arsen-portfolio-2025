@@ -15,13 +15,12 @@
   <!-- Main Content -->
   <main class="relative z-10 flex flex-col items-start justify-center flex-1 p-4">
     <div class="ProzorSredina mx-auto max-w-4xl">
-      <div class="Ime flex flex-wrap items-center gap-6 text-4xl font-bold sm:text-5xl md:text-7xl text-primary">
+      <div class="Ime flex items-center gap-6 text-4xl font-bold sm:text-5xl md:text-7xl text-primary">
         <h1 class="text-primary">{{ 'HERO.MY_NAME_IS' | translate }}</h1>
-        <!-- On mobile, names stack; on larger screens they are inline -->
-        <div class="flex flex-col sm:flex-row items-center gap-6">
-          <h1 id="su" class="text-accent font-bold">Arsen</h1>
-          <h1 id="su_name" class="text-accent italic font-bold">Đurđev</h1>
-        </div>
+        <!-- Render full name on a single line to avoid dynamic wrapping on mobile -->
+        <h1 id="su_full" class="text-accent font-bold italic whitespace-nowrap">
+          <span id="su">Arsen&nbsp;</span><span id="su_name">Đurđev</span>
+        </h1>
       </div>
   <h1 class="text-3xl font-bold mt-4 sm:text-5xl text-primary">
         {{ 'HERO.TAGLINE' | translate }}
