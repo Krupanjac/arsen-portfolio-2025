@@ -13,8 +13,8 @@
   ,
   "ABOUT": {
     "LABEL": "O meni/>",
-    "L1": "$echo \"Zdravo, ja sam Arsen Đuđev.\"",
-    "L2": "Zdravo, ja sam Arsen Đuđev.",
+    "L1": "$echo \"Zdravo, ja sam Arsen Đurđev.\"",
+    "L2": "Zdravo, ja sam Arsen Đurđev.",
     "DOTS": "...",
     "WHOAMI": "$whoami",
     "ROLE": "Ja sam full-stack programer.",
@@ -32,6 +32,24 @@
     "LINKEDIN": "LinkedIn <--klikni za prikaz",
     "GITHUB": "GitHub <--klikni za prikaz",
     "INSTAGRAM": "Instagram <--klikni za prikaz"
+  ,
+  "LANG_LIST": {
+    "PYTHON": "Python",
+    "PASCAL": "Pascal",
+    "C": "C",
+    "CPP": "C++",
+    "UML": "UML",
+    "JAVA": "Java",
+    "CSHARP": "C#",
+    "SQL": "SQL",
+    "JAVASCRIPT": "JavaScript..."
+  },
+  "TOOLS_LIST": {
+    "GIT": "Git",
+    "DOCKER": "Docker",
+    "VISUAL_STUDIO": "Visual Studio",
+    "BOOTSTRAP": "Bootstrap"
+  }
   },
   "CONTACT": {
     "LABEL": "Kontakt/>",
