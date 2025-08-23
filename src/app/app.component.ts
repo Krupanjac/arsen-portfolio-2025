@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+// Router imports removed because loader now depends on actual page load rather than navigation events.
 import { NavComponent } from './layout/nav/nav.component';
 import { LoaderComponent } from './layout/loader/loader.component';
 import { CommonModule } from '@angular/common';
@@ -17,10 +19,11 @@ import { ContactComponent } from './contact/contact.component';
   styleUrls: ['./app.component.css'],
   animations: [slideInAnimation]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'arsen-portfolio-2025';
   loading = true;
-  private timerId: any = null;
+  private loadListenerBound = this.onWindowLoad.bind(this);
+  private fallbackTimeoutId: any = null;
 
   // Minimal local data for the inlined templates
   projects = [
@@ -37,30 +40,50 @@ export class AppComponent implements OnInit {
     { link: 'https://github.com/Krupanjac/SFML-flappy-bird', img: 'assets/ProjectImg/2.png', alt: 'Work 3' }
   ];
 
-  constructor(private router: Router) {}
+  private isBrowser: boolean;
 
-  ngOnInit(): void {
-    // Listen to router events to show/hide the loader during navigation
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        // Generate a random delay between 100ms and 600ms
-        const delay = Math.floor(Math.random() * 500) + 100;
-        this.timerId = setTimeout(() => {
-          this.loading = false;
-        }, delay);
-      } else {
-        // On any other event, cancel any pending delay and show the loader immediately
-        if (this.timerId) {
-          clearTimeout(this.timerId);
-          this.timerId = null;
-        }
-        this.loading = true;
-      }
-    });
+  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+    this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  // Used by the router animation trigger to determine the animation state
-  prepareRoute(outlet: RouterOutlet) {
-    return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+  ngOnInit(): void {
+    // If the document already finished loading (e.g. from cache), hide the loader immediately.
+    if (!this.isBrowser) {
+      // On the server just disable the loader immediately.
+      this.loading = false;
+      return;
+    }
+    try {
+      if (document.readyState === 'complete') {
+        this.loading = false;
+      } else {
+        window.addEventListener('load', this.loadListenerBound, { once: true });
+        this.fallbackTimeoutId = setTimeout(() => {
+          if (this.loading) {
+            this.loading = false;
+          }
+        }, 10000);
+      }
+    } catch {
+      // In any unexpected environment, fail open (hide loader).
+      this.loading = false;
+    }
+  }
+
+  private onWindowLoad() {
+    this.loading = false;
+    if (this.fallbackTimeoutId) {
+      clearTimeout(this.fallbackTimeoutId);
+      this.fallbackTimeoutId = null;
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.isBrowser) {
+      window.removeEventListener('load', this.loadListenerBound);
+    }
+    if (this.fallbackTimeoutId) {
+      clearTimeout(this.fallbackTimeoutId);
+    }
   }
 }
