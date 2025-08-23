@@ -15,6 +15,10 @@ export class HeroComponent implements OnInit, OnDestroy {
   private animationFrameId: number | null = null;
   private randomSymbolsIntervalId: any = null;
   private resizeCanvasFn: (() => void) | null = null;
+  // Scroll interaction
+  private lastScrollY = 0;
+  private scrollVelocity = 0;
+  private scrollListener: (() => void) | null = null;
   // Removed custom cursor & mouse trail properties
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
@@ -43,6 +47,9 @@ export class HeroComponent implements OnInit, OnDestroy {
     if (this.resizeCanvasFn) {
       window.removeEventListener('resize', this.resizeCanvasFn);
     }
+    if (this.scrollListener) {
+      window.removeEventListener('scroll', this.scrollListener);
+    }
   // Removed mouse listeners and droplet animation cleanup
   }
 
@@ -66,19 +73,24 @@ export class HeroComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let stars: Array<{ x: number; y: number; radius: number; vx: number; vy: number }> = [];
+  // Added baseVx/baseVy to remember original (cruise) speed for easing after bounces
+  let stars: Array<{ x: number; y: number; radius: number; vx: number; vy: number; baseVx: number; baseVy: number }> = [];
     const createStars = () => {
       stars = [];
       const starCount = window.innerWidth > 500
         ? Math.floor(Math.random() * 50 + 100)
         : Math.floor(Math.random() * 40 + 20);
       for (let i = 0; i < starCount; i++) {
+        const vx = (Math.random() - 0.5) * 2;
+        const vy = (Math.random() - 0.5) * 2;
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           radius: Math.random() * 1 + 1,
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2
+          vx,
+          vy,
+          baseVx: vx,
+          baseVy: vy
         });
       }
     };
@@ -112,13 +124,42 @@ export class HeroComponent implements OnInit, OnDestroy {
       stars.forEach(star => {
         star.x += star.vx;
         star.y += star.vy;
-        if (star.x < 0 || star.x > canvas.width) {
-          star.vx *= -1;
+        // Apply scroll-induced parallax instantly (per-frame delta only)
+        if (this.scrollVelocity !== 0) {
+          star.y += -this.scrollVelocity * 0.05; // immediate effect
         }
-        if (star.y < 0 || star.y > canvas.height) {
-          star.vy *= -1;
+        // Bounce with clamping (include radius to keep inside viewport)
+  const scrollEnergy = Math.min(Math.abs(this.scrollVelocity), 300); // instantaneous energy (0..300)
+  // Saturated scaling: linear earlier, flattens for large scrolls
+  // normalized 0..1 then map to multiplier 1..(1+scaleRange)
+  const normalized = scrollEnergy / 300; // 0..1
+  const scaleRange = 2; // max added multiplier (old linear could reach +3)
+  const energyFactor = 1 + (normalized / (1 + 1.5 * normalized)) * scaleRange; // soft saturation
+  const maxSpeed = 4.5; // reduced top speed for gentler bounce
+
+  if (star.x - star.radius < 0) {
+          star.x = star.radius;
+          star.vx = Math.min(Math.max(-star.vx * energyFactor, -maxSpeed), maxSpeed);
+        } else if (star.x + star.radius > canvas.width) {
+          star.x = canvas.width - star.radius;
+          star.vx = Math.min(Math.max(-star.vx * energyFactor, -maxSpeed), maxSpeed);
         }
+        if (star.y - star.radius < 0) {
+          star.y = star.radius;
+          star.vy = Math.min(Math.max(-star.vy * energyFactor, -maxSpeed), maxSpeed);
+        } else if (star.y + star.radius > canvas.height) {
+          star.y = canvas.height - star.radius;
+          star.vy = Math.min(Math.max(-star.vy * energyFactor, -maxSpeed), maxSpeed);
+        }
+
+  // Ease velocities back toward their original (base) values for smooth slowdown
+  // Only apply easing if current speed exceeds base speed noticeably to avoid perpetual tiny adjustments
+  const relaxFactor = 0.002; // 0.2% per frame
+  star.vx += (star.baseVx - star.vx) * relaxFactor;
+  star.vy += (star.baseVy - star.vy) * relaxFactor;
       });
+  // Reset scroll velocity so only new wheel events affect next frame
+  this.scrollVelocity = 0;
     };
 
     const animate = () => {
@@ -134,6 +175,18 @@ export class HeroComponent implements OnInit, OnDestroy {
     };
     window.addEventListener('resize', this.resizeCanvasFn);
     this.resizeCanvasFn();
+    // Scroll listener to adjust parallax speed
+    this.lastScrollY = window.scrollY;
+    this.scrollListener = () => {
+      const current = window.scrollY;
+      const delta = current - this.lastScrollY; // positive when scrolling down
+      this.lastScrollY = current;
+      this.scrollVelocity += delta; // collect deltas between frames
+      const max = 300;
+      if (this.scrollVelocity > max) this.scrollVelocity = max;
+      if (this.scrollVelocity < -max) this.scrollVelocity = -max;
+    };
+    window.addEventListener('scroll', this.scrollListener, { passive: true });
     animate();
   }
 
