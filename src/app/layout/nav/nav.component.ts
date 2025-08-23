@@ -42,4 +42,20 @@ export class NavComponent {
       }
     });
   }
+
+  // Scroll to an in-page anchor smoothly (desktop)
+  onNavigate(event: Event, id: string) {
+    event.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Mobile navigation: scroll and close mobile menu
+  onNavigateMobile(event: Event, id: string) {
+    event.preventDefault();
+    this.toggleNav();
+    setTimeout(() => this.onNavigate(event, id), 50);
+  }
 }
