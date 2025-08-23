@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
   encapsulation: ViewEncapsulation.None
 })
 export class HeroComponent implements OnInit, OnDestroy {
-  private originalName = 'Đuđev';
+  private originalName = 'Đurđev';
   private animationFrameId: number | null = null;
   private randomSymbolsIntervalId: any = null;
   private resizeCanvasFn: (() => void) | null = null;
