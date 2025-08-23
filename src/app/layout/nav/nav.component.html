@@ -1,8 +1,8 @@
-<header class="fixed top-0 left-0 w-full bg-transparent px-4 py-3 z-50 backdrop-blur-[2px]">
+<header class="fixed top-0 left-0 w-full bg-transparent px-4 py-3 z-50 backdrop-blur-[4px]">
   <div class="w-full max-w-[1100px] mx-auto flex items-center justify-between">
-  <p id="header_naslov" class="text-2xl md:text-3xl font-bold transition-transform duration-200 ease-out hover:scale-110">
-      <a href="/" class="flex items-center" (click)="onLogoClick($event)">
-        <span class="text-[#482268]">&lt;</span>Krupanjac.h<span class="text-[#482268]">&gt;</span>
+  <p id="header_naslov" class="text-2xl md:text-3xl font-bold transition-transform duration-200 ease-out hover:scale-110 text-primary">
+      <a href="/" class="flex items-center text-accent" (click)="onLogoClick($event)">
+        <span class="text-accent">&lt;</span>Krupanjac.h<span class="text-accent">&gt;</span>
       </a>
     </p>
     <!-- Hamburger button: visible on mobile only -->
@@ -14,35 +14,41 @@
     </button>
 
     <!-- Desktop navigation: visible on md and up -->
-   <nav class="hidden md:flex items-center gap-2 mr-1">
+  <nav class="hidden md:flex items-center gap-2 mr-1">
   <a href="javascript:void(0)" (click)="onNavigate($event, 'home')" [attr.aria-current]="activeId === 'home' ? 'true' : null"
-    class="relative inline-block px-2 py-1 text-sm font-medium text-black/70 hover:text-black/90 transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
+    class="relative inline-block px-2 py-1 text-sm font-medium text-secondary hover:text-accent transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
     {{ 'NAV.START' | translate }}
   </a>
   <a href="javascript:void(0)" (click)="onNavigate($event, 'projects')" [attr.aria-current]="activeId === 'projects' ? 'true' : null"
-    class="relative inline-block px-2 py-1 text-sm font-medium text-black/70 hover:text-black/90 transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
+    class="relative inline-block px-2 py-1 text-sm font-medium text-secondary hover:text-accent transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
     {{ 'NAV.PROJECTS' | translate }}
   </a>
   <a href="javascript:void(0)" (click)="onNavigate($event, 'work')" [attr.aria-current]="activeId === 'work' ? 'true' : null"
-    class="relative inline-block px-2 py-1 text-sm font-medium text-black/70 hover:text-black/90 transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
+    class="relative inline-block px-2 py-1 text-sm font-medium text-secondary hover:text-accent transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
     {{ 'NAV.WORK' | translate }}
   </a>
   <a href="javascript:void(0)" (click)="onNavigate($event, 'about')" [attr.aria-current]="activeId === 'about' ? 'true' : null"
-    class="relative inline-block px-2 py-1 text-sm font-medium text-black/70 hover:text-black/90 transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
+    class="relative inline-block px-2 py-1 text-sm font-medium text-secondary hover:text-accent transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
     {{ 'NAV.ABOUT' | translate }}
   </a>
   <a href="javascript:void(0)" (click)="onNavigate($event, 'contact')" [attr.aria-current]="activeId === 'contact' ? 'true' : null"
-    class="relative inline-block px-2 py-1 text-sm font-medium text-black/70 hover:text-black/90 transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
+    class="relative inline-block px-2 py-1 text-sm font-medium text-secondary hover:text-accent transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
     {{ 'NAV.CONTACT' | translate }}
   </a>
     <div class="flex items-center gap-2 ml-4">
-      <button class="px-3 py-2 text-sm rounded border border-transparent hover:border-gray-400 disabled:opacity-50" [disabled]="isLangLoading" (click)="setLang('en')">EN</button>
-      <span class="text-gray-400">|</span>
-      <button class="px-3 py-2 text-sm rounded border border-transparent hover:border-gray-400 disabled:opacity-50" [disabled]="isLangLoading" (click)="setLang('sr')">SR</button>
-      <svg *ngIf="isLangLoading" class="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+  <button class="px-3 py-2 text-sm rounded border border-transparent hover:border-accent disabled:opacity-50 hover:text-accent"
+      [ngClass]="theme==='dark' ? 'text-secondary' : 'text-secondary'" [disabled]="isLangLoading" (click)="setLang('en')">EN</button>
+  <span class="text-secondary">|</span>
+  <button class="px-3 py-2 text-sm rounded border border-transparent hover:border-accent disabled:opacity-50 hover:text-accent"
+      [ngClass]="theme==='dark' ? 'text-secondary' : 'text-secondary'" [disabled]="isLangLoading" (click)="setLang('sr')">SR</button>
+  <svg *ngIf="isLangLoading" class="animate-spin h-4 w-4 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
       </svg>
+  <button (click)="toggleTheme()" class="ml-2 px-3 py-2 text-sm rounded border border-transparent hover:border-accent text-secondary hover:text-accent focus-ring" [attr.aria-label]="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
+        <span *ngIf="theme==='dark'">🌙</span>
+        <span *ngIf="theme==='light'">☀️</span>
+      </button>
     </div>
   </nav>
   </div>
@@ -54,22 +60,28 @@
   [ngClass]="{'translate-y-0 opacity-100': isNavOpen, 'translate-y-[-20px] opacity-0': !isNavOpen}">
   <nav class="flex flex-col items-center gap-4 p-4">
   <a href="javascript:void(0)" (click)="onNavigateMobile($event, 'home')" [attr.aria-current]="activeId === 'home' ? 'true' : null"
-    class="relative inline-block text-black font-semibold opacity-70 hover:opacity-90 text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.START' | translate }}</a>
+    class="relative inline-block font-semibold text-secondary hover:text-accent text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.START' | translate }}</a>
   <a href="javascript:void(0)" (click)="onNavigateMobile($event, 'projects')" [attr.aria-current]="activeId === 'projects' ? 'true' : null"
-    class="relative inline-block text-black font-semibold opacity-70 hover:opacity-90 text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.PROJECTS' | translate }}</a>
+    class="relative inline-block font-semibold text-secondary hover:text-accent text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.PROJECTS' | translate }}</a>
   <a href="javascript:void(0)" (click)="onNavigateMobile($event, 'work')" [attr.aria-current]="activeId === 'work' ? 'true' : null"
-    class="relative inline-block text-black font-semibold opacity-70 hover:opacity-90 text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.WORK' | translate }}</a>
+    class="relative inline-block font-semibold text-secondary hover:text-accent text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.WORK' | translate }}</a>
   <a href="javascript:void(0)" (click)="onNavigateMobile($event, 'about')" [attr.aria-current]="activeId === 'about' ? 'true' : null"
-    class="relative inline-block text-black font-semibold opacity-70 hover:opacity-90 text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.ABOUT' | translate }}</a>
+    class="relative inline-block font-semibold text-secondary hover:text-accent text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.ABOUT' | translate }}</a>
   <a href="javascript:void(0)" (click)="onNavigateMobile($event, 'contact')" [attr.aria-current]="activeId === 'contact' ? 'true' : null"
-    class="relative inline-block text-black font-semibold opacity-70 hover:opacity-90 text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.CONTACT' | translate }}</a>
+    class="relative inline-block font-semibold text-secondary hover:text-accent text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.CONTACT' | translate }}</a>
     <div class="flex items-center gap-3 pt-2">
-      <button class="px-4 py-2 text-sm rounded border border-transparent hover:border-gray-400 disabled:opacity-50" [disabled]="isLangLoading" (click)="setLang('en'); toggleNav()">EN</button>
-      <button class="px-4 py-2 text-sm rounded border border-transparent hover:border-gray-400 disabled:opacity-50" [disabled]="isLangLoading" (click)="setLang('sr'); toggleNav()">SR</button>
-      <svg *ngIf="isLangLoading" class="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+  <button class="px-4 py-2 text-sm rounded border border-transparent hover:border-accent disabled:opacity-50 hover:text-accent"
+      [ngClass]="theme==='dark' ? 'text-secondary' : 'text-secondary'" [disabled]="isLangLoading" (click)="setLang('en'); toggleNav()">EN</button>
+  <button class="px-4 py-2 text-sm rounded border border-transparent hover:border-accent disabled:opacity-50 hover:text-accent"
+      [ngClass]="theme==='dark' ? 'text-secondary' : 'text-secondary'" [disabled]="isLangLoading" (click)="setLang('sr'); toggleNav()">SR</button>
+  <svg *ngIf="isLangLoading" class="animate-spin h-4 w-4 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
       </svg>
+  <button (click)="toggleTheme(); toggleNav()" class="px-4 py-2 text-sm rounded border border-transparent hover:border-accent text-secondary hover:text-accent focus-ring" [attr.aria-label]="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
+        <span *ngIf="theme==='dark'">🌙</span>
+        <span *ngIf="theme==='light'">☀️</span>
+      </button>
     </div>
   </nav>
 </div>

@@ -1,16 +1,61 @@
 /* You can add global styles to this file, and also import other style files */
 @use "tailwindcss";
 
+/* =========================================
+   Theme Design Tokens (CSS Variables)
+   Supports light (default) & dark via [data-theme="dark"].
+   ========================================= */
+:root {
+  /* Light theme defaults — darker, non-gray text & stronger dividers for white backgrounds */
+  --color-bg: #ffffff; /* plain white page background */
+  --color-bg-alt: #fbfdff; /* subtle off-white */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f7fbff;
+  /* Use darker, near-black borders (not gray) so dividers and rails are visible */
+  --color-border: rgba(0,0,0,0.12);
+  --color-border-strong: rgba(0,0,0,0.24);
+  /* Strong readable text (avoid mid-grays on white) */
+  --color-text: #0b1220; /* very dark navy/near-black */
+  --color-text-muted: #1f2937; /* darker muted (still readable on white) */
+  --color-text-faint: #334155; /* subtle but darker than previous grays */
+  --color-accent: #482268; /* brand purple */
+  --color-accent-rgb: 72 34 104;
+  --color-accent-alt: #5d2f8a;
+  --color-terminal-bg: #000000e6;
+  --color-terminal-green: #00ff00;
+  --color-terminal-line: #003300;
+  --glow-accent: 0 0 10px rgba(var(--color-accent-rgb)/0.55), 0 0 22px rgba(var(--color-accent-rgb)/0.3);
+}
+
+:root[data-theme='dark'] {
+  --color-bg: #0d0f17;
+  --color-bg-alt: #161b26;
+  --color-surface: #1e2532;
+  --color-surface-alt: #253042;
+  --color-border: #2a3141;
+  --color-border-strong: #3a4557;
+  --color-text: #e2e8f0;
+  --color-text-muted: #94a3b8;
+  --color-text-faint: #64748b;
+  --color-accent: #8b5cf6;
+  --color-accent-rgb: 139 92 246;
+  --color-accent-alt: #a78bfa;
+  --glow-accent: 0 0 10px rgba(var(--color-accent-rgb)/0.6), 0 0 24px rgba(var(--color-accent-rgb)/0.35);
+}
 
 /* Global resets and custom styles */
 html, body {
   margin: 0;
   overflow: scroll;
   overscroll-behavior: none;
+  background: var(--color-bg);
+  background-color: var(--color-bg);
   background-size: cover;
   background-position: center;
   font-family: 'Open Sans', sans-serif;
-  user-select: none;}
+  user-select: none;
+  color: var(--color-text);
+}
 
 /* Smooth in-page scrolling for anchor links */
 html {
@@ -21,6 +66,63 @@ a{
   text-decoration: none;
   cursor : default;
 }
+
+/* Typography helpers */
+.text-accent { color: var(--color-accent) !important; }
+.text-primary { color: var(--color-text) !important; }
+.text-secondary { color: var(--color-text-muted) !important; }
+.text-muted { color: var(--color-text-muted) !important; }
+.text-faint { color: var(--color-text-faint) !important; }
+
+/* Background / surface helpers */
+.bg-surface { background: var(--color-surface) !important; }
+.bg-surface-alt { background: var(--color-surface-alt) !important; }
+.bg-alt { background: var(--color-bg-alt) !important; }
+
+/* Border helpers */
+.border-base { border-color: var(--color-border) !important; }
+.border-strong { border-color: var(--color-border-strong) !important; }
+.border-accent { border-color: var(--color-accent) !important; }
+.border-divider { border-color: var(--color-border) !important; }
+:root[data-theme='dark'] .border-divider { opacity: .55; }
+:root:not([data-theme='dark']) .border-divider { opacity: .85; }
+
+/* Strong vertical rail separator with adaptive contrast */
+.rail-separator { border-color: rgba(255,255,255,0.12) !important; }
+/* Light theme: strong black divider for maximum contrast */
+:root:not([data-theme='dark']) .rail-separator { border-color: rgba(0,0,0,0.85) !important; opacity: 1; }
+/* Dark theme: subtle whitish divider */
+:root[data-theme='dark'] .rail-separator { border-color: rgba(255,255,255,0.12) !important; opacity: 1; }
+
+/* Map old utility usages ONLY in dark mode (keep default Tailwind palette in light) */
+:root[data-theme='dark'] .text-gray-800,
+:root[data-theme='dark'] .text-black { color: var(--color-text) !important; }
+:root[data-theme='dark'] .text-gray-600,
+:root[data-theme='dark'] .text-black\/70 { color: var(--color-text-muted) !important; }
+:root[data-theme='dark'] .text-black\/90 { color: var(--color-text) !important; }
+:root[data-theme='dark'] .border-black,
+:root[data-theme='dark'] .border-black\/85 { border-color: var(--color-border-strong) !important; }
+:root[data-theme='dark'] .border-black\/20 { border-color: var(--color-border) !important; opacity: .35; }
+
+/* Scrollbar (WebKit) */
+body::-webkit-scrollbar { width: 10px; }
+body::-webkit-scrollbar-track { background: transparent; }
+body::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 20px; }
+body::-webkit-scrollbar-thumb:hover { background: var(--color-border-strong); }
+
+/* Text selection */
+::selection { background: rgba(var(--color-accent-rgb)/0.35); color: var(--color-text); }
+
+/* Terminal adjustments driven by variables */
+.terminal-output .copyable { color: var(--color-terminal-green); }
+.terminal-output .copyable:hover::after { background: #002200; color: var(--color-terminal-green); }
+.cursor { background: var(--color-terminal-green); }
+
+/* Accent glow utility */
+.glow-accent { box-shadow: var(--glow-accent); transition: box-shadow .35s ease; }
+
+/* Decorative gradient only in dark mode */
+:root[data-theme='dark'] body { background: radial-gradient(circle at 30% 20%, #141926, #0d0f17 60%) fixed; }
 
 /* Optional: Border shadow style */
 .border-shadow {

@@ -97,14 +97,26 @@ export class HeroComponent implements OnInit, OnDestroy {
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#482268';
+      // Resolve accent color from CSS variable (fallback to original purple)
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#482268';
+      ctx.fillStyle = accent;
       stars.forEach(star => {
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
         ctx.fill();
       });
       ctx.beginPath();
-      ctx.strokeStyle = '#48226893';
+      // Apply 0.6 alpha to accent for connecting lines
+      let accentStroke = accent;
+      // If hex, append alpha; else fall back to rgba conversion attempt
+      if (/^#([0-9a-fA-F]{6})$/.test(accent)) {
+        accentStroke = accent + '99';
+      } else if (/^#([0-9a-fA-F]{3})$/.test(accent)) {
+        accentStroke = accent + '99';
+      } else {
+        accentStroke = 'rgba(139,92,246,0.6)';
+      }
+      ctx.strokeStyle = accentStroke;
       ctx.lineWidth = 0.3;
       stars.forEach((a, i) => {
         stars.slice(i).forEach(b => {

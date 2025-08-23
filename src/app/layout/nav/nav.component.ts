@@ -19,6 +19,7 @@ export class NavComponent implements AfterViewInit, OnDestroy {
   private observer: IntersectionObserver | null = null;
   private scrollAnimationId: number | null = null;
   private isUserInteracting = false;
+  theme: 'light' | 'dark' = 'dark';
 
   toggleNav(): void {
     this.isNavOpen = !this.isNavOpen;
@@ -29,6 +30,25 @@ export class NavComponent implements AfterViewInit, OnDestroy {
     const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : null;
     const lang = stored || 'en';
     this.translate.use(lang);
+    // Theme init
+    if (typeof document !== 'undefined') {
+      try {
+        const storedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        this.theme = (storedTheme === 'light' || storedTheme === 'dark') ? storedTheme as any : (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', this.theme);
+      } catch {
+        document.documentElement.setAttribute('data-theme', this.theme);
+      }
+    }
+  }
+
+  toggleTheme() {
+    this.theme = this.theme === 'dark' ? 'light' : 'dark';
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', this.theme);
+    }
+    try { localStorage.setItem('theme', this.theme); } catch {}
   }
 
   /**
