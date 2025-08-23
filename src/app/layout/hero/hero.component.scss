@@ -1,21 +1,2 @@
-/* Ensure proper layering */
-html, body {
-    margin: 0;
-    overflow-x: hidden;
-}
-
-/* Canvas positioning */
-#canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-}
-
-/* Main content positioning */
-main {
-    position: relative;
-    will-change: transform; /* Optimize for animations */
-}
-
-/* Removed custom cursor and trail styles */
+/* Tailwind migration: no component-specific styles needed */
   
