@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-about',
@@ -31,6 +32,8 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
   private lineIndex = 0;
   private charIndex = 0;
   private isTypingFinished = false;
+  private typingTimeout: any = null;
+  private langChangeSub: Subscription | null = null;
 
   modalVisible: boolean = false;
   modalMessage: string = '';
@@ -53,7 +56,26 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Build lines using translations (mirroring original about text sequence)
+    // Build lines using translations via helper so we can rebuild on language change
+    this.buildAboutLines();
+
+    // Subscribe to runtime language changes to rebuild and restart typing
+    if (typeof window !== 'undefined') {
+      this.langChangeSub = this.translate.onLangChange.subscribe(() => {
+        this.restartTypingForLangChange();
+      });
+    }
+
+    if (typeof window === 'undefined') {
+      this.displayTextRaw = this.aboutLines.join('\n');
+      this.displayText = this.sanitizer.bypassSecurityTrustHtml(this.displayTextRaw);
+      this.isTypingFinished = true;
+      return;
+    }
+    this.typeText();
+  }
+
+  private buildAboutLines(): void {
     this.aboutLines = [
       `C:> ${this.translate.instant('ABOUT.L1')}`,
       `C:> ${this.translate.instant('ABOUT.L2')}`,
@@ -70,21 +92,21 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
       `C:> ${this.translate.instant('ABOUT.SKILL_FRONTEND')}`,
       `C:> ${this.translate.instant('ABOUT.DOTS')}`,
       `C:> ${this.translate.instant('ABOUT.LANGS')}`,
-  `C:> ${this.translate.instant('ABOUT.LANG_LIST.PYTHON')}`,
-  `C:> ${this.translate.instant('ABOUT.LANG_LIST.PASCAL')}`,
-  `C:> ${this.translate.instant('ABOUT.LANG_LIST.C')}`,
-  `C:> ${this.translate.instant('ABOUT.LANG_LIST.CPP')}`,
-  `C:> ${this.translate.instant('ABOUT.LANG_LIST.UML')}`,
-  `C:> ${this.translate.instant('ABOUT.LANG_LIST.JAVA')}`,
-  `C:> ${this.translate.instant('ABOUT.LANG_LIST.CSHARP')}`,
-  `C:> ${this.translate.instant('ABOUT.LANG_LIST.SQL')}`,
-  `C:> ${this.translate.instant('ABOUT.LANG_LIST.JAVASCRIPT')}`,
+      `C:> ${this.translate.instant('ABOUT.LANG_LIST.PYTHON')}`,
+      `C:> ${this.translate.instant('ABOUT.LANG_LIST.PASCAL')}`,
+      `C:> ${this.translate.instant('ABOUT.LANG_LIST.C')}`,
+      `C:> ${this.translate.instant('ABOUT.LANG_LIST.CPP')}`,
+      `C:> ${this.translate.instant('ABOUT.LANG_LIST.UML')}`,
+      `C:> ${this.translate.instant('ABOUT.LANG_LIST.JAVA')}`,
+      `C:> ${this.translate.instant('ABOUT.LANG_LIST.CSHARP')}`,
+      `C:> ${this.translate.instant('ABOUT.LANG_LIST.SQL')}`,
+      `C:> ${this.translate.instant('ABOUT.LANG_LIST.JAVASCRIPT')}`,
       `C:> ${this.translate.instant('ABOUT.DOTS')}`,
       `C:> ${this.translate.instant('ABOUT.TOOLS')}`,
-  `C:> ${this.translate.instant('ABOUT.TOOLS_LIST.GIT')}`,
-  `C:> ${this.translate.instant('ABOUT.TOOLS_LIST.DOCKER')}`,
-  `C:> ${this.translate.instant('ABOUT.TOOLS_LIST.VISUAL_STUDIO')}`,
-  `C:> ${this.translate.instant('ABOUT.TOOLS_LIST.BOOTSTRAP')}`,
+      `C:> ${this.translate.instant('ABOUT.TOOLS_LIST.GIT')}`,
+      `C:> ${this.translate.instant('ABOUT.TOOLS_LIST.DOCKER')}`,
+      `C:> ${this.translate.instant('ABOUT.TOOLS_LIST.VISUAL_STUDIO')}`,
+      `C:> ${this.translate.instant('ABOUT.TOOLS_LIST.BOOTSTRAP')}`,
       `C:> ${this.translate.instant('ABOUT.AI')}`,
       `C:> ${this.translate.instant('ABOUT.DOTS')}`,
       `C:> ${this.translate.instant('ABOUT.CONTACT')}`,
@@ -93,13 +115,22 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
       `C:> <a href="https://www.instagram.com/arsendjurdjev/" class="copyable" data-link="Instagram" data-url="https://www.instagram.com/arsendjurdjev/">${this.translate.instant('ABOUT.INSTAGRAM')}</a>`,
       'C:> <span class="copyable" data-email="arsen.djurdjev@live.com">arsen.djurdjev@live.com</span>'
     ];
+  }
 
-    if (typeof window === 'undefined') {
-      this.displayTextRaw = this.aboutLines.join('\n');
-      this.displayText = this.sanitizer.bypassSecurityTrustHtml(this.displayTextRaw);
-      this.isTypingFinished = true;
-      return;
+  private restartTypingForLangChange(): void {
+    // clear any pending typing timeout
+    if (this.typingTimeout) {
+      clearTimeout(this.typingTimeout);
+      this.typingTimeout = null;
     }
+    // rebuild lines and reset state, then restart typing
+    this.buildAboutLines();
+    this.displayTextRaw = '';
+    this.displayText = this.sanitizer.bypassSecurityTrustHtml('');
+    this.lineIndex = 0;
+    this.charIndex = 0;
+    this.isTypingFinished = false;
+    this.cursorVisible = false;
     this.typeText();
   }
 
@@ -114,14 +145,14 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
       if (this.charIndex < this.aboutLines[this.lineIndex].length) {
         this.displayTextRaw += this.aboutLines[this.lineIndex][this.charIndex];
         this.displayText = this.sanitizer.bypassSecurityTrustHtml(this.displayTextRaw);
-        this.charIndex++;
-        setTimeout(() => this.typeText(), 2);
+  this.charIndex++;
+  this.typingTimeout = setTimeout(() => this.typeText(), 2);
       } else {
         this.displayTextRaw += '\n';
         this.displayText = this.sanitizer.bypassSecurityTrustHtml(this.displayTextRaw);
         this.lineIndex++;
-        this.charIndex = 0;
-        setTimeout(() => this.typeText(), 10);
+  this.charIndex = 0;
+  this.typingTimeout = setTimeout(() => this.typeText(), 10);
       }
     } else {
       this.cursorVisible = true;
@@ -192,5 +223,7 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
   ngOnDestroy(): void {
     if (this.blinkIntervalId) clearInterval(this.blinkIntervalId);
     if (this.modalTimeout) clearTimeout(this.modalTimeout);
+  if (this.typingTimeout) clearTimeout(this.typingTimeout);
+  if (this.langChangeSub) this.langChangeSub.unsubscribe();
   }
 }
