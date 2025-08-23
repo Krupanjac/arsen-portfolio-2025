@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { RailComponent } from '../layout/rail/rail.component';
 
 interface WorkItem {
   link: string;
@@ -11,7 +12,7 @@ interface WorkItem {
 @Component({
   selector: 'app-work',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, RailComponent],
   templateUrl: './work.component.html',
   styleUrls: ['./work.component.scss']
 })

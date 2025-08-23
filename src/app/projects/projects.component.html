@@ -4,9 +4,9 @@
     <p class="text-base font-semibold text-gray-800">{{ 'PROJECTS.LABEL' | translate }}</p>
   </div>
   <!-- Left rail with vertical line -->
-  <div class="hidden md:flex border-r-2 border-black items-start justify-end pr-4 py-4">
-    <p class="text-xl whitespace-nowrap">{{ 'PROJECTS.LABEL' | translate }}</p>
-  </div>
+  <app-rail>
+    {{ 'PROJECTS.LABEL' | translate }}
+  </app-rail>
   <!-- Projects grid -->
   <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">

@@ -4,9 +4,9 @@
     <p class="text-base font-semibold text-gray-800">{{ 'ABOUT.LABEL' | translate }}</p>
   </div>
   <!-- Left rail -->
-  <div class="hidden md:flex border-r-2 border-black items-start justify-end pr-4 py-4">
-    <p class="text-xl whitespace-nowrap">{{ 'ABOUT.LABEL' | translate }}</p>
-  </div>
+  <app-rail>
+    {{ 'ABOUT.LABEL' | translate }}
+  </app-rail>
   <!-- Centered CLI-like content -->
   <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
     <div class="cli-container bg-gray-900 text-green-500 font-mono p-5 rounded-md my-10 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">

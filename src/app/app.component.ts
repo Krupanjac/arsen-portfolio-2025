@@ -5,13 +5,14 @@ import { LoaderComponent } from './layout/loader/loader.component';
 import { CommonModule } from '@angular/common';
 import { slideInAnimation } from './app.animation';
 import { HeroComponent } from "./layout/hero/hero.component";
+import { RailComponent } from './layout/rail/rail.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ContactComponent } from './contact/contact.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NavComponent, LoaderComponent, CommonModule, HeroComponent, TranslateModule, ContactComponent],
+  imports: [NavComponent, LoaderComponent, CommonModule, HeroComponent, TranslateModule, ContactComponent, RailComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   animations: [slideInAnimation]

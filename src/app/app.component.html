@@ -10,9 +10,9 @@
     <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
       <p class="text-base font-semibold text-gray-800">{{ 'HOME.LABEL' | translate }}</p>
     </div>
-    <div class="hidden md:flex border-r-2 border-black items-start justify-end pr-4 py-4">
-      <p class="text-xl whitespace-nowrap">{{ 'HOME.LABEL' | translate }}</p>
-    </div>
+    <app-rail>
+      {{ 'HOME.LABEL' | translate }}
+    </app-rail>
     <div class="flex flex-col items-center justify-start bg-transparent pt-12 md:-ml-[20%] pl-4">
       <header class="text-center w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
         <h1 class="text-3xl md:text-4xl font-bold text-gray-800">{{ 'HOME.TITLE' | translate }}</h1>
@@ -28,9 +28,9 @@
     <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
       <p class="text-base font-semibold text-gray-800">{{ 'PROJECTS.LABEL' | translate }}</p>
     </div>
-    <div class="hidden md:flex border-r-2 border-black items-start justify-end pr-4 py-4">
-      <p class="text-xl whitespace-nowrap">{{ 'PROJECTS.LABEL' | translate }}</p>
-    </div>
+    <app-rail>
+      {{ 'PROJECTS.LABEL' | translate }}
+    </app-rail>
     <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
         <a *ngFor="let project of projects"
@@ -50,9 +50,9 @@
     <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
       <p class="text-base font-semibold text-gray-800">{{ 'WORK.LABEL' | translate }}</p>
     </div>
-    <div class="hidden md:flex border-r-2 border-black items-start justify-end pr-4 py-4">
-      <p class="text-xl whitespace-nowrap">{{ 'WORK.LABEL' | translate }}</p>
-    </div>
+    <app-rail>
+      {{ 'WORK.LABEL' | translate }}
+    </app-rail>
     <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
         <a *ngFor="let work of workItems"
@@ -72,9 +72,9 @@
     <div class="md:hidden pt-14 px-4 pb-2 border-b border-black/20">
       <p class="text-base font-semibold text-gray-800">{{ 'ABOUT.LABEL' | translate }}</p>
     </div>
-    <div class="hidden md:flex border-r-2 border-black items-start justify-end pr-4 py-4">
-      <p class="text-xl whitespace-nowrap">{{ 'ABOUT.LABEL' | translate }}</p>
-    </div>
+    <app-rail>
+      {{ 'ABOUT.LABEL' | translate }}
+    </app-rail>
     <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
       <div class="cli-container bg-gray-900 text-green-500 font-mono p-5 rounded-md my-10 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
         <p class="cli-line">C:\Users\You&gt; {{ 'ABOUT.L1' | translate }}</p>

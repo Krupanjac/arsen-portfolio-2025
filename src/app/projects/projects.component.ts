@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; // <-- Add this line
 import { TranslateModule } from '@ngx-translate/core';
+import { RailComponent } from '../layout/rail/rail.component';
 
 interface Project {
   link: string;
@@ -11,7 +12,7 @@ interface Project {
 @Component({
   selector: 'app-projects',
   standalone: true, // Standalone component
-  imports: [CommonModule, TranslateModule], // <-- Add CommonModule here
+  imports: [CommonModule, TranslateModule, RailComponent], // <-- Add CommonModule here
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss']
 })
