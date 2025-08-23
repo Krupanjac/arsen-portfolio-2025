@@ -1,19 +1,20 @@
-<header class="fixed top-0 left-0 w-full bg-transparent flex items-center justify-between px-4 py-2 z-50 backdrop-blur-[2px]">
-  <p id="header_naslov" class="text-3xl font-bold">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="flex items-center">
-      <span class="text-[#482268]">&lt;</span>Krupanjac.h<span class="text-[#482268]">&gt;</span>
-    </a>
-  </p>
-  <!-- Hamburger button: visible on mobile only -->
-  <button class="md:hidden focus:outline-none" (click)="toggleNav()">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"/>
-    </svg>
-  </button>
+<header class="fixed top-0 left-0 w-full bg-transparent px-4 py-2 z-50 backdrop-blur-[2px]">
+  <div class="w-full max-w-[1100px] mx-auto flex items-center justify-between">
+    <p id="header_naslov" class="text-2xl md:text-3xl font-bold">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="flex items-center">
+        <span class="text-[#482268]">&lt;</span>Krupanjac.h<span class="text-[#482268]">&gt;</span>
+      </a>
+    </p>
+    <!-- Hamburger button: visible on mobile only -->
+    <button class="md:hidden focus:outline-none" (click)="toggleNav()">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
 
-  <!-- Desktop navigation: visible on md and up -->
-  <nav class="hidden md:flex items-center gap-6 mr-4">
+    <!-- Desktop navigation: visible on md and up -->
+    <nav class="hidden md:flex items-center gap-4 mr-2">
   <a href="javascript:void(0)" (click)="onNavigate($event, 'home')" [class.active]="activeId === 'home'" [attr.aria-current]="activeId === 'home' ? 'true' : null" class="nav-link text-black opacity-70 hover:opacity-90">{{ 'NAV.START' | translate }}</a>
   <a href="javascript:void(0)" (click)="onNavigate($event, 'projects')" [class.active]="activeId === 'projects'" [attr.aria-current]="activeId === 'projects' ? 'true' : null" class="nav-link text-black opacity-70 hover:opacity-90">{{ 'NAV.PROJECTS' | translate }}</a>
   <a href="javascript:void(0)" (click)="onNavigate($event, 'work')" [class.active]="activeId === 'work'" [attr.aria-current]="activeId === 'work' ? 'true' : null" class="nav-link text-black opacity-70 hover:opacity-90">{{ 'NAV.WORK' | translate }}</a>
@@ -29,6 +30,7 @@
       </svg>
     </div>
   </nav>
+  </div>
 </header>
 
 <!-- Mobile dropdown navigation -->

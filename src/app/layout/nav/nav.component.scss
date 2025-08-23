@@ -36,3 +36,27 @@
 
     transition : all 0.2s ease-out;
   }
+
+  /* Desktop: tighten nav spacing and font size so header doesn't appear too wide */
+  @media (min-width: 768px) {
+    header > div {
+      align-items: center;
+    }
+
+    header nav {
+      gap: 0.5rem; /* smaller gap between links */
+      margin-right: 0.25rem;
+    }
+
+    header nav .nav-link {
+      padding: 0.125rem 0.35rem;
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    /* language buttons smaller on desktop */
+    header nav .flex.items-center button {
+      padding: 0.25rem 0.4rem;
+      font-size: 0.8rem;
+    }
+  }
