@@ -37,6 +37,9 @@ export async function onRequest({ request, env, next }) {
   '/projectImg',
   '/public',
   '/i18n',
+  // session endpoint (client calls this to check auth)
+  '/api/session',
+  '/.netlify/functions/session',
   // Make Angular component routes public so users can view the site without auth
   '/',
   '/projects',
