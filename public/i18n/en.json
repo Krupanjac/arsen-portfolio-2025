@@ -81,6 +81,7 @@
     "SIGN_IN": "Sign In",
     "LOADING": "Loading...",
     "SUCCESS": "Logged in successfully.",
-    "FAILED": "Login failed"
+  "FAILED": "Login failed",
+  "COMPLETE_CHALLENGE": "Please complete the security challenge to enable login"
   }
 }

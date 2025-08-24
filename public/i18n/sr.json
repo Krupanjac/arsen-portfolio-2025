@@ -81,6 +81,7 @@
     "SIGN_IN": "Prijavi se",
     "LOADING": "Učitavanje...",
     "SUCCESS": "Uspešno prijavljeni.",
-    "FAILED": "Prijava neuspešna"
+  "FAILED": "Prijava neuspešna",
+  "COMPLETE_CHALLENGE": "Kompletirajte bezbednosni izazov da biste omogućili prijavu"
   }
 }

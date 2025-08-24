@@ -65,6 +65,12 @@ export class LoginComponent {
   }
 
   submit() {
+    // Prevent submitting before Turnstile challenge completes
+    if (!this.turnstileToken) {
+      this.error = this.translate.instant('LOGIN.COMPLETE_CHALLENGE');
+      return;
+    }
+
     this.error = null;
     this.success = false;
     this.loading = true;
