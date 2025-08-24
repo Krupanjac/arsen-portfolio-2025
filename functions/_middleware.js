@@ -31,7 +31,6 @@ export async function onRequest({ request, env, next }) {
   const publicPrefixes = [
   '/login', // frontend route for LoginComponent
   '/api/login', // API route if used
-  '/.netlify/functions/login', // Netlify-style function path
   '/functions/login', // some hosts expose functions under /functions/
   '/assets',
   '/projectImg',
@@ -39,7 +38,7 @@ export async function onRequest({ request, env, next }) {
   '/i18n',
   // session endpoint (client calls this to check auth)
   '/api/session',
-  '/.netlify/functions/session',
+  
   // Make Angular component routes public so users can view the site without auth
   '/',
   '/projects',
@@ -63,7 +62,7 @@ export async function onRequest({ request, env, next }) {
 
   const cookie = request.headers.get('Cookie') || '';
   const token = cookie.split('; ').find(c => c.startsWith('auth='))?.split('=')[1];
-
+  
   if (!token) return new Response('Unauthorized', { status: 401 });
 
   try {

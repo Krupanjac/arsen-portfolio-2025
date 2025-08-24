@@ -10,23 +10,13 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   checkSession() {
-    // Try primary path then fallback (same as LoginService pattern)
     return this.http.get('/api/session', { withCredentials: true }).pipe(
       map((res: any) => {
         this._authenticated = !!res?.authenticated;
         this._username = res?.username || null;
         return res;
       }),
-      catchError(() => {
-        return this.http.get('/.netlify/functions/session', { withCredentials: true }).pipe(
-          map((res: any) => {
-            this._authenticated = !!res?.authenticated;
-            this._username = res?.username || null;
-            return res;
-          }),
-          catchError(() => of({ authenticated: false }))
-        );
-      })
+      catchError(() => of({ authenticated: false }))
     );
   }
 

@@ -11,12 +11,7 @@ export class LoginService {
     const opts = { withCredentials: true } as const;
 
     return this.http.post('/api/login', body, opts).pipe(
-      catchError((err) => {
-        // Fallback to common serverless function path used on some hosts
-        return this.http.post('/.netlify/functions/login', body, opts).pipe(
-          catchError((err2) => throwError(() => err))
-        );
-      })
+      catchError((err) => throwError(() => err))
     );
   }
 }
