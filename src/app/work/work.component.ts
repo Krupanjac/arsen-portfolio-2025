@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { TerminalTypingDirective } from '../shared/terminal-typing.directive';
 import { RailComponent } from '../layout/rail/rail.component';
 
 interface WorkItem {
@@ -12,7 +13,7 @@ interface WorkItem {
 @Component({
   selector: 'app-work',
   standalone: true,
-  imports: [CommonModule, TranslateModule, RailComponent],
+  imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective],
   templateUrl: './work.component.html',
   styleUrls: ['./work.component.scss']
 })

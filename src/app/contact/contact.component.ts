@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TerminalTypingDirective } from '../shared/terminal-typing.directive';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, TerminalTypingDirective],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
   encapsulation: ViewEncapsulation.None, // Ensures CSS works on dynamically added elements

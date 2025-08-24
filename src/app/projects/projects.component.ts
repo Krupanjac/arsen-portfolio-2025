@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; // <-- Add this line
 import { TranslateModule } from '@ngx-translate/core';
+import { TerminalTypingDirective } from '../shared/terminal-typing.directive';
 import { RailComponent } from '../layout/rail/rail.component';
 
 interface Project {
@@ -12,7 +13,7 @@ interface Project {
 @Component({
   selector: 'app-projects',
   standalone: true, // Standalone component
-  imports: [CommonModule, TranslateModule, RailComponent], // <-- Add CommonModule here
+  imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective], // <-- Add CommonModule here
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss']
 })

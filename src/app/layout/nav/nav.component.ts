@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterModule, CommonModule, TranslateModule],
+  imports: [RouterModule, CommonModule, TranslateModule, TerminalTypingDirective],
   // No custom providers
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']

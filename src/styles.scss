@@ -23,6 +23,7 @@
   --color-accent-alt: #5d2f8a;
   --color-terminal-bg: #000000e6;
   --color-terminal-green: #00ff00;
+  --color-terminal-directive: #272727;
   --color-terminal-line: #003300;
   --glow-accent: 0 0 10px rgba(var(--color-accent-rgb)/0.55), 0 0 22px rgba(var(--color-accent-rgb)/0.3);
 }
@@ -41,6 +42,8 @@
   --color-accent-rgb: 139 92 246;
   --color-accent-alt: #a78bfa;
   --glow-accent: 0 0 10px rgba(var(--color-accent-rgb)/0.6), 0 0 24px rgba(var(--color-accent-rgb)/0.35);
+  /* Terminal-typing: white text in dark mode */
+  --color-terminal-directive: #ffffff;
 }
 
 /* Global resets and custom styles */
@@ -133,6 +136,14 @@ body::-webkit-scrollbar-thumb:hover { background: var(--color-border-strong); }
 .terminal-output .copyable { color: var(--color-terminal-green); }
 .terminal-output .copyable:hover::after { background: #002200; color: var(--color-terminal-green); }
 .cursor { background: var(--color-terminal-green); }
+
+/* Small inline cursor used during fast language-rewrite animation */
+.cursor { display: inline-block; width: 8px; height: 1.1em; vertical-align: text-bottom; margin-left: 4px; background: var(--color-terminal-green); opacity: 1; }
+.cursor.hidden { opacity: 0; }
+
+/* Terminal-typing directive cursor (unique class to avoid conflicts) */
+.tt-cursor { display: inline-block; width: 8px; height: 1.1em; vertical-align: text-bottom; margin-left: 4px; background: var(--color-terminal-directive); animation: tt-blink 700ms steps(1) infinite; }
+@keyframes tt-blink { 50% { opacity: 0; } }
 
 /* Accent glow utility */
 .glow-accent { box-shadow: var(--glow-accent); transition: box-shadow .35s ease; }

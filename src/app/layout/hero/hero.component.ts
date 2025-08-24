@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslateModule, TerminalTypingDirective],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.scss'],
   encapsulation: ViewEncapsulation.None

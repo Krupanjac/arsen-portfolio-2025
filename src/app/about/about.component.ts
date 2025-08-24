@@ -1,6 +1,7 @@
 import { Component, ChangeDetectorRef, ElementRef, Renderer2, AfterViewChecked, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TerminalTypingDirective } from '../shared/terminal-typing.directive';
 import { DomSanitizer } from '@angular/platform-browser';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { Subscription } from 'rxjs';
@@ -8,7 +9,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, TerminalTypingDirective],
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
   encapsulation: ViewEncapsulation.None,
