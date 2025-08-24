@@ -20,6 +20,15 @@ export class HeroComponent implements OnInit, OnDestroy {
   private lastScrollY = 0;
   private scrollVelocity = 0;
   private scrollListener: (() => void) | null = null;
+  // Mouse / pointer interactivity
+  private mouseX = 0;
+  private mouseY = 0;
+  private mouseActive = false;
+  private mouseMoveListener: ((e: Event) => void) | null = null;
+  private pointerOutListener: (() => void) | null = null;
+  private clickListener: ((e: MouseEvent) => void) | null = null;
+  private particles: Array<{ x: number; y: number; vx: number; vy: number; life: number; r: number; color: string }> = [];
+  private twinklePhase = 0;
   // Removed custom cursor & mouse trail properties
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
@@ -51,6 +60,15 @@ export class HeroComponent implements OnInit, OnDestroy {
     if (this.scrollListener) {
       window.removeEventListener('scroll', this.scrollListener);
     }
+    if (this.mouseMoveListener) {
+      window.removeEventListener('mousemove', this.mouseMoveListener as any);
+    }
+    if (this.pointerOutListener) {
+      window.removeEventListener('pointerleave', this.pointerOutListener as any);
+    }
+    if (this.clickListener) {
+      window.removeEventListener('click', this.clickListener as any);
+    }
   // Removed mouse listeners and droplet animation cleanup
   }
 
@@ -75,7 +93,7 @@ export class HeroComponent implements OnInit, OnDestroy {
     }
 
   // Added baseVx/baseVy to remember original (cruise) speed for easing after bounces
-  let stars: Array<{ x: number; y: number; radius: number; vx: number; vy: number; baseVx: number; baseVy: number }> = [];
+  let stars: Array<{ x: number; y: number; radius: number; vx: number; vy: number; baseVx: number; baseVy: number; baseRadius?: number }> = [];
     const createStars = () => {
       stars = [];
       const starCount = window.innerWidth > 500
@@ -84,10 +102,12 @@ export class HeroComponent implements OnInit, OnDestroy {
       for (let i = 0; i < starCount; i++) {
         const vx = (Math.random() - 0.5) * 2;
         const vy = (Math.random() - 0.5) * 2;
+        const r = Math.random() * 1 + 1;
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          radius: Math.random() * 1 + 1,
+          radius: r,
+          baseRadius: r,
           vx,
           vy,
           baseVx: vx,
@@ -95,16 +115,30 @@ export class HeroComponent implements OnInit, OnDestroy {
         });
       }
     };
+    // resolve accent color here so event handlers can reuse it; support light theme
+    const resolvedAccent = () => {
+      // CSS variable takes precedence
+      const css = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim();
+      if (css) return css;
+      // prefer system theme: use black in light mode, purple in dark
+      const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      return prefersLight ? '#000000' : '#482268';
+    };
+    let accent = resolvedAccent();
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Resolve accent color from CSS variable (fallback to original purple)
-      const accent = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#482268';
-      ctx.fillStyle = accent;
+  // accent color resolved from outer scope; refresh each frame in case theme changes
+  accent = resolvedAccent();
+  ctx.fillStyle = accent;
       stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fill();
+  ctx.beginPath();
+  ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+  // twinkle by changing globalAlpha slightly per star
+  ctx.save();
+  ctx.globalAlpha = 0.7 + 0.3 * Math.sin(this.twinklePhase + (star.x + star.y) * 0.001);
+  ctx.fill();
+  ctx.restore();
       });
       ctx.beginPath();
       // Apply 0.6 alpha to accent for connecting lines
@@ -131,9 +165,31 @@ export class HeroComponent implements OnInit, OnDestroy {
         });
       });
       ctx.stroke();
+
+      // Draw particles (click bursts)
+      this.particles.forEach(p => {
+        const alpha = Math.max(0, p.life / 60);
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = alpha;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+
+      // Draw subtle cursor glow when active
+      if (this.mouseActive) {
+        const g = ctx.createRadialGradient(this.mouseX, this.mouseY, 0, this.mouseX, this.mouseY, 120);
+        g.addColorStop(0, 'rgba(139,92,246,0.18)');
+        g.addColorStop(1, 'rgba(139,92,246,0)');
+        ctx.fillStyle = g as any;
+        ctx.fillRect(this.mouseX - 120, this.mouseY - 120, 240, 240);
+      }
     };
 
     const update = () => {
+      // advance twinkle
+      this.twinklePhase += 0.03;
       stars.forEach(star => {
         star.x += star.vx;
         star.y += star.vy;
@@ -141,6 +197,21 @@ export class HeroComponent implements OnInit, OnDestroy {
         if (this.scrollVelocity !== 0) {
           star.y += -this.scrollVelocity * 0.05; // immediate effect
         }
+        // Mouse interaction: gentle attraction toward pointer, with distance falloff
+        if (this.mouseActive) {
+          const dx = this.mouseX - star.x;
+          const dy = this.mouseY - star.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 220 && dist > 0.0001) {
+            // strength stronger when closer
+            const strength = (1 - dist / 220) * 0.35; // tuned
+            star.vx += (dx / dist) * strength;
+            star.vy += (dy / dist) * strength;
+          }
+        }
+        // subtle orbital noise for liveliness
+        star.vx += (Math.cos((star.x + star.y + this.twinklePhase) * 0.002) - 0.5) * 0.0008;
+        star.vy += (Math.sin((star.x + star.y + this.twinklePhase) * 0.002) - 0.5) * 0.0008;
         // Bounce with clamping (include radius to keep inside viewport)
   const scrollEnergy = Math.min(Math.abs(this.scrollVelocity), 300); // instantaneous energy (0..300)
   // Saturated scaling: linear earlier, flattens for large scrolls
@@ -170,9 +241,26 @@ export class HeroComponent implements OnInit, OnDestroy {
   const relaxFactor = 0.002; // 0.2% per frame
   star.vx += (star.baseVx - star.vx) * relaxFactor;
   star.vy += (star.baseVy - star.vy) * relaxFactor;
+        // twinkle radius easing toward baseRadius
+        if ((star as any).baseRadius !== undefined) {
+          star.radius += (((star as any).baseRadius) - star.radius) * 0.03;
+          // slight per-star twinkle modulation
+          star.radius = (star as any).baseRadius * (0.85 + 0.3 * Math.abs(Math.sin(this.twinklePhase + star.x * 0.001)));
+        }
       });
   // Reset scroll velocity so only new wheel events affect next frame
   this.scrollVelocity = 0;
+
+      // update particles
+      for (let i = this.particles.length - 1; i >= 0; i--) {
+        const p = this.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        p.life -= 1;
+        if (p.life <= 0) this.particles.splice(i, 1);
+      }
     };
 
     const animate = () => {
@@ -200,6 +288,33 @@ export class HeroComponent implements OnInit, OnDestroy {
       if (this.scrollVelocity < -max) this.scrollVelocity = -max;
     };
     window.addEventListener('scroll', this.scrollListener, { passive: true });
+
+    // Pointer move: interactive attraction + cursor glow
+    this.mouseMoveListener = (e: Event) => {
+      const ev = e as MouseEvent;
+      this.mouseX = ev.clientX;
+      this.mouseY = ev.clientY;
+      this.mouseActive = true;
+    };
+    this.pointerOutListener = () => { this.mouseActive = false; };
+    window.addEventListener('mousemove', this.mouseMoveListener, { passive: true });
+    window.addEventListener('pointerleave', this.pointerOutListener);
+
+    // Click: particle burst
+    this.clickListener = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      const count = Math.min(18, 6 + Math.floor(Math.random() * 12));
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1 + Math.random() * 3;
+  const color = Math.random() > 0.5 ? accent : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? '#222' : '#fff');
+        this.particles.push({ x: cx, y: cy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 30 + Math.floor(Math.random() * 40), r: 1 + Math.random() * 3, color });
+        if (this.particles.length > 300) this.particles.splice(0, this.particles.length - 300);
+      }
+    };
+    window.addEventListener('click', this.clickListener);
     animate();
   }
 
