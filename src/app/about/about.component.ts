@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, ElementRef, Renderer2, AfterViewChecked, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectorRef, ElementRef, Renderer2, AfterViewChecked, AfterViewInit, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../shared/terminal-typing.directive';
@@ -26,6 +26,9 @@ import { Subscription } from 'rxjs';
   ]
 })
 export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
+  // IntersectionObserver to delay typing until component is visible
+  private ioObserver: IntersectionObserver | null = null;
+  private hasStartedTyping = false;
   aboutLines: string[] = [];
   displayText: any = '';
   displayTextRaw: string = '';
@@ -73,6 +76,28 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.isTypingFinished = true;
       return;
     }
+    // Defer the typing until the component is visible in the viewport
+    try {
+      this.ioObserver = new IntersectionObserver((entries) => {
+        const e = entries[0];
+        if (e && e.isIntersecting) {
+          if (this.ioObserver) {
+            this.ioObserver.disconnect();
+            this.ioObserver = null;
+          }
+          this.startTyping();
+        }
+      }, { threshold: 0.1 });
+      this.ioObserver.observe(this.elRef.nativeElement);
+    } catch (err) {
+      // Fallback: if IntersectionObserver isn't available, start immediately
+      this.startTyping();
+    }
+  }
+
+  private startTyping(): void {
+    if (this.hasStartedTyping) return;
+    this.hasStartedTyping = true;
     this.typeText();
   }
 
@@ -132,7 +157,11 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.charIndex = 0;
     this.isTypingFinished = false;
     this.cursorVisible = false;
-    this.typeText();
+    // Only start typing now if typing has already started previously (e.g. visible).
+    // If the component hasn't become visible yet, typing will start when it does.
+    if (this.hasStartedTyping) {
+      this.typeText();
+    }
   }
 
   ngAfterViewChecked(): void {
@@ -226,5 +255,9 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (this.modalTimeout) clearTimeout(this.modalTimeout);
   if (this.typingTimeout) clearTimeout(this.typingTimeout);
   if (this.langChangeSub) this.langChangeSub.unsubscribe();
+    if (this.ioObserver) {
+      try { this.ioObserver.disconnect(); } catch (e) { /* ignore */ }
+      this.ioObserver = null;
+    }
   }
 }
