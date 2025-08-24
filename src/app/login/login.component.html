@@ -1,0 +1,22 @@
+<div class="login-container">
+  <form (ngSubmit)="submit()" class="login-form" autocomplete="on">
+    <h3 translate>Login</h3>
+
+    <label>
+      <span translate>Username</span>
+      <input name="username" [(ngModel)]="username" required />
+    </label>
+
+    <label>
+      <span translate>Password</span>
+      <input name="password" type="password" [(ngModel)]="password" required />
+    </label>
+
+    <button type="submit" [disabled]="loading">{{ loading ? ('Loading' | translate) : ('Sign In' | translate) }}</button>
+
+    <div class="status">
+      <p class="success" *ngIf="success" translate>Logged in successfully.</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </div>
+  </form>
+</div>
