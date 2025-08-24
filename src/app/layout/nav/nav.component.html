@@ -38,7 +38,16 @@
     <div class="flex items-center gap-2 ml-4">
   <!-- Auth / Dashboard button (image) -->
   <button (click)="onAuthClick()" class="flex items-center mr-2 p-1 rounded hover:scale-105 focus:outline-none" title="Open dashboard">
-    <img src="/assets/img/ProjectImg/5.png" alt="dashboard" class="h-8 w-8 rounded-full object-cover border border-transparent hover:border-accent" />
+    <!-- Minimal monochrome SVG avatar (stroke-based, uses currentColor) -->
+    <svg role="img" aria-label="Dashboard" class="h-8 w-8 rounded-full border border-transparent hover:border-accent p-1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false">
+      <title>Dashboard</title>
+      <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <!-- head -->
+        <circle cx="12" cy="9" r="3.2" />
+        <!-- shoulders / torso -->
+        <path d="M4.5 19c1.6-3.5 5.1-5.5 7.5-5.5s5.9 2 7.5 5.5" />
+      </g>
+    </svg>
   </button>
 
   <button class="px-3 py-2 text-sm rounded border border-transparent hover:border-accent disabled:opacity-50 hover:text-accent"

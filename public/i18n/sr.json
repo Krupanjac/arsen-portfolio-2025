@@ -73,4 +73,14 @@
     "MY_NAME_IS": "Moje ime je",
     "TAGLINE": "Razvijam i inženjerujem softver"
   }
+  ,
+  "LOGIN": {
+    "TITLE": "Prijava",
+    "USERNAME": "Korisničko ime",
+    "PASSWORD": "Lozinka",
+    "SIGN_IN": "Prijavi se",
+    "LOADING": "Učitavanje...",
+    "SUCCESS": "Uspešno prijavljeni.",
+    "FAILED": "Prijava neuspešna"
+  }
 }

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LoginService } from './login.service';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +19,11 @@ export class LoginComponent {
   error: string | null = null;
   success = false;
 
-  constructor(private loginService: LoginService, private router: Router) {}
+  constructor(
+    private loginService: LoginService,
+    private router: Router,
+    private translate: TranslateService
+  ) {}
 
   submit() {
     this.error = null;
@@ -39,7 +43,8 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err?.error || err?.message || 'Login failed';
+        // Prefer backend error text, otherwise use a translated fallback
+        this.error = err?.error || err?.message || this.translate.instant('LOGIN.FAILED');
       },
     });
   }

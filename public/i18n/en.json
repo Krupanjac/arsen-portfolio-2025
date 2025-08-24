@@ -73,4 +73,14 @@
     "MY_NAME_IS": "My name is",
     "TAGLINE": "I develop and engineer software"
   }
+  ,
+  "LOGIN": {
+    "TITLE": "Login",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "SIGN_IN": "Sign In",
+    "LOADING": "Loading...",
+    "SUCCESS": "Logged in successfully.",
+    "FAILED": "Login failed"
+  }
 }
