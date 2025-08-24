@@ -57,6 +57,22 @@ html, body {
   color: var(--color-text);
 }
 
+/* Smooth theme transitions
+  We animate the concrete properties that reference CSS variables. When the
+  variables swap (via [data-theme='dark']) the computed properties below will
+  transition smoothly. Keep durations short to feel snappy. */
+:root,
+html, body,
+.bg-surface, .bg-surface-alt, .bg-alt,
+.text-accent, .text-primary, .text-secondary, .text-muted, .text-faint,
+.border-base, .border-strong, .border-divider, .rail-separator,
+body::-webkit-scrollbar-thumb, .terminal-output .copyable, .cursor,
+.glow-accent {
+  transition: background-color .35s ease, color .35s ease,
+          border-color .35s ease, box-shadow .35s ease,
+          opacity .35s ease, fill .35s ease, stroke .35s ease;
+}
+
 /* Smooth in-page scrolling for anchor links */
 html {
   scroll-behavior: smooth;
