@@ -30,6 +30,7 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
   private isUserInteracting = false;
   theme: 'light' | 'dark' = 'dark';
   private authListener: ((ev: Event) => void) | null = null;
+  private _savedScrollY = 0;
 
   toggleNav(): void {
     this.isNavOpen = !this.isNavOpen;
@@ -65,11 +66,15 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
     this.isDashboardOpen = !this.isDashboardOpen;
     if (this.isDashboardOpen) {
       await this.checkSession();
+      this.lockScroll();
+    } else {
+      this.unlockScroll();
     }
   }
 
   closeDashboard() {
     this.isDashboardOpen = false;
+    this.unlockScroll();
   }
 
   async checkSession() {
@@ -308,5 +313,28 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
       this.scrollAnimationId = null;
     }
   if (this.authListener) { try { window.removeEventListener('auth:login', this.authListener); } catch {} }
+  }
+
+  // Prevent background scrolling when a modal/dashboard is open.
+  private lockScroll() {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    try {
+      this._savedScrollY = window.scrollY || window.pageYOffset || 0;
+      // apply fixed positioning to body to prevent scroll and keep visual position
+      document.body.style.top = `-${this._savedScrollY}px`;
+      document.body.classList.add('modal-open');
+    } catch {}
+  }
+
+  private unlockScroll() {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    try {
+      document.body.classList.remove('modal-open');
+      // restore previous scroll position
+      const y = this._savedScrollY || 0;
+      document.body.style.top = '';
+      window.scrollTo(0, y);
+      this._savedScrollY = 0;
+    } catch {}
   }
 }

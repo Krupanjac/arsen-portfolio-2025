@@ -181,3 +181,12 @@ body::-webkit-scrollbar-thumb:hover { background: var(--color-border-strong); }
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;     /* Firefox */
 }
+
+/* When a modal is open, lock page scroll while preserving visual position */
+body.modal-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  width: 100%;
+}
