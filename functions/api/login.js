@@ -1,12 +1,43 @@
 import bcrypt from "bcryptjs";
 
-// Helper to sign JWT manually
-async function signJWT(payload, secret) {
-  const encoder = new TextEncoder();
-  const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const body = btoa(JSON.stringify(payload));
-  const data = `${header}.${body}`;
+// base64url helpers (UTF-8 safe)
+function base64UrlEncode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
 
+function base64UrlFromArrayBuffer(buf) {
+  const bytes = new Uint8Array(buf);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function base64UrlDecodeToString(b64u) {
+  // convert base64url to base64
+  let base64 = b64u.replace(/-/g, "+").replace(/_/g, "/");
+  // add padding
+  const pad = base64.length % 4;
+  if (pad === 2) base64 += "==";
+  else if (pad === 3) base64 += "=";
+  else if (pad !== 0) base64 += "";
+
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+// Helper to sign JWT manually (produces base64url header.payload.signature)
+async function signJWT(payload, secret) {
+  const header = { alg: "HS256", typ: "JWT" };
+  const headerB64 = base64UrlEncode(JSON.stringify(header));
+  const payloadB64 = base64UrlEncode(JSON.stringify(payload));
+  const data = `${headerB64}.${payloadB64}`;
+
+  const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
     "raw",
     encoder.encode(secret),
@@ -16,10 +47,50 @@ async function signJWT(payload, secret) {
   );
 
   const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
-  const sigBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)))
-    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const sigB64u = base64UrlFromArrayBuffer(signature);
 
-  return `${data}.${sigBase64}`;
+  return `${data}.${sigB64u}`;
+}
+
+// Verify a JWT produced by signJWT (checks signature and exp); returns payload object or null
+export async function verifyJWT(token, secret) {
+  if (!token) return null;
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  const [headerB64u, payloadB64u, sigB64u] = parts;
+
+  // decode header/payload
+  let header, payload;
+  try {
+    header = JSON.parse(base64UrlDecodeToString(headerB64u));
+    payload = JSON.parse(base64UrlDecodeToString(payloadB64u));
+  } catch (e) {
+    return null;
+  }
+
+  if (!header || header.alg !== 'HS256') return null;
+
+  // verify signature by re-signing
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const data = `${headerB64u}.${payloadB64u}`;
+  const expectedSig = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+  const expectedSigB64u = base64UrlFromArrayBuffer(expectedSig);
+
+  if (sigB64u !== expectedSigB64u) return null;
+
+  // Check exp (assumed seconds since epoch)
+  const now = Math.floor(Date.now() / 1000);
+  if (typeof payload.exp === 'number' && payload.exp < now) return null;
+
+  return payload;
 }
 
 // CORS helper — echo Origin when present so credentials (cookies) are allowed
@@ -50,11 +121,14 @@ export async function onRequestPost({ request, env }) {
   const valid = await bcrypt.compare(password, storedHash);
   if (!valid) return new Response("Invalid credentials", { status: 401, headers: corsHeaders(request) });
 
-  const token = await signJWT({ username, exp: Date.now() + 3600_000 }, env.JWT_SECRET);
+
+  // exp must be seconds since epoch (JWT standard)
+  const token = await signJWT({ username, exp: Math.floor(Date.now() / 1000) + 3600 }, env.JWT_SECRET);
 
   const headers = {
     ...corsHeaders(request),
-    "Set-Cookie": `auth=${token}; HttpOnly; Secure; Path=/; SameSite=Strict`,
+    // persistent cookie for 1 hour (Max-Age=3600). HttpOnly and Secure remain set.
+    "Set-Cookie": `auth=${token}; HttpOnly; Secure; Path=/; SameSite=Strict; Max-Age=3600`,
     "Content-Type": "application/json",
   };
 

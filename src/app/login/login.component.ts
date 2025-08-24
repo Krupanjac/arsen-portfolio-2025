@@ -29,6 +29,7 @@ export class LoginComponent {
       next: (res) => {
         this.loading = false;
         this.success = true;
+  try { window.dispatchEvent(new CustomEvent('auth:login')); } catch {}
         // Navigate to protected admin area after successful login
         try {
           this.router.navigate(['/admin']);

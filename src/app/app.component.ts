@@ -13,7 +13,6 @@ import { HomeComponent } from './home/home.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { WorkComponent } from './work/work.component';
 import { AboutComponent } from './about/about.component';
-import { LoginComponent } from './login/login.component';
 
 @Component({
   selector: 'app-root',
@@ -28,8 +27,7 @@ import { LoginComponent } from './login/login.component';
     HomeComponent,
     ProjectsComponent,
     WorkComponent,
-  AboutComponent,
-  LoginComponent
+  AboutComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],

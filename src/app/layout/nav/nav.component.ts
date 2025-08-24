@@ -1,19 +1,27 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
+import { LoginComponent } from '../../login/login.component';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterModule, CommonModule, TranslateModule, TerminalTypingDirective],
+  imports: [RouterModule, CommonModule, TranslateModule, FormsModule, TerminalTypingDirective, LoginComponent],
   // No custom providers
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
-export class NavComponent implements AfterViewInit, OnDestroy {
+export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
+  // Dashboard / auth state
+  isDashboardOpen = false;
+  isAuthenticated = false;
+  username: string | null = null;
+  loginUsername = '';
+  loginPassword = '';
   isNavOpen = false;
   isLangLoading = false;
   activeId: string | null = null;
@@ -21,6 +29,7 @@ export class NavComponent implements AfterViewInit, OnDestroy {
   private scrollAnimationId: number | null = null;
   private isUserInteracting = false;
   theme: 'light' | 'dark' = 'dark';
+  private authListener: ((ev: Event) => void) | null = null;
 
   toggleNav(): void {
     this.isNavOpen = !this.isNavOpen;
@@ -42,6 +51,72 @@ export class NavComponent implements AfterViewInit, OnDestroy {
         document.documentElement.setAttribute('data-theme', this.theme);
       }
     }
+  }
+
+  ngOnInit(): void {
+    // check current session on init
+    try { this.checkSession(); } catch {}
+  // listen for login events from embedded login component
+  this.authListener = () => { try { this.checkSession(); } catch {} };
+  try { window.addEventListener('auth:login', this.authListener); } catch {}
+  }
+
+  async onAuthClick() {
+    this.isDashboardOpen = !this.isDashboardOpen;
+    if (this.isDashboardOpen) {
+      await this.checkSession();
+    }
+  }
+
+  closeDashboard() {
+    this.isDashboardOpen = false;
+  }
+
+  async checkSession() {
+    try {
+      const res = await fetch('/api/session', { credentials: 'include' });
+      if (!res.ok) {
+        this.isAuthenticated = false;
+        this.username = null;
+        return;
+      }
+      const data = await res.json();
+      this.isAuthenticated = !!data?.authenticated;
+      this.username = data?.username || null;
+    } catch (e) {
+      this.isAuthenticated = false;
+      this.username = null;
+    }
+  }
+
+  async onLogin(event: Event) {
+    if (event) { event.preventDefault(); }
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: this.loginUsername, password: this.loginPassword })
+      });
+      if (!res.ok) {
+        // simple error feedback
+        alert('Invalid credentials');
+        return;
+      }
+      // cookie is set by server (HttpOnly). Refresh session state.
+      await this.checkSession();
+    } catch (e) {
+      alert('Login failed');
+    }
+  }
+
+  async onLogout() {
+    try {
+      await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+    } catch {}
+    this.isAuthenticated = false;
+    this.username = null;
+    this.closeDashboard();
   }
 
   toggleTheme() {
@@ -232,5 +307,6 @@ export class NavComponent implements AfterViewInit, OnDestroy {
       cancelAnimationFrame(this.scrollAnimationId);
       this.scrollAnimationId = null;
     }
+  if (this.authListener) { try { window.removeEventListener('auth:login', this.authListener); } catch {} }
   }
 }
