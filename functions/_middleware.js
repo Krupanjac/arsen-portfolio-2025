@@ -29,14 +29,21 @@ export async function onRequest({ request, env, next }) {
   // Public routes (login UI + login API) and static assets should be accessible
   // without authentication. Everything else is protected.
   const publicPrefixes = [
-    '/login', // frontend route for LoginComponent
-    '/api/login', // API route if used
-    '/.netlify/functions/login', // Netlify-style function path
-    '/functions/login', // some hosts expose functions under /functions/
-    '/assets',
-    '/projectImg',
-    '/public',
-    '/i18n',
+  '/login', // frontend route for LoginComponent
+  '/api/login', // API route if used
+  '/.netlify/functions/login', // Netlify-style function path
+  '/functions/login', // some hosts expose functions under /functions/
+  '/assets',
+  '/projectImg',
+  '/public',
+  '/i18n',
+  // Make Angular component routes public so users can view the site without auth
+  '/',
+  '/projects',
+  '/work',
+  '/about',
+  '/contact',
+  '/home',
   ];
 
   // Allow requests for common static file extensions (css/js/images/fonts/json/etc.)
