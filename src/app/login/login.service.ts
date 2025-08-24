@@ -6,8 +6,9 @@ import { catchError, throwError } from 'rxjs';
 export class LoginService {
   constructor(private http: HttpClient) {}
 
-  login(username: string, password: string) {
-    const body = { username, password };
+  login(username: string, password: string, turnstileToken: string = '') {
+    const body: any = { username, password };
+    if (turnstileToken) body.turnstile = turnstileToken;
     const opts = { withCredentials: true } as const;
 
     return this.http.post('/api/login', body, opts).pipe(
