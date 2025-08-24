@@ -113,20 +113,19 @@ export async function onRequestOptions({ request }) {
 }
 
 export async function onRequestPost({ request, env }) {
-  const { username, password } = await request.json();
-
-  // Validate Turnstile token
+  // Read body once (avoid double-reading the request stream)
   const bodyJson = await request.json().catch(() => ({}));
-  const turnstileToken = bodyJson?.turnstile || null;
+  const { username, password, turnstile: turnstileToken } = bodyJson;
   if (!turnstileToken) return new Response('Missing turnstile token', { status: 400, headers: corsHeaders(request) });
 
-  // Read Turnstile secret from KV
-  let secret = await env.USERS.get('turnstile:key');
-  if (!secret) return new Response('Turnstile secret not configured', { status: 500, headers: corsHeaders(request) });
+  // Read Turnstile secret from environment binding (from .env / Wrangler)
+  // This expects TURNSTILE_SECRET to be provided to the Worker at deploy/run time.
+  let secret = env.TURNSTILE_SECRET;
+  if (!secret) return new Response('Turnstile secret not configured. Set TURNSTILE_SECRET in environment.', { status: 500, headers: corsHeaders(request) });
 
-  // If secret looks like a bcrypt hash (starts with $2), it cannot be used for Turnstile verification
+  // Defensive check: if the secret looks like a bcrypt hash (unlikely for env), avoid using it
   if (typeof secret === 'string' && secret.startsWith('$2')) {
-    return new Response('Turnstile secret in KV appears to be a bcrypt hash; verification requires plaintext secret stored in KV under "turnstile:key"', { status: 500, headers: corsHeaders(request) });
+    return new Response('Turnstile secret appears to be a bcrypt hash; verification requires the plaintext secret in TURNSTILE_SECRET', { status: 500, headers: corsHeaders(request) });
   }
 
   // Verify with Cloudflare Turnstile
