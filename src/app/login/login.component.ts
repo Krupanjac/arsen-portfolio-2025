@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LoginService } from './login.service';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -18,7 +19,7 @@ export class LoginComponent {
   error: string | null = null;
   success = false;
 
-  constructor(private loginService: LoginService) {}
+  constructor(private loginService: LoginService, private router: Router) {}
 
   submit() {
     this.error = null;
@@ -28,6 +29,12 @@ export class LoginComponent {
       next: (res) => {
         this.loading = false;
         this.success = true;
+        // Navigate to protected admin area after successful login
+        try {
+          this.router.navigate(['/admin']);
+        } catch (e) {
+          // ignore navigation errors here; component will show success state
+        }
       },
       error: (err) => {
         this.loading = false;

@@ -4,6 +4,7 @@ import { WorkComponent } from './work/work.component';
 import { AboutComponent } from './about/about.component';
 import { ContactComponent } from './contact/contact.component';
 import { HomeComponent } from './home/home.component';
+import { AdminComponent } from './admin/admin.component';
 
 export const appRoutes: Routes = [
   { path: '', component: HomeComponent, data: { animation: 'HomePage' } },
@@ -11,5 +12,6 @@ export const appRoutes: Routes = [
   { path: 'work', component: WorkComponent, data: { animation: 'WorkPage' } },
   { path: 'about', component: AboutComponent, data: { animation: 'AboutPage' } },
   { path: 'contact', component: ContactComponent, data: { animation: 'ContactPage' } },
+  { path: 'admin', component: AdminComponent, data: { animation: 'AdminPage' } },
   { path: '**', redirectTo: '' }
 ];
