@@ -60,3 +60,15 @@ export async function onRequestPost({ request, env }) {
 
   return new Response(JSON.stringify({ success: true }), { headers });
 }
+
+// Generic entrypoint: some runtimes invoke `onRequest` instead of method-specific
+// handlers. Dispatch to the method-specific exports to ensure POST/OPTIONS are handled.
+export async function onRequest(context) {
+  const { request } = context;
+  const method = request.method?.toUpperCase();
+
+  if (method === 'OPTIONS') return onRequestOptions(context);
+  if (method === 'POST') return onRequestPost(context);
+
+  return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(request) });
+}
