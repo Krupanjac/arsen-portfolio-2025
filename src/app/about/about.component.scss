@@ -1,8 +1,5 @@
-/* Tailwind migration: only keep custom cursor animation & tooltip pseudo-element */
-.cursor { display:inline-block; width:8px; height:16px; background:#00ff00; margin-left:4px; visibility:hidden; animation:blink 0.5s step-end infinite alternate; user-select:none; }
-.cursor.visible { visibility:visible; }
-@keyframes blink { 50% { opacity:0; } }
-.terminal-output pre { white-space:pre-wrap; word-break:break-word; overflow-wrap:anywhere; }
-.terminal-output .copyable { position:relative; cursor:pointer; text-decoration:underline !important; color:#00ff00; }
-.terminal-output .copyable:hover::after { content:"Click to open / copy"; position:absolute; top:50%; left:100%; transform:translateY(-50%); background:#002200; color:#00ff00; padding:4px 8px; border-radius:3px; font-size:0.75rem; border:1px solid #00ff0080; white-space:nowrap; z-index:50; opacity:1; visibility:visible; }
-.terminal-output .copyable::after { content:""; opacity:0; visibility:hidden; transition:all 0.2s ease; }
+
+/* About component no longer needs local terminal styles.
+	Shared terminal styles (cursor, copy tooltip, terminal colors) are defined in
+	`src/styles.scss` so we avoid duplication. Keep this file intentionally minimal
+	for component-specific overrides only. */
