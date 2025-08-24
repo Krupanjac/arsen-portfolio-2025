@@ -1,11 +1,6 @@
 name = "arsen-portfolio-2025"
 # Tell Cloudflare Pages where the static build artifacts are
 pages_build_output_dir = "dist/arsen-portfolio-2025/browser"
-
-# Pages output
-[build]
-  command = "npm run build"
-  directory = "dist/arsen-portfolio-2025/browser"
   
 # KV namespace binding
 [[kv_namespaces]]
