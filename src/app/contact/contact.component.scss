@@ -1,4 +1,0 @@
-/* Contact component no longer duplicates terminal/cursor styles.
-	Shared terminal styles live in `src/styles.scss`. Keep component SCSS for
-	only per-component layout or overrides. */
-@keyframes blink { 50% { opacity:0; } }
