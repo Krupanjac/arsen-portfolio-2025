@@ -45,9 +45,11 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
     if (typeof document !== 'undefined') {
       try {
         const storedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        this.theme = (storedTheme === 'light' || storedTheme === 'dark') ? storedTheme as any : (prefersDark ? 'dark' : 'light');
+        // Default to dark for first-time visitors (unless user has a stored preference)
+        this.theme = (storedTheme === 'light' || storedTheme === 'dark') ? storedTheme as any : 'dark';
         document.documentElement.setAttribute('data-theme', this.theme);
+        // Persist the chosen default so subsequent visits remain consistent
+        try { localStorage.setItem('theme', this.theme); } catch {}
       } catch {
         document.documentElement.setAttribute('data-theme', this.theme);
       }

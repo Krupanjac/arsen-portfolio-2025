@@ -93,10 +93,15 @@ export class HeroComponent implements OnInit, OnDestroy {
     }
 
   // Added baseVx/baseVy to remember original (cruise) speed for easing after bounces
-  let stars: Array<{ x: number; y: number; radius: number; vx: number; vy: number; baseVx: number; baseVy: number; baseRadius?: number }> = [];
+    // devicePixelRatio aware backing store to keep canvas crisp on high-DPI/mobile displays
+    let dpr = 1;
+    let stars: Array<{ x: number; y: number; radius: number; vx: number; vy: number; baseVx: number; baseVy: number; baseRadius?: number }> = [];
     const createStars = () => {
       stars = [];
-      const starCount = window.innerWidth > 500
+      // use logical (CSS) width/height for star placement; canvas.width/height are physical pixels
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+      const starCount = w > 500
         ? Math.floor(Math.random() * 50 + 100)
         : Math.floor(Math.random() * 40 + 20);
       for (let i = 0; i < starCount; i++) {
@@ -104,8 +109,8 @@ export class HeroComponent implements OnInit, OnDestroy {
         const vy = (Math.random() - 0.5) * 2;
         const r = Math.random() * 1 + 1;
         stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
+          x: Math.random() * w,
+          y: Math.random() * h,
           radius: r,
           baseRadius: r,
           vx,
@@ -117,39 +122,102 @@ export class HeroComponent implements OnInit, OnDestroy {
     };
     // resolve accent color here so event handlers can reuse it; support light theme
     const resolvedAccent = () => {
-      // CSS variable takes precedence
+      // prefer system light theme: force black in light mode
+      const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      if (prefersLight) return '#000000';
+      // CSS variable takes precedence for non-light themes
       const css = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim();
       if (css) return css;
-      // prefer system theme: use black in light mode, purple in dark
-      const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-      return prefersLight ? '#000000' : '#482268';
+      // default for dark/unknown
+      return '#482268';
     };
     let accent = resolvedAccent();
 
     const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // clear using logical size (after ctx transform we'll draw in CSS pixels)
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+      ctx.clearRect(0, 0, w, h);
   // accent color resolved from outer scope; refresh each frame in case theme changes
   accent = resolvedAccent();
   ctx.fillStyle = accent;
-      stars.forEach(star => {
-  ctx.beginPath();
-  ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-  // twinkle by changing globalAlpha slightly per star
-  ctx.save();
-  ctx.globalAlpha = 0.7 + 0.3 * Math.sin(this.twinklePhase + (star.x + star.y) * 0.001);
-  ctx.fill();
-  ctx.restore();
+      // helper: convert #RRGGBB to rgba(r,g,b,a)
+      const hexToRgba = (hex: string, a: number) => {
+        if (!hex) return `rgba(139,92,246,${a})`;
+        // accept #rgb or #rrggbb, with or without leading '#'
+        let h = hex.trim();
+        if (h.charAt(0) === '#') h = h.slice(1);
+        if (/^[0-9a-fA-F]{3}$/.test(h)) {
+          const r = parseInt(h[0] + h[0], 16);
+          const g = parseInt(h[1] + h[1], 16);
+          const b = parseInt(h[2] + h[2], 16);
+          return `rgba(${r},${g},${b},${a})`;
+        }
+        if (/^[0-9a-fA-F]{6}$/.test(h)) {
+          const r = parseInt(h.slice(0, 2), 16);
+          const g = parseInt(h.slice(2, 4), 16);
+          const b = parseInt(h.slice(4, 6), 16);
+          return `rgba(${r},${g},${b},${a})`;
+        }
+        // fallback: if it's already rgb/rgba, try to inject alpha
+        const rgbm = /^rgba?\(([^)]+)\)$/.exec(hex);
+        if (rgbm) {
+          const parts = rgbm[1].split(',').map(p => p.trim());
+          if (parts.length >= 3) {
+            const r = parts[0], g = parts[1], b = parts[2];
+            return `rgba(${r},${g},${b},${a})`;
+          }
+        }
+        // last resort: return a sensible purple-ish fallback
+        return `rgba(139,92,246,${a})`;
+      };
+
+  stars.forEach(star => {
+        const sSpeed = Math.sqrt(star.vx * star.vx + star.vy * star.vy);
+        // Only show a small glow at low speeds; glow ramps up after threshold
+        const sThreshold = 0.5; // speeds below this show minimal glow
+        const sMaxSpeed = 4.0; // speed that maps to max glow
+        const sMinGlow = 0.8; // minimal glow radius
+        const sMaxGlow = 28; // maximal glow radius
+        const sFactor = Math.max(0, Math.min(1, (sSpeed - sThreshold) / (sMaxSpeed - sThreshold)));
+        const sGlowSize = sMinGlow + sFactor * (sMaxGlow - sMinGlow);
+
+        // gradient glow using accent color (fallback handled)
+        const ggrad = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.radius + sGlowSize);
+        const a0 = 0.85 * Math.max(0.3, sFactor); // inner alpha slightly tied to speed for stronger glow when fast
+        const a1 = 0.16 * (0.6 + sFactor * 0.8);
+        const accentInner = /^#([0-9a-fA-F]{6})$/.test(accent) ? hexToRgba(accent, a0) : 'rgba(139,92,246,' + a0 + ')';
+        const accentMid = /^#([0-9a-fA-F]{6})$/.test(accent) ? hexToRgba(accent, a1) : 'rgba(139,92,246,' + a1 + ')';
+        ggrad.addColorStop(0, accentInner);
+        ggrad.addColorStop(0.35, accentMid);
+        ggrad.addColorStop(1, 'rgba(0,0,0,0)');
+
+        // draw additive glow behind star (subtle at normal speeds)
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.fillStyle = ggrad as any;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius + sGlowSize, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // draw star core on top
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.save();
+        ctx.globalAlpha = 0.9 + 0.1 * Math.sin(this.twinklePhase + (star.x + star.y) * 0.001);
+        ctx.fillStyle = accent as any;
+        ctx.fill();
+        ctx.restore();
       });
-      ctx.beginPath();
-      // Apply 0.6 alpha to accent for connecting lines
+  ctx.beginPath();
+      // Apply 0.6 alpha to accent for connecting lines; prefer hex->rgba
       let accentStroke = accent;
-      // If hex, append alpha; else fall back to rgba conversion attempt
-      if (/^#([0-9a-fA-F]{6})$/.test(accent)) {
-        accentStroke = accent + '99';
-      } else if (/^#([0-9a-fA-F]{3})$/.test(accent)) {
-        accentStroke = accent + '99';
+      if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(accent)) {
+        accentStroke = hexToRgba(accent, 0.6);
       } else {
-        accentStroke = 'rgba(139,92,246,0.6)';
+        // try to convert rgb(...) or fallback to purple-ish
+        accentStroke = /^rgba?\(/.test(accent) ? accent.replace(/rgba?\(([^)]+)\)/, (_, inner) => `rgba(${inner.split(',').slice(0,3).join(',')},0.6)`) : 'rgba(139,92,246,0.6)';
       }
       ctx.strokeStyle = accentStroke;
       ctx.lineWidth = 0.3;
@@ -169,6 +237,7 @@ export class HeroComponent implements OnInit, OnDestroy {
       // Draw particles (click bursts)
       this.particles.forEach(p => {
         const alpha = Math.max(0, p.life / 60);
+        // draw simple particle core only (no glow)
         ctx.beginPath();
         ctx.fillStyle = p.color;
         ctx.globalAlpha = alpha;
@@ -180,14 +249,18 @@ export class HeroComponent implements OnInit, OnDestroy {
       // Draw subtle cursor glow when active
       if (this.mouseActive) {
         const g = ctx.createRadialGradient(this.mouseX, this.mouseY, 0, this.mouseX, this.mouseY, 120);
-        g.addColorStop(0, 'rgba(139,92,246,0.18)');
-        g.addColorStop(1, 'rgba(139,92,246,0)');
+        const inner = hexToRgba(accent, 0.18);
+        const outer = hexToRgba(accent, 0);
+        g.addColorStop(0, inner as any);
+        g.addColorStop(1, outer as any);
         ctx.fillStyle = g as any;
         ctx.fillRect(this.mouseX - 120, this.mouseY - 120, 240, 240);
       }
     };
 
     const update = () => {
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
       // advance twinkle
       this.twinklePhase += 0.03;
       stars.forEach(star => {
@@ -212,7 +285,7 @@ export class HeroComponent implements OnInit, OnDestroy {
         // subtle orbital noise for liveliness
         star.vx += (Math.cos((star.x + star.y + this.twinklePhase) * 0.002) - 0.5) * 0.0008;
         star.vy += (Math.sin((star.x + star.y + this.twinklePhase) * 0.002) - 0.5) * 0.0008;
-        // Bounce with clamping (include radius to keep inside viewport)
+    // Bounce with clamping (include radius to keep inside viewport)
   const scrollEnergy = Math.min(Math.abs(this.scrollVelocity), 300); // instantaneous energy (0..300)
   // Saturated scaling: linear earlier, flattens for large scrolls
   // normalized 0..1 then map to multiplier 1..(1+scaleRange)
@@ -224,15 +297,15 @@ export class HeroComponent implements OnInit, OnDestroy {
   if (star.x - star.radius < 0) {
           star.x = star.radius;
           star.vx = Math.min(Math.max(-star.vx * energyFactor, -maxSpeed), maxSpeed);
-        } else if (star.x + star.radius > canvas.width) {
-          star.x = canvas.width - star.radius;
+        } else if (star.x + star.radius > w) {
+          star.x = w - star.radius;
           star.vx = Math.min(Math.max(-star.vx * energyFactor, -maxSpeed), maxSpeed);
         }
         if (star.y - star.radius < 0) {
           star.y = star.radius;
           star.vy = Math.min(Math.max(-star.vy * energyFactor, -maxSpeed), maxSpeed);
-        } else if (star.y + star.radius > canvas.height) {
-          star.y = canvas.height - star.radius;
+        } else if (star.y + star.radius > h) {
+          star.y = h - star.radius;
           star.vy = Math.min(Math.max(-star.vy * energyFactor, -maxSpeed), maxSpeed);
         }
 
@@ -270,8 +343,18 @@ export class HeroComponent implements OnInit, OnDestroy {
     };
 
     this.resizeCanvasFn = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // respect devicePixelRatio for crisp rendering on mobile/retina
+      const newDpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+      dpr = newDpr;
+      // set physical canvas size
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      // set css size to match layout
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      // reset transform and scale context so all drawing uses logical (CSS) coordinates
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // recreate stars so positions match new logical size
       createStars();
     };
     window.addEventListener('resize', this.resizeCanvasFn);
