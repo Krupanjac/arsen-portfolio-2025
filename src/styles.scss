@@ -49,8 +49,15 @@
 /* Global resets and custom styles */
 html, body {
   margin: 0;
-  overflow: scroll;
-  overscroll-behavior: none;
+  /* Allow normal vertical scrolling on mobile/tablet. Use auto so the browser
+    can decide when scrollbars are needed, and enable native momentum scrolling
+    on iOS with -webkit-overflow-scrolling. */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Allow default overscroll behavior (e.g. bounce) so mobile users can scroll.
+    Previously this was set to 'none' which blocked some touch scrolling.
+  */
+  overscroll-behavior: auto;
   background: var(--color-bg);
   background-color: var(--color-bg);
   background-size: cover;

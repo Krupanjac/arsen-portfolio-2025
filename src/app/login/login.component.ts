@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { LoginService } from './login.service';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TerminalTypingDirective } from '../shared/terminal-typing.directive';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, TerminalTypingDirective],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })

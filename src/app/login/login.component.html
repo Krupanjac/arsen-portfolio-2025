@@ -1,25 +1,25 @@
 <div class="login-container">
   <form (ngSubmit)="submit()" class="login-form" autocomplete="on">
-  <h3>{{ 'LOGIN.TITLE' | translate }}</h3>
+  <h3><span appTerminalTyping data-i18n-key="LOGIN.TITLE">{{ 'LOGIN.TITLE' | translate }}</span></h3>
 
     <label>
-  <span>{{ 'LOGIN.USERNAME' | translate }}</span>
+  <span appTerminalTyping data-i18n-key="LOGIN.USERNAME">{{ 'LOGIN.USERNAME' | translate }}</span>
     <input name="username" [(ngModel)]="username" required [disabled]="!turnstileToken || loading" />
     </label>
 
     <label>
-  <span>{{ 'LOGIN.PASSWORD' | translate }}</span>
+  <span appTerminalTyping data-i18n-key="LOGIN.PASSWORD">{{ 'LOGIN.PASSWORD' | translate }}</span>
         <input name="password" type="password" [(ngModel)]="password" required [disabled]="!turnstileToken || loading" />
     </label>
 
-    <button type="submit" [disabled]="!turnstileToken || loading">{{ loading ? ('LOGIN.LOADING' | translate) : ('LOGIN.SIGN_IN' | translate) }}</button>
+    <button type="submit" [disabled]="!turnstileToken || loading"><span appTerminalTyping data-i18n-key="LOGIN.SIGN_IN">{{ loading ? ('LOGIN.LOADING' | translate) : ('LOGIN.SIGN_IN' | translate) }}</span></button>
 
     <div class="status">
-  <p class="success" *ngIf="success">{{ 'LOGIN.SUCCESS' | translate }}</p>
+  <p class="success" *ngIf="success"><span appTerminalTyping data-i18n-key="LOGIN.SUCCESS">{{ 'LOGIN.SUCCESS' | translate }}</span></p>
   <p class="error" *ngIf="error">{{ error }}</p>
     </div>
       <!-- Hint shown when the Turnstile challenge hasn't been completed -->
-      <p class="turnstile-hint" *ngIf="!turnstileToken">{{ 'LOGIN.COMPLETE_CHALLENGE' | translate }}</p>
+      <p class="turnstile-hint" *ngIf="!turnstileToken"><span appTerminalTyping data-i18n-key="LOGIN.COMPLETE_CHALLENGE">{{ 'LOGIN.COMPLETE_CHALLENGE' | translate }}</span></p>
   <!-- Cloudflare Turnstile widget will render into this container -->
   <div id="turnstile-container" style="margin-top:12px;"></div>
   </form>
