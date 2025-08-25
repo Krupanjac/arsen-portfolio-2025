@@ -15,7 +15,7 @@
   <!-- Main Content -->
   <main class="relative z-10 flex flex-col items-start justify-center flex-1 p-4">
     <div class="center-pane mx-auto max-w-4xl w-full px-4">
-      <div class="Ime flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-4xl font-bold sm:text-5xl md:text-7xl text-primary">
+  <div class="Ime flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-4xl font-bold sm:text-5xl md:text-7xl text-primary min-h-[3.5rem] sm:min-h-[4.5rem] md:min-h-[6rem]">
         <!-- "My name is" on its own line on mobile, inline on md+ -->
         <h1 class="text-primary block md:inline">
           <span appTerminalTyping data-i18n-key="HERO.MY_NAME_IS" class="md:whitespace-nowrap">{{ 'HERO.MY_NAME_IS' | translate }}</span>
@@ -26,9 +26,9 @@
           <span id="su_name" class="inline-block">Đurđev</span>
         </h1>
       </div>
-  <h1 class="text-3xl font-bold mt-4 sm:text-5xl text-primary">
-  <span appTerminalTyping data-i18n-key="HERO.TAGLINE">{{ 'HERO.TAGLINE' | translate }}</span>
-      </h1>
+  <h1 class="text-xl italic font-light mt-4 sm:text-3xl text-primary">
+    <span class="inline-block w-full" appTerminalTyping data-i18n-key="HERO.TAGLINE">{{ 'HERO.TAGLINE' | translate }}</span>
+  </h1>
     </div>
   </main>
 </div>
