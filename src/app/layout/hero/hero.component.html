@@ -9,17 +9,21 @@
 <div id="particle-container"></div>
 
 <!-- Responsive container: flex-col on mobile, flex-row on desktop -->
-<div class="relative flex flex-col md:flex-row min-h-[70vh]">
+<div class="relative flex flex-col md:flex-row min-h-[70vh] overflow-hidden">
 
 
   <!-- Main Content -->
   <main class="relative z-10 flex flex-col items-start justify-center flex-1 p-4">
-    <div class="ProzorSredina mx-auto max-w-4xl">
-      <div class="Ime flex items-center gap-6 flex-nowrap text-4xl font-bold sm:text-5xl md:text-7xl text-primary">
-  <h1 class="text-primary whitespace-nowrap"><span appTerminalTyping data-i18n-key="HERO.MY_NAME_IS">{{ 'HERO.MY_NAME_IS' | translate }}</span></h1>
-        <!-- Render full name on a single line to avoid dynamic wrapping on mobile -->
-        <h1 id="su_full" class="text-accent font-bold italic whitespace-nowrap">
-          <span id="su">Arsen&nbsp;</span><span id="su_name">Đurđev</span>
+    <div class="center-pane mx-auto max-w-4xl w-full px-4">
+      <div class="Ime flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-4xl font-bold sm:text-5xl md:text-7xl text-primary">
+        <!-- "My name is" on its own line on mobile, inline on md+ -->
+        <h1 class="text-primary block md:inline">
+          <span appTerminalTyping data-i18n-key="HERO.MY_NAME_IS">{{ 'HERO.MY_NAME_IS' | translate }}</span>
+        </h1>
+        <!-- Full name: stacked on mobile, single-line on md+ -->
+        <h1 id="su_full" class="text-accent font-bold italic block md:inline whitespace-normal md:whitespace-nowrap break-words max-w-full">
+          <span id="su" class="inline-block">Arsen&nbsp;</span>
+          <span id="su_name" class="inline-block">Đurđev</span>
         </h1>
       </div>
   <h1 class="text-3xl font-bold mt-4 sm:text-5xl text-primary">
