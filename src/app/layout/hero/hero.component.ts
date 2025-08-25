@@ -120,16 +120,14 @@ export class HeroComponent implements OnInit, OnDestroy {
         });
       }
     };
-    // resolve accent color here so event handlers can reuse it; support light theme
+    // resolve accent color here so event handlers can reuse it; prefer the site's CSS variable first
     const resolvedAccent = () => {
-      // prefer system light theme: force black in light mode
-      const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-      if (prefersLight) return '#000000';
-      // CSS variable takes precedence for non-light themes
+      // CSS variable takes precedence when present (ensures mobile uses same accent as desktop)
       const css = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim();
       if (css) return css;
-      // default for dark/unknown
-      return '#482268';
+      // fall back to system preference if CSS var is not defined
+      const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      return prefersLight ? '#000000' : '#482268';
     };
     let accent = resolvedAccent();
 
@@ -186,8 +184,8 @@ export class HeroComponent implements OnInit, OnDestroy {
         const ggrad = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.radius + sGlowSize);
         const a0 = 0.85 * Math.max(0.3, sFactor); // inner alpha slightly tied to speed for stronger glow when fast
         const a1 = 0.16 * (0.6 + sFactor * 0.8);
-        const accentInner = /^#([0-9a-fA-F]{6})$/.test(accent) ? hexToRgba(accent, a0) : 'rgba(139,92,246,' + a0 + ')';
-        const accentMid = /^#([0-9a-fA-F]{6})$/.test(accent) ? hexToRgba(accent, a1) : 'rgba(139,92,246,' + a1 + ')';
+  const accentInner = (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(accent)) ? hexToRgba(accent, a0) : 'rgba(139,92,246,' + a0 + ')';
+  const accentMid = (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(accent)) ? hexToRgba(accent, a1) : 'rgba(139,92,246,' + a1 + ')';
         ggrad.addColorStop(0, accentInner);
         ggrad.addColorStop(0.35, accentMid);
         ggrad.addColorStop(1, 'rgba(0,0,0,0)');
