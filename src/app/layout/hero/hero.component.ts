@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
@@ -11,8 +11,11 @@ import { TerminalTypingDirective } from '../../shared/terminal-typing.directive'
   styleUrls: ['./hero.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class HeroComponent implements OnInit, OnDestroy {
+export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   private originalName = 'Đurđev';
+  // per-character animation timeouts so multiple chars can animate independently
+  // store an array of timers per index so restore timers + animation timers can be managed
+  private charTimeouts: Map<number, any[]> = new Map();
   private animationFrameId: number | null = null;
   private randomSymbolsIntervalId: any = null;
   private resizeCanvasFn: (() => void) | null = null;
@@ -42,6 +45,12 @@ export class HeroComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.initializeEffects();
     }, delay);
+  }
+
+  ngAfterViewInit(): void {
+    // ensure DOM is ready before creating per-character spans
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.setupNameSpans();
   }
 
   ngOnDestroy(): void {
@@ -401,23 +410,169 @@ export class HeroComponent implements OnInit, OnDestroy {
 
   // Removed droplet creation & animation methods
 
-  private randomSymbols(): void {
+  private async randomSymbols(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
     const symbols = "!@#$%^&*()-_=+[]{}|;:,.<>?";
-    const suNameEl = document.getElementById('su_name');
-    if (!suNameEl) {
-      return;
-    }
-    const nameArray = this.originalName.split('');
+  const nameChars = Array.from(this.originalName);
+    if (nameChars.length === 0) return;
+    // choose up to 2 distinct indices to scramble
     const indices = new Set<number>();
-    while (indices.size < 2) {
-      indices.add(Math.floor(Math.random() * nameArray.length));
+    const count = Math.min(2, nameChars.length);
+    while (indices.size < count) {
+      indices.add(Math.floor(Math.random() * nameChars.length));
     }
-    indices.forEach(i => {
-      nameArray[i] = symbols[Math.floor(Math.random() * symbols.length)];
+    // Ensure per-char spans exist; if not, create them now so we can animate chars individually
+    const container = document.getElementById('su_name');
+    if (!container) return;
+    const firstSpan = container.querySelector('span[data-index="0"]') as HTMLElement | null;
+    if (!firstSpan) {
+      // create spans on-demand (covers race conditions where ngAfterViewInit didn't run or DOM was replaced)
+      this.setupNameSpans();
+    }
+
+    // Animate chosen indices sequentially left-to-right so cursor spawns on one char at a time
+    let anyAnimated = false;
+    const selected = Array.from(indices.values()).sort((a, b) => a - b);
+
+    // Restore any other spans that are currently not matching original immediately
+    // Do NOT animate these restores (no cursor) so only the sequential animations show the cursor.
+    const spans = container.querySelectorAll('span[data-index]');
+    spans.forEach(s => {
+      const idx = Number(s.getAttribute('data-index'));
+      if (!selected.includes(idx)) {
+        const orig = nameChars[idx];
+        if ((s.textContent || '') !== orig) {
+          // clear any pending timers for this index
+          const prev = this.charTimeouts.get(idx);
+          if (prev && Array.isArray(prev)) {
+            prev.forEach(t => clearTimeout(t));
+            this.charTimeouts.delete(idx);
+          }
+          // instant restore without cursor
+          (s as HTMLElement).textContent = orig;
+        }
+      }
     });
-    suNameEl.textContent = nameArray.join('');
+
+    // Sequentially animate selected indices to scrambled symbols with a small stagger
+    const holdDuration = 1600; // ms to hold scrambled symbol before restoring sequence
+    const staggerMs = 180; // ms between starting each char animation
+    for (const i of selected) {
+      const sym = symbols[Math.floor(Math.random() * symbols.length)];
+      const span = container.querySelector(`span[data-index="${i}"]`) as HTMLElement | null;
+      if (span) {
+        anyAnimated = true;
+        // await per-char animation so cursor appears only on this char
+        await this.animateCharChange(i, sym);
+        // small stagger before moving to next char to make the cursor movement visible
+        await new Promise(r => setTimeout(r, staggerMs));
+      }
+    }
+
+    // If any were animated, wait a bit then sequentially restore them back to original (left-to-right)
+    if (anyAnimated) {
+      await new Promise(resolve => setTimeout(resolve, holdDuration));
+      for (const i of selected) {
+        const span = container.querySelector(`span[data-index="${i}"]`) as HTMLElement | null;
+        if (span) {
+          await this.animateCharChange(i, nameChars[i]);
+          await new Promise(r => setTimeout(r, staggerMs));
+        }
+      }
+    } else {
+      // fallback: if for some reason no spans could be animated, update textContent quickly
+      const arr = nameChars.slice();
+      indices.forEach(i => arr[i] = symbols[Math.floor(Math.random() * symbols.length)]);
+      container.textContent = arr.join('');
+    }
+  }
+
+  // Build per-character spans inside #su_name so each char can be animated independently
+  private setupNameSpans(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const container = document.getElementById('su_name');
+    if (!container) return;
+    const chars = Array.from(this.originalName);
+    // create spans for each char; include zero-width joiners implicitly supported
+    container.innerHTML = '';
+    chars.forEach((ch, idx) => {
+      const span = document.createElement('span');
+      span.className = 'su-char inline-block';
+      span.setAttribute('data-index', String(idx));
+      // preserve special characters correctly
+      span.textContent = ch;
+      container.appendChild(span);
+    });
+  }
+
+  // Animate a single character change with a terminal cursor.
+  // This reuses the project's .tt-cursor styling and performs a small erase+type sequence.
+  private animateCharChange(index: number, targetChar: string, speedMs = 140): Promise<void> {
+  if (!isPlatformBrowser(this.platformId)) return Promise.resolve();
+  const container = document.getElementById('su_name');
+  if (!container) return Promise.resolve();
+  const span = container.querySelector(`span[data-index="${index}"]`) as HTMLElement | null;
+  if (!span) return Promise.resolve();
+
+    // clear any previous timeouts for this char (array of timers)
+    const prevArr = this.charTimeouts.get(index);
+    if (prevArr && Array.isArray(prevArr)) {
+      prevArr.forEach(t => clearTimeout(t));
+      this.charTimeouts.delete(index);
+    }
+
+    // helper to remove a single timer id from map
+    const removeTimer = (idx: number, id: number | any) => {
+      const arr = this.charTimeouts.get(idx) || [];
+      const pos = arr.indexOf(id);
+      if (pos >= 0) arr.splice(pos, 1);
+      if (arr.length) this.charTimeouts.set(idx, arr);
+      else this.charTimeouts.delete(idx);
+    };
+
+  // make the cursor visible and pauses long enough to notice
+  // eraseSpeed controls how long the cursor-only phase lasts
+  // typePause controls how long the cursor remains after the character appears
+  const eraseSpeed = Math.max(120, Math.floor(speedMs));
+  const typePause = Math.max(500, Math.floor(speedMs * 4));
+
+    // ensure cursor has a visible background in case the CSS variable isn't defined
+    const cssVar = (typeof window !== 'undefined') ? getComputedStyle(document.documentElement).getPropertyValue('--color-terminal-directive').trim() : '';
+    const cursorBg = cssVar || '#ffffff';
+    const cursorHtml = `<span class="tt-cursor" style="background:${cursorBg}">&nbsp;</span>`;
+
+    // Step 1: show only cursor
+    span.innerHTML = cursorHtml;
+
+    // Return a promise that resolves when the animation completes
+    return new Promise<void>((resolve) => {
+      // Step 2: after a short erase delay, type the target char with cursor
+      const t1 = window.setTimeout(() => {
+        span.innerHTML = `${this.escapeHtml(targetChar)}${cursorHtml}`;
+        // Step 3: remove cursor after a short pause
+        const t2 = window.setTimeout(() => {
+          span.textContent = targetChar;
+          // remove t2 and t1 from the timers map for this index
+          removeTimer(index, t2);
+          removeTimer(index, t1);
+          resolve();
+        }, typePause);
+        // push t2 into the map
+        const arr2 = this.charTimeouts.get(index) || [];
+        arr2.push(t2);
+        this.charTimeouts.set(index, arr2);
+      }, eraseSpeed);
+      // push t1 into the map
+      const arr1 = this.charTimeouts.get(index) || [];
+      arr1.push(t1);
+      this.charTimeouts.set(index, arr1);
+    });
+  }
+
+  // minimal html escaper for single-character targets
+  private escapeHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 }
