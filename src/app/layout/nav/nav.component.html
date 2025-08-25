@@ -87,9 +87,10 @@
 </header>
 
   <!-- Dashboard overlay (modal) -->
-  <div *ngIf="isDashboardOpen" class="fixed inset-0 z-60 flex items-start justify-center pt-20 bg-black/50">
-    <div class="w-full max-w-md mx-4 bg-surface rounded-lg p-6 shadow-lg border border-muted">
-      <button class="ml-auto mb-2 text-sm text-secondary" (click)="closeDashboard()">✕</button>
+  <div *ngIf="isDashboardOpen" class="fixed inset-0 z-60 flex items-start justify-center pt-20 bg-black/50" (click)="closeDashboard()">
+    <div class="w-full max-w-md mx-4 bg-surface rounded-lg p-6 shadow-lg border border-muted relative" (click)="$event.stopPropagation()">
+      <!-- moved close button to top-right and made it absolute so it doesn't affect layout -->
+      <button aria-label="Close" class="absolute top-3 right-3 text-sm text-secondary hover:opacity-90" (click)="closeDashboard()">✕</button>
 
       <div *ngIf="!isAuthenticated">
         <app-login></app-login>

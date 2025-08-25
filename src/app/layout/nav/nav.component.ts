@@ -30,6 +30,7 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
   private isUserInteracting = false;
   theme: 'light' | 'dark' = 'dark';
   private authListener: ((ev: Event) => void) | null = null;
+  private keydownListener: ((ev: KeyboardEvent) => void) | null = null;
   private _savedScrollY = 0;
 
   toggleNav(): void {
@@ -68,15 +69,38 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
     this.isDashboardOpen = !this.isDashboardOpen;
     if (this.isDashboardOpen) {
       await this.checkSession();
-      this.lockScroll();
+  this.lockScroll();
+  this.attachModalListeners();
     } else {
-      this.unlockScroll();
+  this.unlockScroll();
+  this.detachModalListeners();
     }
   }
 
   closeDashboard() {
     this.isDashboardOpen = false;
     this.unlockScroll();
+    this.detachModalListeners();
+  }
+
+  private attachModalListeners() {
+    try {
+      this.keydownListener = (ev: KeyboardEvent) => {
+        if (ev.key === 'Escape' || ev.key === 'Esc') {
+          this.closeDashboard();
+        }
+      };
+      window.addEventListener('keydown', this.keydownListener);
+    } catch {}
+  }
+
+  private detachModalListeners() {
+    try {
+      if (this.keydownListener) {
+        window.removeEventListener('keydown', this.keydownListener);
+        this.keydownListener = null;
+      }
+    } catch {}
   }
 
   async checkSession() {
