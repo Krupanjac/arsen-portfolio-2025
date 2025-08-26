@@ -49,4 +49,4 @@ Allow: /projectImg/
 Allow: /i18n/
 
 # Sitemap
-Sitemap: https://krupanjac.pages.dev/sitemap.xml
+Sitemap: https://krupanjac.dev/sitemap.xml
