@@ -104,6 +104,14 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async checkSession() {
+    // During server-side rendering there's no window/global fetch base URL,
+    // calling fetch with a relative path will throw. Skip session check on SSR.
+    if (typeof window === 'undefined') {
+      this.isAuthenticated = false;
+      this.username = null;
+      return;
+    }
+
     try {
       const res = await fetch('/api/session', { credentials: 'include' });
       if (!res.ok) {
