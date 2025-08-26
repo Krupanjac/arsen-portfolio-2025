@@ -10,5 +10,6 @@ import { CommonModule } from '@angular/common';
 })
 export class RailComponent {
   // Optional input to allow passing a class for the inner text
-  @Input() textClass = 'text-xl whitespace-nowrap text-primary';
+  // default: white on mobile, primary on sm+ (mobile-first Tailwind)
+  @Input() textClass = 'text-xl whitespace-nowrap text-white sm:text-primary';
 }

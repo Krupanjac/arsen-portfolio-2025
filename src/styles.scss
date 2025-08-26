@@ -16,7 +16,7 @@
   --color-border-strong: rgba(0,0,0,0.24);
   /* Strong readable text (avoid mid-grays on white) */
   --color-text: #0b1220; /* very dark navy/near-black */
-  --color-text-muted: #1f2937; /* darker muted (still readable on white) */
+  --color-text-muted: #e2e8f0; /* darker muted (still readable on white) */
   --color-text-faint: #334155; /* subtle but darker than previous grays */
   --color-accent: #482268; /* brand purple */
   --color-accent-rgb: 72 34 104;
@@ -36,8 +36,8 @@
   --color-border: #2a3141;
   --color-border-strong: #3a4557;
   --color-text: #e2e8f0;
-  --color-text-muted: #94a3b8;
-  --color-text-faint: #64748b;
+  --color-text-muted: #e2e8f0;
+  --color-text-faint: #b6b6b6;
   --color-accent: #8b5cf6;
   --color-accent-rgb: 139 92 246;
   --color-accent-alt: #a78bfa;
@@ -118,12 +118,12 @@ a{
 /* Light theme: strong black divider for maximum contrast */
 :root:not([data-theme='dark']) .rail-separator { border-color: rgba(0,0,0,0.85) !important; opacity: 1; }
 /* Dark theme: subtle whitish divider */
-:root[data-theme='dark'] .rail-separator { border-color: rgba(255,255,255,0.12) !important; opacity: 1; }
+:root[data-theme='dark'] .rail-separator { border-color: rgba(255, 255, 255, 0.644) !important; opacity: 1; }
 
 /* Map old utility usages ONLY in dark mode (keep default Tailwind palette in light) */
-:root[data-theme='dark'] .text-gray-800,
+:root[data-theme='dark'] .text-white,
 :root[data-theme='dark'] .text-black { color: var(--color-text) !important; }
-:root[data-theme='dark'] .text-gray-600,
+:root[data-theme='dark'] .text-white,
 :root[data-theme='dark'] .text-black\/70 { color: var(--color-text-muted) !important; }
 :root[data-theme='dark'] .text-black\/90 { color: var(--color-text) !important; }
 :root[data-theme='dark'] .border-black,
