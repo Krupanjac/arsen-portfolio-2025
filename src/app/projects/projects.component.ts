@@ -4,6 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../shared/terminal-typing.directive';
 import { RailComponent } from '../layout/rail/rail.component';
 import { BlogService, BlogPost } from '../blog.service';
+import { BlogModalComponent } from '../blog-modal/blog-modal.component';
 import { isPlatformBrowser } from '@angular/common';
 
 interface Project {
@@ -15,7 +16,7 @@ interface Project {
 @Component({
   selector: 'app-projects',
   standalone: true, // Standalone component
-  imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective], // <-- Add CommonModule here
+  imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective, BlogModalComponent], // <-- Add CommonModule here
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss']
 })
@@ -23,6 +24,8 @@ export class ProjectsComponent implements OnInit {
   // Static placeholders removed — populate this array from a service or content source instead.
   projects: Project[] = [];
   blogPosts: BlogPost[] = [];
+  selectedPost: BlogPost | null = null;
+  modalVisible: boolean = false;
 
   constructor(private blogService: BlogService, @Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -37,5 +40,15 @@ export class ProjectsComponent implements OnInit {
     this.blogService.list().subscribe(posts => {
       this.blogPosts = posts.filter(post => post.category === 'project');
     });
+  }
+
+  openModal(post: BlogPost): void {
+    this.selectedPost = post;
+    this.modalVisible = true;
+  }
+
+  closeModal(): void {
+    this.modalVisible = false;
+    this.selectedPost = null;
   }
 }

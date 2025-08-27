@@ -4,6 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../shared/terminal-typing.directive';
 import { RailComponent } from '../layout/rail/rail.component';
 import { BlogService, BlogPost } from '../blog.service';
+import { BlogModalComponent } from '../blog-modal/blog-modal.component';
 import { isPlatformBrowser } from '@angular/common';
 
 interface WorkItem {
@@ -15,7 +16,7 @@ interface WorkItem {
 @Component({
   selector: 'app-work',
   standalone: true,
-  imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective],
+  imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective, BlogModalComponent],
   templateUrl: './work.component.html',
   styleUrls: ['./work.component.scss']
 })
@@ -23,6 +24,8 @@ export class WorkComponent implements OnInit {
   // Static placeholders removed — populate this array from a service or content source instead.
   workItems: WorkItem[] = [];
   blogPosts: BlogPost[] = [];
+  selectedPost: BlogPost | null = null;
+  modalVisible: boolean = false;
 
   constructor(private blogService: BlogService, @Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -37,5 +40,15 @@ export class WorkComponent implements OnInit {
     this.blogService.list().subscribe(posts => {
       this.blogPosts = posts.filter(post => post.category === 'work');
     });
+  }
+
+  openModal(post: BlogPost): void {
+    this.selectedPost = post;
+    this.modalVisible = true;
+  }
+
+  closeModal(): void {
+    this.modalVisible = false;
+    this.selectedPost = null;
   }
 }
