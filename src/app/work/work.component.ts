@@ -18,10 +18,6 @@ interface WorkItem {
   styleUrls: ['./work.component.scss']
 })
 export class WorkComponent {
-  workItems: WorkItem[] = [
-    { link: 'https://github.com/Krupanjac/SFML-2DMK', img: 'assets/ProjectImg/4.png', alt: 'Work 1' },
-    { link: 'https://github.com/Krupanjac/SFML-snake-game', img: 'assets/ProjectImg/1.png', alt: 'Work 2' },
-    { link: 'https://github.com/Krupanjac/SFML-flappy-bird', img: 'assets/ProjectImg/2.png', alt: 'Work 3' },
-    // ... add more items as needed.
-  ];
+  // Static placeholders removed — populate this array from a service or content source instead.
+  workItems: WorkItem[] = [];
 }
