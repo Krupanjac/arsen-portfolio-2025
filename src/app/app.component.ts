@@ -13,6 +13,8 @@ import { HomeComponent } from './home/home.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { WorkComponent } from './work/work.component';
 import { AboutComponent } from './about/about.component';
+import { PlayStateService } from './play-state.service';
+import { PlayButtonComponent } from './layout/play-button/play-button.component';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +29,8 @@ import { AboutComponent } from './about/about.component';
     HomeComponent,
     ProjectsComponent,
     WorkComponent,
-  AboutComponent
+  AboutComponent,
+  PlayButtonComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -43,8 +46,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private isBrowser: boolean;
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) platformId: Object, private playStateService: PlayStateService) {
     this.isBrowser = isPlatformBrowser(platformId);
+  }
+
+  get playState(): PlayStateService {
+    return this.playStateService;
   }
 
   ngOnInit(): void {
@@ -77,6 +84,10 @@ export class AppComponent implements OnInit, OnDestroy {
       clearTimeout(this.fallbackTimeoutId);
       this.fallbackTimeoutId = null;
     }
+  }
+
+  stopPlaying() {
+    this.playStateService.isPlaying = false;
   }
 
   ngOnDestroy(): void {

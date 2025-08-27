@@ -1,17 +1,19 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ViewEncapsulation, Input } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [TranslateModule, TerminalTypingDirective],
+  imports: [CommonModule, TranslateModule, TerminalTypingDirective],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
+  @Input() showOnlyBackground: boolean = false;
   private originalName = 'Đurđev';
   // per-character animation timeouts so multiple chars can animate independently
   // store an array of timers per index so restore timers + animation timers can be managed
