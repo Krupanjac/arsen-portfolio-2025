@@ -1,12 +1,5 @@
-<!-- Background Canvas -->
-<canvas
-  id="canvas"
-  class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
-></canvas>
-<!-- Custom cursor removed -->
-
-<!-- (Optional) Particle container -->
-<div id="particle-container"></div>
+<!-- Background Component -->
+<app-background></app-background>
 
 <!-- Responsive container: flex-col on mobile, flex-row on desktop -->
 <div *ngIf="!showOnlyBackground" class="relative flex flex-col md:flex-row min-h-[70vh] overflow-hidden">
