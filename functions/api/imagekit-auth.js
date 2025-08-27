@@ -31,7 +31,7 @@ export async function onRequestPost(context) {
     const array = new Uint8Array(16);
     crypto.getRandomValues(array);
     const imagekitToken = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-    const expire = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
+    const expire = Math.floor(Date.now() / 1000) + 3000; // 50 minutes from now (less than 1 hour)
 
     // Create signature: HMAC-SHA1 of (token + expire) using private key
     const encoder = new TextEncoder();
