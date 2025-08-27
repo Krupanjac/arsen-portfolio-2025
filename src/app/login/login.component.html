@@ -1,25 +1,25 @@
 <div class="flex justify-center p-2">
-  <form (ngSubmit)="submit()" class="inline-flex flex-col items-stretch w-auto min-w-[280px] max-w-full p-4 rounded-lg bg-white bg-opacity-[0.02] gap-2" autocomplete="on">
+  <form (ngSubmit)="submit()" class="inline-flex flex-col items-stretch w-auto min-w-[280px] max-w-full p-4 rounded-lg bg-surface gap-2" autocomplete="on">
   <h3><span appTerminalTyping data-i18n-key="LOGIN.TITLE">{{ 'LOGIN.TITLE' | translate }}</span></h3>
 
     <label class="flex flex-col text-sm">
   <span appTerminalTyping data-i18n-key="LOGIN.USERNAME">{{ 'LOGIN.USERNAME' | translate }}</span>
-    <input name="username" [(ngModel)]="username" required [disabled]="!turnstileToken || loading" class="p-1 rounded border border-white border-opacity-10 box-border w-full" />
+    <input name="username" [(ngModel)]="username" required [disabled]="!turnstileToken || loading" class="p-1 rounded border border-base box-border w-full bg-surface" />
     </label>
 
     <label class="flex flex-col text-sm">
   <span appTerminalTyping data-i18n-key="LOGIN.PASSWORD">{{ 'LOGIN.PASSWORD' | translate }}</span>
-        <input name="password" type="password" [(ngModel)]="password" required [disabled]="!turnstileToken || loading" class="p-1 rounded border border-white border-opacity-10 box-border w-full" />
+        <input name="password" type="password" [(ngModel)]="password" required [disabled]="!turnstileToken || loading" class="p-1 rounded border border-base box-border w-full bg-surface" />
     </label>
 
-    <button type="submit" [disabled]="!turnstileToken || loading" class="p-2 rounded-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"><span appTerminalTyping data-i18n-key="LOGIN.SIGN_IN">{{ loading ? ('LOGIN.LOADING' | translate) : ('LOGIN.SIGN_IN' | translate) }}</span></button>
+    <button type="submit" [disabled]="!turnstileToken || loading" class="p-2 rounded-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed bg-accent text-white hover:bg-accent/90 transition-colors"><span appTerminalTyping data-i18n-key="LOGIN.SIGN_IN">{{ loading ? ('LOGIN.LOADING' | translate) : ('LOGIN.SIGN_IN' | translate) }}</span></button>
 
     <div class="status">
-  <p class="text-blue-300" *ngIf="success"><span appTerminalTyping data-i18n-key="LOGIN.SUCCESS">{{ 'LOGIN.SUCCESS' | translate }}</span></p>
+  <p class="text-accent" *ngIf="success"><span appTerminalTyping data-i18n-key="LOGIN.SUCCESS">{{ 'LOGIN.SUCCESS' | translate }}</span></p>
   <p class="text-red-400" *ngIf="error">{{ error }}</p>
     </div>
       <!-- Hint shown when the Turnstile challenge hasn't been completed -->
-      <p class="text-xs text-white text-opacity-60 m-0" *ngIf="!turnstileToken"><span appTerminalTyping data-i18n-key="LOGIN.COMPLETE_CHALLENGE">{{ 'LOGIN.COMPLETE_CHALLENGE' | translate }}</span></p>
+      <p class="text-xs text-secondary m-0" *ngIf="!turnstileToken"><span appTerminalTyping data-i18n-key="LOGIN.COMPLETE_CHALLENGE">{{ 'LOGIN.COMPLETE_CHALLENGE' | translate }}</span></p>
   <!-- Cloudflare Turnstile widget will render into this container -->
   <div id="turnstile-container" class="overflow-hidden box-border flex justify-center w-full mt-3"></div>
   </form>

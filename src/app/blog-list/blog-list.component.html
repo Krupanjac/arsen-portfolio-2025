@@ -1,15 +1,15 @@
 <div class="p-4">
-  <h2>Blog</h2>
-  <div *ngIf="loading">Loading...</div>
-  <div *ngIf="!loading && posts.length === 0">No posts yet.</div>
+  <h2 class="text-primary">Blog</h2>
+  <div class="text-secondary" *ngIf="loading">Loading...</div>
+  <div class="text-secondary" *ngIf="!loading && posts.length === 0">No posts yet.</div>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" *ngIf="!loading">
-    <div *ngFor="let p of posts" class="bg-white p-4 border rounded">
-      <h3 class="font-semibold">{{p.title}}</h3>
-      <p class="text-sm text-muted">{{p.description}}</p>
+    <div *ngFor="let p of posts" class="bg-surface p-4 border border-base rounded">
+      <h3 class="font-semibold text-primary">{{p.title}}</h3>
+      <p class="text-sm text-secondary">{{p.description}}</p>
       <div *ngIf="p.images?.length" class="mt-2">
         <img [src]="p.images && p.images[0]" alt="" class="w-full h-36 object-cover rounded" />
       </div>
-      <div class="mt-2 text-xs text-secondary">Tags: {{p.tags?.join(', ')}}</div>
+      <div class="mt-2 text-xs text-faint">Tags: {{p.tags?.join(', ')}}</div>
     </div>
   </div>
 </div>

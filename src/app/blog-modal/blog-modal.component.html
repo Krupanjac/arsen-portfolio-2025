@@ -1,8 +1,8 @@
 <!-- Blog Modal Overlay -->
 <div class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex justify-center items-center z-50 p-5" *ngIf="visible" @modalAnimation (click)="onOverlayClick($event)">
-  <div class="bg-white border border-gray-300 rounded-lg p-4 sm:p-6 max-w-[95vw] sm:max-w-[90vw] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative box-shadow-xl" (click)="$event.stopPropagation()">
+  <div class="bg-surface border border-base rounded-lg p-4 sm:p-6 max-w-[95vw] sm:max-w-[90vw] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative box-shadow-xl" (click)="$event.stopPropagation()">
     <!-- Close button -->
-    <button class="absolute top-3 right-3 bg-transparent border-none text-gray-500 cursor-pointer p-2 rounded hover:text-gray-700 hover:bg-gray-100 transition-colors z-10" (click)="close()" aria-label="Close modal">
+    <button class="absolute top-3 right-3 bg-transparent border-none text-secondary cursor-pointer p-2 rounded hover:text-primary hover:bg-surface-alt transition-colors z-10" (click)="close()" aria-label="Close modal">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -10,7 +10,7 @@
     </button>
 
     <!-- Post title -->
-    <h2 class="text-lg sm:text-xl font-semibold text-gray-900 mb-5 pr-8 sm:pr-10">{{ post?.title }}</h2>
+    <h2 class="text-lg sm:text-xl font-semibold text-primary mb-5 pr-8 sm:pr-10">{{ post?.title }}</h2>
 
     <!-- Image display -->
     <div class="relative mb-5" *ngIf="post?.images && post!.images!.length > 0">
@@ -46,8 +46,8 @@
       <div class="flex justify-center gap-2 mt-2.5" *ngIf="post!.images!.length > 1">
         <button
           *ngFor="let image of post!.images!; let i = index"
-          class="w-2 h-2 rounded-full border-none bg-gray-300 cursor-pointer transition-colors hover:bg-gray-400"
-          [class.bg-blue-500]="i === currentImageIndex"
+          class="w-2 h-2 rounded-full border-none border-base cursor-pointer transition-colors hover:border-strong"
+          [class.bg-accent]="i === currentImageIndex"
           (click)="goToImage(i)"
           [attr.aria-label]="'Go to image ' + (i + 1)">
         </button>
@@ -56,17 +56,17 @@
 
     <!-- Post description -->
     <div class="mb-4" *ngIf="post?.description">
-      <p class="text-gray-600 leading-relaxed m-0">{{ post!.description }}</p>
+      <p class="text-secondary leading-relaxed m-0">{{ post!.description }}</p>
     </div>
 
     <!-- Post tags -->
     <div class="flex flex-wrap gap-2 mb-4" *ngIf="post?.tags && post!.tags!.length > 0">
-      <span *ngFor="let tag of post!.tags!" class="bg-blue-500 text-white px-2 py-1 rounded text-sm">{{ tag }}</span>
+      <span *ngFor="let tag of post!.tags!" class="bg-accent text-white px-2 py-1 rounded text-sm">{{ tag }}</span>
     </div>
 
     <!-- Post date -->
     <div class="text-right" *ngIf="post?.created_at">
-      <p class="text-gray-400 text-sm m-0">{{ post!.created_at | date:'mediumDate' }}</p>
+      <p class="text-faint text-sm m-0">{{ post!.created_at | date:'mediumDate' }}</p>
     </div>
   </div>
 </div>
