@@ -31,10 +31,18 @@ export async function onRequest({ request, env, next }) {
   const staticExtRegex = /\.(css|js|mjs|png|jpg|jpeg|gif|svg|ico|webp|json|woff2?|ttf|map)$/i;
 
   // If the request targets a public prefix or a static asset, skip auth.
-  if (
-    publicPrefixes.some(p => pathname === p || pathname.startsWith(p + '/')) ||
-    staticExtRegex.test(pathname)
-  ) {
+  if (staticExtRegex.test(pathname)) {
+    return next();
+  }
+
+  // Allow unauthenticated GET requests for the public posts listing and single-post fetch.
+  // Mutating methods (POST/PUT/DELETE) under /api/posts must be authenticated.
+  if (pathname.startsWith('/api/posts')) {
+    if (request.method?.toUpperCase() === 'GET') return next();
+    // otherwise fall through and require auth
+  }
+
+  if (publicPrefixes.some(p => pathname === p || pathname.startsWith(p + '/'))) {
     return next();
   }
 

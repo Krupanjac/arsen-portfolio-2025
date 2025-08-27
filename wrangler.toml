@@ -1,3 +1,5 @@
+# Compatibility date for Workers runtime (set to today's date to match local dev warnings)
+compatibility_date = "2025-08-27"
 name = "arsen-portfolio-2025"
 # Tell Cloudflare Pages where the static build artifacts are
 pages_build_output_dir = "dist/arsen-portfolio-2025/browser"
@@ -10,3 +12,11 @@ id = "acb99670456648b9b5e97aadc7d83a72"  # your KV namespace ID
 # Environment variables
 [vars]
 JWT_SECRET = "eb9gOdrAT54mGgcgu4W2rjqoj2mkMAmB"
+TURNSTILE_SECRET = "0x4AAAAAABulTleFysaWFhKpDCmGJtF3spU"
+
+# D1 binding for the "portfolio" database. Set the id and database_name as provided by Cloudflare.
+[[d1_databases]]
+binding = "PORTFOLIO" # use env.PORTFOLIO in worker code
+database_name = "portfolio"
+# Cloudflare D1 database id (use the value from the D1 dashboard)
+database_id = "d6db3ff2-18c0-4cc5-989a-569e1e6f3990"

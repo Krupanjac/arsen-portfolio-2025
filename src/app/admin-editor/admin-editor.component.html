@@ -1,0 +1,37 @@
+<div class="admin-editor-root">
+  <div class="controls mb-4">
+    <button (click)="newPost()" class="btn">New post</button>
+    <button (click)="initDb()" class="btn">Init DB</button>
+  </div>
+
+  <div class="posts-list">
+    <div *ngFor="let p of posts" class="post-row border p-2 mb-2 rounded">
+      <div class="flex justify-between">
+        <div>
+          <div class="font-semibold">{{p.title}}</div>
+          <div class="text-xs text-secondary">Tags: {{p.tags?.join(', ')}}</div>
+        </div>
+        <div>
+          <button (click)="edit(p)" class="btn small">Edit</button>
+          <button (click)="remove(p.id)" class="btn small danger">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="editing" class="editor mt-4 p-4 border rounded">
+    <label>Title</label>
+    <input [(ngModel)]="editing.title" class="w-full p-2 border rounded mb-2" />
+    <label>Description</label>
+    <textarea [(ngModel)]="editing.description" class="w-full p-2 border rounded mb-2"></textarea>
+  <label>Tags (comma separated)</label>
+  <input [(ngModel)]="tagsText" class="w-full p-2 border rounded mb-2" />
+  <label>Images (comma separated URLs)</label>
+  <input [(ngModel)]="imagesText" class="w-full p-2 border rounded mb-2" />
+
+    <div class="flex gap-2">
+      <button (click)="save()" class="btn">Save</button>
+      <button (click)="editing = null" class="btn">Cancel</button>
+    </div>
+  </div>
+</div>
