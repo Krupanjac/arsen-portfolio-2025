@@ -1,6 +1,36 @@
 import { getTokenFromRequest, unauthorizedJSON, forbiddenJSON, jsonOK } from './_auth.js';
 import { verifyJWT } from './login.js';
 
+// Function to initialize the database if the posts table doesn't exist
+async function initializeDatabase(env) {
+  try {
+    // Check if posts table exists
+    const tableCheck = await env.PORTFOLIO.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='posts'").first();
+    if (!tableCheck) {
+      // Posts table missing — create it
+      // Hardcoded SQL to create the table
+      const sql = `-- SQL to create posts table for Cloudflare D1
+CREATE TABLE IF NOT EXISTS posts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  description TEXT,
+  tags TEXT, -- JSON array
+  images TEXT, -- JSON array of image URLs
+  category TEXT, -- 'project' or 'work'
+  created_by TEXT,
+  updated_by TEXT,
+  created_at INTEGER,
+  updated_at INTEGER
+);`;
+  await env.PORTFOLIO.prepare(sql).run();
+    } else {
+      console.log('Posts table already exists');
+    }
+  } catch (e) {
+    console.error('Error initializing database:', e);
+  }
+}
+
 function corsHeaders(request) {
   const origin = request.headers.get('Origin') || '*';
   return {
@@ -11,7 +41,8 @@ function corsHeaders(request) {
   };
 }
 
-export async function onRequestOptions({ request }) {
+export async function onRequestOptions({ request, env }) {
+  await initializeDatabase(env);
   return new Response(null, { status: 204, headers: corsHeaders(request) });
 }
 
@@ -26,40 +57,34 @@ async function requireAuth(request, env) {
 // run SQL from file to initialize DB
 export async function onRequestPost(context) {
   const { request, env } = context;
+  await initializeDatabase(env);
   const url = new URL(request.url);
-  // support /api/posts/init to run schema
-  if (url.pathname.endsWith('/init')) {
-    // Only allow when called by an authenticated user
-    const payload = await requireAuth(request, env);
-    if (!payload) return unauthorizedJSON();
 
-    // read SQL file bundled under functions/db/init_posts.sql
-    try {
-      const sql = await (await fetch(new URL('../db/init_posts.sql', import.meta.url))).text();
-      await env.PORTFOLIO.prepare(sql).run();
-      return jsonOK({ success: true });
-    } catch (e) {
-      return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
-    }
+  // support /api/posts/init to run schema
+  if (url.pathname === '/api/posts/init' || url.pathname.endsWith('/posts/init')) {
+    await initializeDatabase(env);
+    return jsonOK({ success: true });
   }
 
   // create post when POST to /api/posts
   if (url.pathname.endsWith('/posts') || url.pathname.endsWith('/posts/')) {
+  // create post
     const payload = await requireAuth(request, env);
     if (!payload) return unauthorizedJSON();
 
     const body = await request.json().catch(() => ({}));
-    const { title, description, tags, images } = body;
+    const { title, description, tags, images, category } = body;
     if (!title) return new Response(JSON.stringify({ error: 'Missing title' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 
     try {
       const now = Math.floor(Date.now() / 1000);
       const res = await env.PORTFOLIO.prepare(
-        `INSERT INTO posts (title, description, tags, images, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?)`
-      ).bind(title, description || null, JSON.stringify(tags || []), JSON.stringify(images || []), payload.username, now).run();
+        `INSERT INTO posts (title, description, tags, images, category, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
+      ).bind(title, description || null, JSON.stringify(tags || []), JSON.stringify(images || []), category || null, payload.username, now).run();
 
       return jsonOK({ success: true, insertedId: res.lastInsertRowid || null });
     } catch (e) {
+      console.error('Database error:', e);
       return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
   }
@@ -68,6 +93,7 @@ export async function onRequestPost(context) {
 }
 
 export async function onRequestGet({ request, env }) {
+  await initializeDatabase(env);
   const url = new URL(request.url);
   // list or get single
   const id = url.searchParams.get('id');
@@ -90,27 +116,31 @@ export async function onRequestGet({ request, env }) {
 }
 
 export async function onRequestPut({ request, env }) {
+  await initializeDatabase(env);
   // update post (body must contain id and fields)
   const payload = await requireAuth(request, env);
   if (!payload) return unauthorizedJSON();
 
   const body = await request.json().catch(() => ({}));
-  const { id, title, description, tags, images } = body;
+  console.log('PUT request body:', body); // Debug log
+  const { id, title, description, tags, images, category } = body;
   if (!id) return new Response(JSON.stringify({ error: 'Missing id' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 
   try {
     const now = Math.floor(Date.now() / 1000);
     await env.PORTFOLIO.prepare(
-      `UPDATE posts SET title = ?, description = ?, tags = ?, images = ?, updated_by = ?, updated_at = ? WHERE id = ?`
-    ).bind(title || null, description || null, JSON.stringify(tags || []), JSON.stringify(images || []), payload.username, now, id).run();
+      `UPDATE posts SET title = ?, description = ?, tags = ?, images = ?, category = ?, updated_by = ?, updated_at = ? WHERE id = ?`
+    ).bind(title || null, description || null, JSON.stringify(tags || []), JSON.stringify(images || []), category || null, payload.username, now, id).run();
 
     return jsonOK({ success: true });
   } catch (e) {
+    console.error('Database update error:', e);
     return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
 
 export async function onRequestDelete({ request, env }) {
+  await initializeDatabase(env);
   const payload = await requireAuth(request, env);
   if (!payload) return unauthorizedJSON();
 
@@ -124,4 +154,27 @@ export async function onRequestDelete({ request, env }) {
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
+}
+
+// Generic entrypoint: some runtimes invoke `onRequest` instead of method-specific
+// handlers. Dispatch to the method-specific exports to ensure POST/OPTIONS are handled.
+export async function onRequest(context) {
+  const { request, env } = context;
+
+  // Initialize database if needed on every request
+  await initializeDatabase(env);
+
+  const method = request.method?.toUpperCase();
+  const url = new URL(request.url);
+
+  console.log('Main onRequest called:', method, url.pathname); // Debug log
+
+  if (method === 'OPTIONS') return onRequestOptions(context);
+  if (method === 'GET') return onRequestGet(context);
+  if (method === 'POST') return onRequestPost(context);
+  if (method === 'PUT') return onRequestPut(context);
+  if (method === 'DELETE') return onRequestDelete(context);
+
+  console.log('Method not allowed:', method); // Debug log
+  return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(request) });
 }

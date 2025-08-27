@@ -6,11 +6,12 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
 import { LoginComponent } from '../../login/login.component';
+import { AdminEditorComponent } from '../../admin-editor/admin-editor.component';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterModule, CommonModule, TranslateModule, FormsModule, TerminalTypingDirective, LoginComponent],
+  imports: [RouterModule, CommonModule, TranslateModule, FormsModule, TerminalTypingDirective, LoginComponent, AdminEditorComponent],
   // No custom providers
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']

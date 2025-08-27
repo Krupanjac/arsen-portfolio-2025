@@ -100,6 +100,12 @@
       <div *ngIf="isAuthenticated">
         <h3 class="text-lg font-semibold mb-3">Dashboard</h3>
         <p class="text-sm text-secondary mb-4">Signed in as <strong>{{ username }}</strong></p>
+        
+        <!-- Admin Editor Component -->
+        <div class="mb-4">
+          <app-admin-editor></app-admin-editor>
+        </div>
+        
         <button (click)="onLogout()" class="px-3 py-2 bg-danger text-white rounded">Sign out</button>
       </div>
 

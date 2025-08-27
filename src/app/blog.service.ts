@@ -10,6 +10,7 @@ export interface BlogPost {
   images?: string[];
   created_by?: string;
   created_at?: number;
+  category?: 'project' | 'work'; // New category field
 }
 
 @Injectable({ providedIn: 'root' })

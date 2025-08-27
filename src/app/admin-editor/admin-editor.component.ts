@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BlogService, BlogPost } from '../blog.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-admin-editor',
@@ -10,18 +11,25 @@ import { BlogService, BlogPost } from '../blog.service';
   templateUrl: './admin-editor.component.html',
   styleUrls: ['./admin-editor.component.scss']
 })
-export class AdminEditorComponent {
+export class AdminEditorComponent implements OnInit {
   posts: BlogPost[] = [];
   editing: BlogPost | null = null;
   loading = false;
   tagsText = '';
   imagesText = '';
 
-  constructor(private svc: BlogService) { this.reload(); }
+  constructor(private svc: BlogService, @Inject(PLATFORM_ID) private platformId: Object) {}
+
+  ngOnInit() {
+    // Only load posts in the browser, not during SSR
+    if (isPlatformBrowser(this.platformId)) {
+      this.reload();
+    }
+  }
 
   reload() { this.svc.list().subscribe(r => this.posts = r); }
 
-  newPost() { this.editing = { title: '', description: '', tags: [], images: [] }; }
+  newPost() { this.editing = { title: '', description: '', tags: [], images: [], category: undefined }; }
 
   edit(p: BlogPost) { this.editing = { ...p }; this.tagsText = (p.tags || []).join(', '); this.imagesText = (p.images || []).join(', '); }
 

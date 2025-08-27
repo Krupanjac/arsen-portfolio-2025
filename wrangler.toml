@@ -12,7 +12,6 @@ id = "acb99670456648b9b5e97aadc7d83a72"  # your KV namespace ID
 # Environment variables
 [vars]
 JWT_SECRET = "eb9gOdrAT54mGgcgu4W2rjqoj2mkMAmB"
-TURNSTILE_SECRET = "0x4AAAAAABulTleFysaWFhKpDCmGJtF3spU"
 
 # D1 binding for the "portfolio" database. Set the id and database_name as provided by Cloudflare.
 [[d1_databases]]

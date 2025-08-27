@@ -28,6 +28,12 @@
   <input [(ngModel)]="tagsText" class="w-full p-2 border rounded mb-2" />
   <label>Images (comma separated URLs)</label>
   <input [(ngModel)]="imagesText" class="w-full p-2 border rounded mb-2" />
+  <label>Category</label>
+  <select [(ngModel)]="editing.category" class="w-full p-2 border rounded mb-2">
+    <option value="">Select category</option>
+    <option value="project">Project</option>
+    <option value="work">Work</option>
+  </select>
 
     <div class="flex gap-2">
       <button (click)="save()" class="btn">Save</button>

@@ -1,4 +1,6 @@
--- SQL to create posts table for Cloudflare D1
+-- Migration: create posts table for Cloudflare D1
+-- Run with: wrangler d1 migrations apply --database portfolio
+
 CREATE TABLE IF NOT EXISTS posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,

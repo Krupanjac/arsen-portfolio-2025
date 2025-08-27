@@ -39,7 +39,8 @@ export async function onRequest({ request, env, next }) {
   // Mutating methods (POST/PUT/DELETE) under /api/posts must be authenticated.
   if (pathname.startsWith('/api/posts')) {
     if (request.method?.toUpperCase() === 'GET') return next();
-    // otherwise fall through and require auth
+    // For POST/PUT/DELETE, require authentication but don't block the request
+    // The individual function will handle authentication
   }
 
   if (publicPrefixes.some(p => pathname === p || pathname.startsWith(p + '/'))) {
