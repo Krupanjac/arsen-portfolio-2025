@@ -9,9 +9,6 @@ pages_build_output_dir = "dist/arsen-portfolio-2025/browser"
 binding = "USERS"        # variable used in your code: env.USERS
 id = "acb99670456648b9b5e97aadc7d83a72"  # your KV namespace ID
 
-# Environment variables
-[vars]
-JWT_SECRET = "eb9gOdrAT54mGgcgu4W2rjqoj2mkMAmB"
 
 # D1 binding for the "portfolio" database. Set the id and database_name as provided by Cloudflare.
 [[d1_databases]]
