@@ -1,8 +1,8 @@
 <!-- Blog Modal Overlay -->
-<div class="modal-overlay" *ngIf="visible" @modalAnimation (click)="onOverlayClick($event)">
-  <div class="modal-content" (click)="$event.stopPropagation()">
+<div class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex justify-center items-center z-50 p-5" *ngIf="visible" @modalAnimation (click)="onOverlayClick($event)">
+  <div class="bg-white border border-gray-300 rounded-lg p-4 sm:p-6 max-w-[95vw] sm:max-w-[90vw] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative box-shadow-xl" (click)="$event.stopPropagation()">
     <!-- Close button -->
-    <button class="close-button" (click)="close()" aria-label="Close modal">
+    <button class="absolute top-3 right-3 bg-transparent border-none text-gray-500 cursor-pointer p-2 rounded hover:text-gray-700 hover:bg-gray-100 transition-colors z-10" (click)="close()" aria-label="Close modal">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -10,18 +10,18 @@
     </button>
 
     <!-- Post title -->
-    <h2 class="modal-title">{{ post?.title }}</h2>
+    <h2 class="text-lg sm:text-xl font-semibold text-gray-900 mb-5 pr-8 sm:pr-10">{{ post?.title }}</h2>
 
     <!-- Image display -->
-    <div class="image-container" *ngIf="post?.images && post!.images!.length > 0">
+    <div class="relative mb-5" *ngIf="post?.images && post!.images!.length > 0">
       <!-- Main image -->
-      <div class="main-image">
-        <img [src]="post!.images![currentImageIndex]" [alt]="post!.title + ' - Image ' + (currentImageIndex + 1)" />
+      <div class="text-center mb-2.5">
+        <img [src]="post!.images![currentImageIndex]" [alt]="post!.title + ' - Image ' + (currentImageIndex + 1)" class="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded" />
       </div>
 
       <!-- Navigation arrows (only show if more than 1 image) -->
       <button
-        class="nav-button prev-button"
+        class="absolute top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 border-none text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full cursor-pointer flex items-center justify-center transition-all hover:bg-opacity-70 disabled:opacity-50 disabled:cursor-not-allowed z-5 left-2 sm:left-2.5"
         (click)="prevImage()"
         [disabled]="currentImageIndex === 0"
         *ngIf="post!.images!.length > 1"
@@ -32,7 +32,7 @@
       </button>
 
       <button
-        class="nav-button next-button"
+        class="absolute top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 border-none text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full cursor-pointer flex items-center justify-center transition-all hover:bg-opacity-70 disabled:opacity-50 disabled:cursor-not-allowed z-5 right-2 sm:right-2.5"
         (click)="nextImage()"
         [disabled]="currentImageIndex === post!.images!.length - 1"
         *ngIf="post!.images!.length > 1"
@@ -43,11 +43,11 @@
       </button>
 
       <!-- Image indicators -->
-      <div class="image-indicators" *ngIf="post!.images!.length > 1">
+      <div class="flex justify-center gap-2 mt-2.5" *ngIf="post!.images!.length > 1">
         <button
           *ngFor="let image of post!.images!; let i = index"
-          class="indicator"
-          [class.active]="i === currentImageIndex"
+          class="w-2 h-2 rounded-full border-none bg-gray-300 cursor-pointer transition-colors hover:bg-gray-400"
+          [class.bg-blue-500]="i === currentImageIndex"
           (click)="goToImage(i)"
           [attr.aria-label]="'Go to image ' + (i + 1)">
         </button>
@@ -55,18 +55,18 @@
     </div>
 
     <!-- Post description -->
-    <div class="post-description" *ngIf="post?.description">
-      <p>{{ post!.description }}</p>
+    <div class="mb-4" *ngIf="post?.description">
+      <p class="text-gray-600 leading-relaxed m-0">{{ post!.description }}</p>
     </div>
 
     <!-- Post tags -->
-    <div class="post-tags" *ngIf="post?.tags && post!.tags!.length > 0">
-      <span *ngFor="let tag of post!.tags!" class="tag">{{ tag }}</span>
+    <div class="flex flex-wrap gap-2 mb-4" *ngIf="post?.tags && post!.tags!.length > 0">
+      <span *ngFor="let tag of post!.tags!" class="bg-blue-500 text-white px-2 py-1 rounded text-sm">{{ tag }}</span>
     </div>
 
     <!-- Post date -->
-    <div class="post-date" *ngIf="post?.created_at">
-      <p>{{ post!.created_at | date:'mediumDate' }}</p>
+    <div class="text-right" *ngIf="post?.created_at">
+      <p class="text-gray-400 text-sm m-0">{{ post!.created_at | date:'mediumDate' }}</p>
     </div>
   </div>
 </div>

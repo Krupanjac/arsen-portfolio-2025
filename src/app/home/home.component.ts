@@ -10,7 +10,7 @@ import { RailComponent } from '../layout/rail/rail.component';
   standalone: true,
   imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 
 export class HomeComponent {

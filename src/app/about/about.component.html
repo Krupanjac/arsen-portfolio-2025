@@ -17,7 +17,7 @@
       </div>
       <div class="p-2.5 min-h-[150px] terminal-output">
         <pre class="whitespace-pre-wrap break-words" [innerHTML]="displayText"></pre>
-        <span *ngIf="cursorVisible" class="cursor">█</span>
+        <span *ngIf="cursorVisible" class="inline-block w-2 h-4 bg-green-500 ml-1 invisible animate-pulse select-none">█</span>
       </div>
     </div>
   </div>

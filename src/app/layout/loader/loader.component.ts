@@ -5,7 +5,7 @@ import { PLATFORM_ID } from '@angular/core';
 @Component({
   selector: 'app-loading',
   templateUrl: './loader.component.html',
-  styleUrls: ['./loader.component.css']
+  styleUrls: ['./loader.component.scss']
 })
 export class LoaderComponent implements OnInit, OnDestroy {
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}

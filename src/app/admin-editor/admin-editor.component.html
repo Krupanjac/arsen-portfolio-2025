@@ -1,7 +1,7 @@
-<div class="admin-editor-root">
-  <div class="controls mb-4">
-    <button (click)="newPost()" class="btn">New post</button>
-    <button (click)="initDb()" class="btn">Init DB</button>
+<div class="p-4">
+  <div class="mb-4">
+    <button (click)="newPost()" class="px-1.5 py-1 border border-gray-300 rounded">New post</button>
+    <button (click)="initDb()" class="px-1.5 py-1 border border-gray-300 rounded">Init DB</button>
   </div>
 
   <div class="posts-list">
@@ -12,8 +12,8 @@
           <div class="text-xs text-secondary">Tags: {{p.tags?.join(', ')}}</div>
         </div>
         <div>
-          <button (click)="edit(p)" class="btn small">Edit</button>
-          <button (click)="remove(p.id)" class="btn small danger">Delete</button>
+          <button (click)="edit(p)" class="px-1 py-0.5 border border-gray-300 rounded">Edit</button>
+          <button (click)="remove(p.id)" class="px-1 py-0.5 border border-red-300 bg-red-50 rounded">Delete</button>
         </div>
       </div>
     </div>
@@ -27,12 +27,12 @@
   <label>Tags (comma separated)</label>
   <input [(ngModel)]="tagsText" class="w-full p-2 border rounded mb-2" />
   <label>Images</label>
-  <div class="images-container mb-4">
-    <div *ngFor="let image of images; let i = index" class="image-preview mb-2 flex items-center gap-2">
+  <div class="mb-4">
+    <div *ngFor="let image of images; let i = index" class="flex items-center gap-2 mb-2">
       <img [src]="image" alt="Preview" class="w-20 h-20 object-cover rounded border" />
-      <button (click)="removeImage(i)" class="btn small danger">Remove</button>
+      <button (click)="removeImage(i)" class="px-1 py-0.5 border border-red-300 bg-red-50 rounded">Remove</button>
     </div>
-    <button (click)="addImageSlot()" class="btn small" [disabled]="loading">
+    <button (click)="addImageSlot()" class="px-1 py-0.5 border border-gray-300 rounded" [disabled]="loading">
       <span *ngIf="!loading">+</span>
       <span *ngIf="loading">Uploading...</span>
     </button>
@@ -53,8 +53,8 @@
   </select>
 
     <div class="flex gap-2">
-      <button (click)="save()" class="btn">Save</button>
-      <button (click)="editing = null" class="btn">Cancel</button>
+      <button (click)="save()" class="px-1.5 py-1 border border-gray-300 rounded">Save</button>
+      <button (click)="editing = null" class="px-1.5 py-1 border border-gray-300 rounded">Cancel</button>
     </div>
   </div>
 </div>
