@@ -55,4 +55,117 @@ export class ImagekitService {
       transformation: transformations || []
     });
   }
+
+  // Generate responsive image URLs for different device sizes
+  getResponsiveImageUrls(fileId: string, options?: {
+    mobileWidth?: number;
+    tabletWidth?: number;
+    desktopWidth?: number;
+    quality?: number;
+    format?: string;
+  }): {
+    src: string;
+    srcset: string;
+    sizes: string;
+  } {
+    const {
+      mobileWidth = 400,
+      tabletWidth = 800,
+      desktopWidth = 1200,
+      quality = 80,
+      format = 'auto'
+    } = options || {};
+
+    // Base transformations
+    const baseTransformations = [
+      { q: quality },
+      { f: format }
+    ];
+
+    // Generate URLs for different sizes
+    const mobileUrl = this.imagekit.url({
+      src: fileId,
+      transformation: [
+        ...baseTransformations,
+        { w: mobileWidth }
+      ]
+    });
+
+    const tabletUrl = this.imagekit.url({
+      src: fileId,
+      transformation: [
+        ...baseTransformations,
+        { w: tabletWidth }
+      ]
+    });
+
+    const desktopUrl = this.imagekit.url({
+      src: fileId,
+      transformation: [
+        ...baseTransformations,
+        { w: desktopWidth }
+      ]
+    });
+
+    return {
+      src: desktopUrl, // Default/fallback
+      srcset: `${mobileUrl} ${mobileWidth}w, ${tabletUrl} ${tabletWidth}w, ${desktopUrl} ${desktopWidth}w`,
+      sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+    };
+  }
+
+  // Generate modal image URLs (higher quality, larger sizes)
+  getModalImageUrls(fileId: string, options?: {
+    mobileWidth?: number;
+    tabletWidth?: number;
+    desktopWidth?: number;
+    quality?: number;
+    format?: string;
+  }): {
+    src: string;
+    srcset: string;
+    sizes: string;
+  } {
+    const {
+      mobileWidth = 600,
+      tabletWidth = 1000,
+      desktopWidth = 1600,
+      quality = 90,
+      format = 'auto'
+    } = options || {};
+
+    return this.getResponsiveImageUrls(fileId, {
+      mobileWidth,
+      tabletWidth,
+      desktopWidth,
+      quality,
+      format
+    });
+  }
+
+  // Generate preview image URLs (smaller, optimized for thumbnails)
+  getPreviewImageUrls(fileId: string, options?: {
+    width?: number;
+    height?: number;
+    quality?: number;
+    format?: string;
+  }): string {
+    const {
+      width = 400,
+      height = 300,
+      quality = 70,
+      format = 'auto'
+    } = options || {};
+
+    return this.imagekit.url({
+      src: fileId,
+      transformation: [
+        { w: width },
+        { h: height },
+        { c: 'at_max' }, // Crop to fit
+        { q: quality },
+        { f: format }
+      ]
+    });
+  }
 }

@@ -16,7 +16,13 @@
     <div class="relative mb-5" *ngIf="post?.images && post!.images!.length > 0">
       <!-- Main image -->
       <div class="text-center mb-2.5">
-        <img [src]="post!.images![currentImageIndex]" [alt]="post!.title + ' - Image ' + (currentImageIndex + 1)" class="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded" />
+        <img
+          [src]="getModalImageUrls(post!.images![currentImageIndex]).src"
+          [srcset]="getModalImageUrls(post!.images![currentImageIndex]).srcset"
+          [sizes]="getModalImageUrls(post!.images![currentImageIndex]).sizes"
+          [alt]="post!.title + ' - Image ' + (currentImageIndex + 1)"
+          class="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded"
+          loading="lazy" />
       </div>
 
       <!-- Navigation arrows (only show if more than 1 image) -->

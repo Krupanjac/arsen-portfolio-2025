@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BlogPost } from '../blog.service';
+import { ImagekitService } from '../imagekit.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
@@ -28,6 +29,8 @@ export class BlogModalComponent implements OnChanges, OnDestroy {
 
   currentImageIndex: number = 0;
   private _savedScrollY: number = 0;
+
+  constructor(private imagekitService: ImagekitService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['visible']) {
@@ -78,6 +81,17 @@ export class BlogModalComponent implements OnChanges, OnDestroy {
 
   goToImage(index: number): void {
     this.currentImageIndex = index;
+  }
+
+  // Get responsive image URLs for modal display
+  getModalImageUrls(imageUrl: string) {
+    if (!imageUrl) return { src: '', srcset: '', sizes: '' };
+    // If it's already an ImageKit URL, use the service to generate responsive version
+    if (imageUrl.includes('ik.imagekit.io')) {
+      return this.imagekitService.getModalImageUrls(imageUrl);
+    }
+    // Otherwise return the original URL
+    return { src: imageUrl, srcset: '', sizes: '' };
   }
 
   onOverlayClick(event: Event): void {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BlogService, BlogPost } from '../blog.service';
+import { ImagekitService } from '../imagekit.service';
 
 @Component({
   selector: 'app-blog-list',
@@ -12,6 +13,17 @@ import { BlogService, BlogPost } from '../blog.service';
 export class BlogListComponent implements OnInit {
   posts: BlogPost[] = [];
   loading = true;
-  constructor(private svc: BlogService) {}
+  constructor(private svc: BlogService, private imagekitService: ImagekitService) {}
   ngOnInit(): void { this.svc.list().subscribe(p => { this.posts = p; this.loading = false; }); }
+
+  // Get responsive image URLs for preview
+  getPreviewImageUrl(imageUrl: string): string {
+    if (!imageUrl) return '';
+    // If it's already an ImageKit URL, use the service to generate responsive version
+    if (imageUrl.includes('ik.imagekit.io')) {
+      return this.imagekitService.getPreviewImageUrls(imageUrl);
+    }
+    // Otherwise return as is
+    return imageUrl;
+  }
 }
