@@ -26,8 +26,25 @@
     <textarea [(ngModel)]="editing.description" class="w-full p-2 border rounded mb-2"></textarea>
   <label>Tags (comma separated)</label>
   <input [(ngModel)]="tagsText" class="w-full p-2 border rounded mb-2" />
-  <label>Images (comma separated URLs)</label>
-  <input [(ngModel)]="imagesText" class="w-full p-2 border rounded mb-2" />
+  <label>Images</label>
+  <div class="images-container mb-4">
+    <div *ngFor="let image of images; let i = index" class="image-preview mb-2 flex items-center gap-2">
+      <img [src]="image" alt="Preview" class="w-20 h-20 object-cover rounded border" />
+      <button (click)="removeImage(i)" class="btn small danger">Remove</button>
+    </div>
+    <button (click)="addImageSlot()" class="btn small" [disabled]="loading">
+      <span *ngIf="!loading">+</span>
+      <span *ngIf="loading">Uploading...</span>
+    </button>
+    <input 
+      id="imageInput" 
+      type="file" 
+      accept="image/*" 
+      multiple 
+      (change)="onFileSelected($event)" 
+      class="hidden" 
+    />
+  </div>
   <label>Category</label>
   <select [(ngModel)]="editing.category" class="w-full p-2 border rounded mb-2">
     <option value="">Select category</option>

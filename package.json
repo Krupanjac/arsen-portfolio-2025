@@ -7,8 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-  "serve:ssr:arsen-portfolio-2025": "node dist/arsen-portfolio-2025/server/server.mjs",
-  "d1:migrate": "wrangler d1 migrations apply portfolio"
+    "serve:ssr:arsen-portfolio-2025": "node dist/arsen-portfolio-2025/server/server.mjs",
+    "d1:migrate": "wrangler d1 migrations apply portfolio"
   },
   "private": true,
   "dependencies": {
@@ -28,6 +28,7 @@
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "express": "^4.21.2",
+    "imagekit-javascript": "^4.0.1",
     "postcss": "^8.5.2",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.0.6",

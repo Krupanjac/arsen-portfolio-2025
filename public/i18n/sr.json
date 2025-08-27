@@ -54,7 +54,7 @@
   "CONTACT": {
     "LABEL": "Kontakt/>",
     "TERMINAL_USER": "root@terminal",
-    "HOME_LABEL": "Početna/>",
+    "HOME_LABEL": "Kontakt/>",
     "COPIED": "Kopirano: {{email}}",
     "COPY_FAILED": "Kopiranje nije uspelo."
   },
