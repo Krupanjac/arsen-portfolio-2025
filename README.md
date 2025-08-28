@@ -52,7 +52,42 @@ For end-to-end (e2e) testing, run:
 ng e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Interactive Background Features
+
+The background component now includes interactive gravity field creation that influences star movement:
+
+### Gravity Field Mode
+- **Toggle Gravity Mode**: Press `D` to enter/exit gravity field creation mode
+- **Create Gravity Points**: In gravity mode, Shift+Click to start creating gravity points, move mouse to add points, Shift+Click again to stop
+- **Clear Gravity Fields**: Press `C` to clear all gravity fields
+
+### Text Gravity Fields
+- **Add Text Fields**: Press `T` to open a prompt and enter text that will be converted to gravity points
+- Text is rendered using canvas and converted to points that stars gravitate towards
+
+### How It Works
+- Stars naturally gravitate toward gravity points and text fields
+- The gravity effect creates dynamic formations as stars move toward your invisible gravity fields
+- Stars repel each other from longer distances to prevent clustering and maintain visual clarity
+- Gravity fields fade out visually over time but retain their attractive force
+- Long-range attraction ensures distant stars are drawn to your shapes
+- Gravity fields are shown as subtle glowing indicators that fade with age
+- All interactions work alongside the existing mouse attraction and particle effects
+
+### Controls Summary
+- `D` - Toggle gravity field mode
+- `C` - Clear all gravity fields
+- `T` - Add text gravity field
+- `S` - Add 20 random stars (in gravity mode only)
+- `Shift+Click` - Start/stop continuous gravity point creation
+- `Click` - Create particles (when not in gravity mode)
+
+### Visual Feedback
+- Gravity mode indicator in the top-left corner
+- Subtle glowing circles show active gravity points
+- Gravity field indicators fade out over time while maintaining attraction
+- Stars will cluster and form shapes around your gravity fields from any distance
+- Star repulsion prevents overcrowding and maintains line visibility
 
 ## Additional Resources
 

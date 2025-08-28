@@ -25,6 +25,7 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
   private mouseMoveListener: ((e: Event) => void) | null = null;
   private pointerOutListener: (() => void) | null = null;
   private clickListener: ((e: MouseEvent) => void) | null = null;
+  private keydownListener: ((e: KeyboardEvent) => void) | null = null;
   private particles: Array<{ x: number; y: number; vx: number; vy: number; life: number; r: number; color: string }> = [];
   private twinklePhase = 0;
   
@@ -36,6 +37,20 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
   // Simplified caching - remove over-complex gradient caching
   private accentRgbaCache = new Map<string, string>();
   
+  // Drawing and shape interaction
+  private isDrawingMode = false;
+  private drawnPoints: Array<{ x: number; y: number; age: number; maxAge: number }> = [];
+  private isDrawing = false;
+  private shapeGravityStrength = 0.08;
+  private shapeAttractionRange = 400;
+  private starRepulsionStrength = 0.05;
+  private starRepulsionRange = 80;
+  private stars: Array<{ 
+    x: number; y: number; radius: number; vx: number; vy: number; 
+    baseVx: number; baseVy: number; baseRadius: number;
+    twinkleOffset: number;
+  }> = [];
+
   // Pre-calculated constants
   private readonly TWINKLE_SPEED = 0.03;
   private readonly SCROLL_DAMPING = 0.05;
@@ -48,6 +63,162 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly MAX_PARTICLES = 300;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  // Drawing and shape methods
+  toggleDrawingMode(): void {
+    this.isDrawingMode = !this.isDrawingMode;
+    if (!this.isDrawingMode) {
+      this.isDrawing = false;
+    }
+  }
+
+  clearDrawing(): void {
+    this.drawnPoints = [];
+  }
+
+  addRandomStars(count: number = 20): void {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    for (let i = 0; i < count; i++) {
+      const vx = (Math.random() - 0.5) * 2;
+      const vy = (Math.random() - 0.5) * 2;
+      const r = Math.random() * 1 + 1;
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+
+      this.stars.push({
+        x, y,
+        radius: r,
+        baseRadius: r,
+        vx, vy,
+        baseVx: vx,
+        baseVy: vy,
+        twinkleOffset: (x + y) * 0.001
+      });
+    }
+  }
+
+  addTextShape(text: string, x: number = window.innerWidth / 2, y: number = window.innerHeight / 2): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size for text rendering
+    canvas.width = 800;
+    canvas.height = 200;
+
+    // Configure text style
+    ctx.font = 'bold 120px Arial';
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Draw text
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    // Extract points from text
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const points: Array<{ x: number; y: number }> = [];
+
+    // Sample pixels to create points
+    for (let y = 0; y < canvas.height; y += 4) {
+      for (let x = 0; x < canvas.width; x += 4) {
+        const index = (y * canvas.width + x) * 4;
+        const alpha = imageData.data[index + 3];
+        if (alpha > 128) {
+          points.push({
+            x: x - canvas.width / 2 + window.innerWidth / 2,
+            y: y - canvas.height / 2 + window.innerHeight / 2
+          });
+        }
+      }
+    }
+
+    // Reduce points for performance
+    const reducedPoints = this.reducePoints(points, 8);
+    this.drawnPoints.push(...reducedPoints);
+  }
+
+  private reducePoints(points: Array<{ x: number; y: number }>, minDistance: number): Array<{ x: number; y: number; age: number; maxAge: number }> {
+    const result: Array<{ x: number; y: number; age: number; maxAge: number }> = [];
+    points.forEach(point => {
+      const tooClose = result.some(existing =>
+        Math.sqrt((point.x - existing.x) ** 2 + (point.y - existing.y) ** 2) < minDistance
+      );
+      if (!tooClose) {
+        result.push({
+          x: point.x,
+          y: point.y,
+          age: 0,
+          maxAge: 1800 // 30 seconds at 60fps
+        });
+      }
+    });
+    return result;
+  }
+
+  private applyShapeGravity(star: any, stars: any[]): void {
+    if (this.drawnPoints.length === 0) return;
+
+    let closestPoint = this.drawnPoints[0];
+    let minDistance = Infinity;
+
+    // Find closest drawn point
+    this.drawnPoints.forEach(point => {
+      const dx = point.x - star.x;
+      const dy = point.y - star.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestPoint = point;
+      }
+    });
+
+    if (minDistance < this.shapeAttractionRange) {
+      const dx = closestPoint.x - star.x;
+      const dy = closestPoint.y - star.y;
+
+      // Stronger attraction for distant stars
+      let force;
+      if (minDistance > 200) {
+        // Long-range attraction
+        force = this.shapeGravityStrength * 2 * (1 - minDistance / this.shapeAttractionRange);
+      } else {
+        // Normal attraction with falloff
+        const normalizedDistance = minDistance / this.shapeAttractionRange;
+        force = this.shapeGravityStrength * (1 - normalizedDistance * normalizedDistance);
+      }
+
+      star.vx += dx * force;
+      star.vy += dy * force;
+
+      // Add some damping to prevent overshooting
+      star.vx *= 0.98;
+      star.vy *= 0.98;
+    }
+  }
+
+  private applyStarRepulsion(star: any, stars: any[]): void {
+    stars.forEach(otherStar => {
+      if (star === otherStar) return;
+
+      const dx = otherStar.x - star.x;
+      const dy = otherStar.y - star.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < this.starRepulsionRange && distance > 0.1) {
+        const force = this.starRepulsionStrength / (distance * distance + 1);
+        const repulsionX = -dx * force;
+        const repulsionY = -dy * force;
+
+        star.vx += repulsionX;
+        star.vy += repulsionY;
+      }
+    });
+  }
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) {
@@ -86,6 +257,9 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.clickListener) {
       window.removeEventListener('click', this.clickListener as any);
     }
+    if (this.keydownListener) {
+      window.removeEventListener('keydown', this.keydownListener as any);
+    }
     this.accentRgbaCache.clear();
   }
 
@@ -109,14 +283,9 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
     ctx.imageSmoothingQuality = 'low';
 
     let dpr = 1;
-    let stars: Array<{ 
-      x: number; y: number; radius: number; vx: number; vy: number; 
-      baseVx: number; baseVy: number; baseRadius: number;
-      twinkleOffset: number; // Pre-calculate twinkle offset
-    }> = [];
     
     const createStars = () => {
-      stars = [];
+      this.stars = [];
       const w = canvas.width / dpr;
       const h = canvas.height / dpr;
       const starCount = w > 500
@@ -130,7 +299,7 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
         const x = Math.random() * w;
         const y = Math.random() * h;
         
-        stars.push({
+        this.stars.push({
           x, y,
           radius: r,
           baseRadius: r,
@@ -207,7 +376,7 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
       const sMaxGlow = 28;
       const speedRange = sMaxSpeed - sThreshold;
       
-      stars.forEach(star => {
+      this.stars.forEach(star => {
         const sSpeed = Math.sqrt(star.vx * star.vx + star.vy * star.vy);
         const sFactor = Math.max(0, Math.min(1, (sSpeed - sThreshold) / speedRange));
         const sGlowSize = sMinGlow + sFactor * (sMaxGlow - sMinGlow);
@@ -231,7 +400,7 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
       // Draw all star cores efficiently
       ctx.fillStyle = accent;
       ctx.beginPath();
-      stars.forEach(star => {
+      this.stars.forEach(star => {
         const alpha = 0.9 + 0.1 * Math.sin(this.twinklePhase + star.twinkleOffset);
         ctx.globalAlpha = alpha;
         ctx.moveTo(star.x + star.radius, star.y);
@@ -245,10 +414,10 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
       ctx.lineWidth = 0.3;
       ctx.beginPath();
       
-      for (let i = 0; i < stars.length; i++) {
-        const a = stars[i];
-        for (let j = i + 1; j < stars.length; j++) {
-          const b = stars[j];
+      for (let i = 0; i < this.stars.length; i++) {
+        const a = this.stars[i];
+        for (let j = i + 1; j < this.stars.length; j++) {
+          const b = this.stars[j];
           const dx = a.x - b.x;
           const dy = a.y - b.y;
           const distSq = dx * dx + dy * dy;
@@ -281,6 +450,38 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
         ctx.fillStyle = g;
         ctx.fillRect(this.mouseX - 120, this.mouseY - 120, 240, 240);
       }
+
+      // Draw gravity field indicators (subtle, fading)
+      if (this.drawnPoints.length > 0) {
+        this.drawnPoints.forEach(point => {
+          const ageRatio = 1 - (point.age / point.maxAge);
+          const alpha = 0.3 * ageRatio;
+          const radius = 15 * ageRatio;
+
+          if (alpha > 0.01) {
+            const g = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius);
+            g.addColorStop(0, hexToRgba(accent, alpha));
+            g.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, radius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+      }
+
+      // Draw drawing mode indicator
+      if (this.isDrawingMode) {
+        ctx.fillStyle = this.isDrawing ? hexToRgba(accent, 0.9) : hexToRgba(accent, 0.5);
+        ctx.font = '14px Arial';
+        ctx.fillText('GRAVITY FIELD MODE', 20, 35);
+        if (this.isDrawing) {
+          ctx.fillText('Creating gravity points... (Shift+Click to stop)', 20, 55);
+        } else {
+          ctx.fillText('Shift+Click to create gravity field', 20, 55);
+        }
+        ctx.fillText('C: Clear Fields | T: Add Text Field | S: Add Stars | D: Toggle Mode', 20, 75);
+      }
     };
 
     const update = () => {
@@ -294,7 +495,7 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
       const energyFactor = 1 + (normalized / (1 + 1.5 * normalized)) * 2;
       const scrollDelta = this.scrollVelocity * this.SCROLL_DAMPING;
       
-      stars.forEach(star => {
+      this.stars.forEach(star => {
         // Basic movement
         star.x += star.vx;
         star.y += star.vy;
@@ -303,6 +504,12 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
         if (scrollDelta !== 0) {
           star.y -= scrollDelta;
         }
+        
+        // Apply shape gravity
+        this.applyShapeGravity(star, this.stars);
+        
+        // Apply star repulsion to prevent clustering
+        this.applyStarRepulsion(star, this.stars);
         
         // Mouse interaction - optimized
         if (this.mouseActive) {
@@ -349,6 +556,14 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       
       this.scrollVelocity = 0;
+
+      // Age drawn points and remove old ones
+      for (let i = this.drawnPoints.length - 1; i >= 0; i--) {
+        this.drawnPoints[i].age++;
+        if (this.drawnPoints[i].age > this.drawnPoints[i].maxAge) {
+          this.drawnPoints.splice(i, 1);
+        }
+      }
 
       // Update particles - remove in reverse order
       for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -400,6 +615,11 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
       this.mouseX = ev.clientX;
       this.mouseY = ev.clientY;
       this.mouseActive = true;
+
+      // Handle drawing
+      if (this.isDrawingMode && this.isDrawing) {
+        this.drawnPoints.push({ x: this.mouseX, y: this.mouseY, age: 0, maxAge: 1800 });
+      }
     };
     this.pointerOutListener = () => { this.mouseActive = false; };
     window.addEventListener('mousemove', this.mouseMoveListener, { passive: true });
@@ -407,32 +627,60 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Click listener
     this.clickListener = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const cx = e.clientX - rect.left;
-      const cy = e.clientY - rect.top;
-      const count = Math.min(18, 6 + Math.floor(Math.random() * 12));
-      
-      for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 1 + Math.random() * 3;
-        const color = Math.random() > 0.5 ? accent : 
-          (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? '#222' : '#fff');
-        
-        this.particles.push({
-          x: cx, y: cy,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          life: 30 + Math.floor(Math.random() * 40),
-          r: 1 + Math.random() * 3,
-          color
-        });
-        
-        if (this.particles.length > this.MAX_PARTICLES) {
-          this.particles.splice(0, this.particles.length - this.MAX_PARTICLES);
+      if (this.isDrawingMode) {
+        if (e.shiftKey) {
+          // Shift+click to start/stop drawing
+          this.isDrawing = !this.isDrawing;
+        }
+        // Regular clicks in drawing mode do nothing
+      } else {
+        // Original particle effect
+        const rect = canvas.getBoundingClientRect();
+        const cx = e.clientX - rect.left;
+        const cy = e.clientY - rect.top;
+        const count = Math.min(18, 6 + Math.floor(Math.random() * 12));
+
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 1 + Math.random() * 3;
+          const color = Math.random() > 0.5 ? accent :
+            (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? '#222' : '#fff');
+
+          this.particles.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 30 + Math.floor(Math.random() * 40),
+            r: 1 + Math.random() * 3,
+            color
+          });
+
+          if (this.particles.length > this.MAX_PARTICLES) {
+            this.particles.splice(0, this.particles.length - this.MAX_PARTICLES);
+          }
         }
       }
     };
     window.addEventListener('click', this.clickListener);
+
+    // Keyboard listener for controls
+    this.keydownListener = (e: KeyboardEvent) => {
+      if (e.key === 'd' || e.key === 'D') {
+        this.toggleDrawingMode();
+      } else if (e.key === 'c' || e.key === 'C') {
+        this.clearDrawing();
+      } else if (e.key === 't' || e.key === 'T') {
+        const text = prompt('Enter text to add as shape:');
+        if (text) {
+          this.addTextShape(text);
+        }
+      } else if (this.isDrawingMode && (e.key === 's' || e.key === 'S')) {
+        // Add more stars at random locations
+        this.addRandomStars();
+      }
+    };
+    window.addEventListener('keydown', this.keydownListener);
+
     animate();
   }
 }
