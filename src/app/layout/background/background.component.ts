@@ -160,65 +160,213 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
     return result;
   }
 
-  private applyShapeGravity(star: any, stars: any[]): void {
-    if (this.drawnPoints.length === 0) return;
+private applyShapeGravity(star: any, stars: any[]): void {
+  if (this.drawnPoints.length === 0) return;
 
-    let closestPoint = this.drawnPoints[0];
-    let minDistance = Infinity;
+  // Calculate center of mass of the shape
+  let centerX = 0;
+  let centerY = 0;
+  let totalWeight = 0;
+  
+  this.drawnPoints.forEach(point => {
+    const weight = 1 - (point.age / point.maxAge); // Weight by age
+    centerX += point.x * weight;
+    centerY += point.y * weight;
+    totalWeight += weight;
+  });
+  
+  if (totalWeight > 0) {
+    centerX /= totalWeight;
+    centerY /= totalWeight;
+  }
 
-    // Find closest drawn point
-    this.drawnPoints.forEach(point => {
-      const dx = point.x - star.x;
-      const dy = point.y - star.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestPoint = point;
-      }
-    });
+  // Find multiple nearby points, not just the closest
+  const nearbyPoints: Array<{point: any, distance: number, weight: number}> = [];
+  
+  this.drawnPoints.forEach(point => {
+    const dx = point.x - star.x;
+    const dy = point.y - star.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    if (distance < this.shapeAttractionRange) {
+      const ageWeight = 1 - (point.age / point.maxAge);
+      nearbyPoints.push({
+        point,
+        distance,
+        weight: ageWeight
+      });
+    }
+  });
 
-    if (minDistance < this.shapeAttractionRange) {
-      const dx = closestPoint.x - star.x;
-      const dy = closestPoint.y - star.y;
+  if (nearbyPoints.length === 0) return;
 
-      // Stronger attraction for distant stars
-      let force;
-      if (minDistance > 200) {
-        // Long-range attraction
-        force = this.shapeGravityStrength * 2 * (1 - minDistance / this.shapeAttractionRange);
-      } else {
-        // Normal attraction with falloff
-        const normalizedDistance = minDistance / this.shapeAttractionRange;
-        force = this.shapeGravityStrength * (1 - normalizedDistance * normalizedDistance);
-      }
+  // Sort by distance to get the N closest points
+  nearbyPoints.sort((a, b) => a.distance - b.distance);
+  const influencePoints = nearbyPoints.slice(0, Math.min(5, nearbyPoints.length));
 
-      star.vx += dx * force;
-      star.vy += dy * force;
+  // Calculate weighted attraction to multiple points
+  let totalForceX = 0;
+  let totalForceY = 0;
+  let totalInfluence = 0;
 
-      // Add some damping to prevent overshooting
+  influencePoints.forEach(({point, distance, weight}) => {
+    const dx = point.x - star.x;
+    const dy = point.y - star.y;
+    
+    // Inverse square falloff with distance
+    const distanceFactor = 1 - (distance / this.shapeAttractionRange);
+    const influence = distanceFactor * distanceFactor * weight;
+    
+    totalForceX += dx * influence;
+    totalForceY += dy * influence;
+    totalInfluence += influence;
+  });
+
+  if (totalInfluence > 0) {
+    totalForceX /= totalInfluence;
+    totalForceY /= totalInfluence;
+    
+    // Add a secondary force toward the center of mass for cohesion
+    const toCenterX = centerX - star.x;
+    const toCenterY = centerY - star.y;
+    const centerDistance = Math.sqrt(toCenterX * toCenterX + toCenterY * toCenterY);
+    
+    if (centerDistance > 100) { // Only apply center force if far from center
+      const centerForce = 0.3; // Weaker than point forces
+      totalForceX = totalForceX * 0.7 + (toCenterX / centerDistance) * centerForce * 0.3;
+      totalForceY = totalForceY * 0.7 + (toCenterY / centerDistance) * centerForce * 0.3;
+    }
+    
+    // Apply adaptive force based on current velocity
+    const currentSpeed = Math.sqrt(star.vx * star.vx + star.vy * star.vy);
+    let adaptiveStrength = this.shapeGravityStrength;
+    
+    // If moving fast, apply less force to prevent overshooting
+    if (currentSpeed > 2) {
+      adaptiveStrength *= 0.5;
+    }
+    
+    // If very close to any point, apply weaker force to prevent clustering
+    if (influencePoints[0].distance < 30) {
+      adaptiveStrength *= 0.3;
+    }
+    
+    // Apply the calculated forces
+    star.vx += totalForceX * adaptiveStrength;
+    star.vy += totalForceY * adaptiveStrength;
+    
+    // Stronger damping when within the shape to promote settling
+    if (influencePoints[0].distance < 50) {
+      star.vx *= 0.95;
+      star.vy *= 0.95;
+    } else {
       star.vx *= 0.98;
       star.vy *= 0.98;
     }
   }
+}
 
-  private applyStarRepulsion(star: any, stars: any[]): void {
-    stars.forEach(otherStar => {
-      if (star === otherStar) return;
+// Enhanced star repulsion to maintain spacing within shapes
+private applyStarRepulsion(star: any, stars: any[]): void {
+  let repulsionX = 0;
+  let repulsionY = 0;
+  let neighborCount = 0;
+  
+  stars.forEach(otherStar => {
+    if (star === otherStar) return;
 
-      const dx = otherStar.x - star.x;
-      const dy = otherStar.y - star.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+    const dx = otherStar.x - star.x;
+    const dy = otherStar.y - star.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < this.starRepulsionRange && distance > 0.1) {
-        const force = this.starRepulsionStrength / (distance * distance + 1);
-        const repulsionX = -dx * force;
-        const repulsionY = -dy * force;
-
-        star.vx += repulsionX;
-        star.vy += repulsionY;
+    if (distance < this.starRepulsionRange && distance > 0.1) {
+      // Adaptive repulsion based on proximity to shape
+      let repulsionStrength = this.starRepulsionStrength;
+      
+      // Check if both stars are within a shape
+      const starInShape = this.isStarNearShape(star);
+      const otherInShape = this.isStarNearShape(otherStar);
+      
+      if (starInShape && otherInShape) {
+        // Stronger repulsion within shapes for better distribution
+        repulsionStrength *= 2;
       }
-    });
+      
+      const force = repulsionStrength / (distance * distance + 1);
+      repulsionX -= dx * force;
+      repulsionY -= dy * force;
+      neighborCount++;
+    }
+  });
+  
+  // Apply accumulated repulsion
+  if (neighborCount > 0) {
+    star.vx += repulsionX;
+    star.vy += repulsionY;
   }
+}
+
+// Helper method to check if a star is near the shape
+private isStarNearShape(star: any): boolean {
+  if (this.drawnPoints.length === 0) return false;
+  
+  for (const point of this.drawnPoints) {
+    const dx = point.x - star.x;
+    const dy = point.y - star.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < 100) { // Within shape influence
+      return true;
+    }
+  }
+  return false;
+}
+
+// Alternative method: Field-based approach for even better distribution
+private applyShapeGravityField(star: any, stars: any[]): void {
+  if (this.drawnPoints.length === 0) return;
+
+  // Create a potential field from all points
+  let fieldX = 0;
+  let fieldY = 0;
+  let totalField = 0;
+  
+  // Sample the field at the star's position
+  this.drawnPoints.forEach(point => {
+    const dx = point.x - star.x;
+    const dy = point.y - star.y;
+    const distSq = dx * dx + dy * dy;
+    
+    if (distSq < this.shapeAttractionRange * this.shapeAttractionRange) {
+      // Gaussian-like field for smooth distribution
+      const field = Math.exp(-distSq / (2 * 50 * 50)); // 50 is the spread parameter
+      const ageWeight = 1 - (point.age / point.maxAge);
+      
+      fieldX += dx * field * ageWeight;
+      fieldY += dy * field * ageWeight;
+      totalField += field * ageWeight;
+    }
+  });
+  
+  if (totalField > 0) {
+    // Normalize the field vector
+    fieldX /= totalField;
+    fieldY /= totalField;
+    
+    // Add some randomness to prevent perfect alignment
+    const noise = 0.1;
+    fieldX += (Math.random() - 0.5) * noise;
+    fieldY += (Math.random() - 0.5) * noise;
+    
+    // Apply the field force
+    const fieldStrength = this.shapeGravityStrength * Math.min(1, totalField);
+    star.vx += fieldX * fieldStrength;
+    star.vy += fieldY * fieldStrength;
+    
+    // Damping
+    star.vx *= 0.97;
+    star.vy *= 0.97;
+  }
+}
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) {
