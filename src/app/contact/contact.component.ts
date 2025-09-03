@@ -67,7 +67,7 @@ export class ContactComponent implements OnInit, AfterViewChecked, AfterViewInit
   ngOnInit(): void {
     // Hardcoded contact lines (with embedded emails in span.copyable)
     this.contactLines = [
-      `root@terminal:~$ E-MAIL - <span class="copyable" data-email="arsen.djurdjev@live.com">arsen.djurdjev@live.com</span>`,
+      `root@terminal:~$ E-MAIL - <span class="copyable" data-email="contact@krupanjac.dev">contact@krupanjac.dev</span>`,
       'root@terminal:~$ '
     ];
     // On the server, avoid timers to prevent SSR timeouts; render instantly

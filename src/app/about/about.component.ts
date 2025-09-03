@@ -139,7 +139,7 @@ export class AboutComponent implements OnInit, AfterViewChecked, OnDestroy {
       `C:> <a href="https://www.linkedin.com/in/arsendjurdjev/" class="copyable" data-link="LinkedIn" data-url="https://www.linkedin.com/in/arsendjurdjev/">${this.translate.instant('ABOUT.LINKEDIN')}</a>`,
       `C:> <a href="https://www.github.com/Krupanjac/" class="copyable" data-link="GitHub" data-url="https://www.github.com/Krupanjac/">${this.translate.instant('ABOUT.GITHUB')}</a>`,
       `C:> <a href="https://www.instagram.com/arsendjurdjev/" class="copyable" data-link="Instagram" data-url="https://www.instagram.com/arsendjurdjev/">${this.translate.instant('ABOUT.INSTAGRAM')}</a>`,
-      'C:> <span class="copyable" data-email="arsen.djurdjev@live.com">arsen.djurdjev@live.com</span>'
+      'C:> <span class="copyable" data-email="contact@krupanjac.dev">contact@krupanjac.dev</span>'
     ];
   }
 
