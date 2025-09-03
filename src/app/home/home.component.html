@@ -13,5 +13,154 @@
   <h1 class="text-3xl md:text-4xl font-bold text-primary"><span appTerminalTyping data-i18n-key="HOME.TITLE">{{ 'HOME.TITLE' | translate }}</span></h1>
   <p class="mt-4 text-md md:text-xl text-secondary backdrop-blur-[10px]"><span appTerminalTyping data-i18n-key="HOME.SUBTITLE">{{ 'HOME.SUBTITLE' | translate }}</span></p>
     </header>
-  </div>
-</div>
+
+    <!-- Tech Stack Section (clean) -->
+    <section id="tech-stack" class="relative w-full mt-16 mb-20 max-w-6xl">
+      <div class="mx-auto px-2 sm:px-4">
+        <div class="text-center mb-10">
+          <h2 class="text-2xl md:text-3xl font-semibold tracking-tight text-primary inline-flex items-center gap-2">
+            <span class="inline-block" appTerminalTyping data-i18n-key="HOME.STACK.TITLE">{{ 'HOME.STACK.TITLE' | translate }}</span>
+          </h2>
+          <p class="mt-3 text-sm md:text-base text-secondary max-w-2xl mx-auto" appTerminalTyping data-i18n-key="HOME.STACK.SUBTITLE">{{ 'HOME.STACK.SUBTITLE' | translate }}</p>
+        </div>
+
+        <div class="space-y-10 md:space-y-12">
+          <!-- Helper: reusable icon card -->
+          <!-- Languages -->
+          <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
+            <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.LANGUAGES.TITLE">{{ 'HOME.STACK.GROUPS.LANGUAGES.TITLE' | translate }}</h3>
+            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+              <ng-container *ngFor="let l of [
+                {k:'C',svg:'c'},
+                {k:'CPP',svg:'cpp'},
+                {k:'PYTHON',svg:'py'},
+                {k:'TYPESCRIPT',svg:'ts'},
+                {k:'JAVASCRIPT',svg:'js'},
+                {k:'SQL',svg:'sql'}] ; let i = index">
+                <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" [style.animationDelay]="(60 + i*60) + 'ms'" [attr.title]="('HOME.STACK.ITEMS.' + l.k) | translate">
+                  <ng-container [ngSwitch]="l.svg">
+                    <svg *ngSwitchCase="'c'" viewBox="0 0 128 128" class="w-6 h-6 md:w-7 md:h-7"><path fill="#03599C" d="M64 0L5 32v64l59 32 59-32V32L64 0z"/><path fill="#fff" d="M86.1 79.2c-3.9 6.8-11.2 11.4-19.6 11.4-12.4 0-22.5-10.1-22.5-22.5S54.1 45.6 66.5 45.6c8.4 0 15.7 4.6 19.6 11.4l12.4-7.2C92 38 80.1 32 66.5 32 46.6 32 30.4 48.2 30.4 68.1s16.2 36.1 36.1 36.1c13.6 0 25.5-6 32-15.8l-12.4-7.2z"/></svg>
+                    <svg *ngSwitchCase="'cpp'" viewBox="0 0 128 128" class="w-6 h-6 md:w-7 md:h-7"><path fill="#00599C" d="M64 0L5 32v64l59 32 59-32V32L64 0z"/><path fill="#fff" d="M95 74.3l-6.2-3.6 6.2-3.6 3.1 1.8 6.2 3.6-6.2 3.6-3.1 1.8-3.1-1.8zM81.9 74.3l-6.2-3.6 6.2-3.6 3.1 1.8 6.2 3.6-6.2 3.6-3.1 1.8-3.1-1.8z"/><path fill="#fff" d="M64 96.2c-15.5 0-28.1-12.6-28.1-28.1S48.5 40 64 40c10 0 19.3 5.3 24.4 13.9l-12.3 7.1c-2.5-4.3-7.1-7-12.2-7-7.7 0-13.9 6.3-13.9 13.9 0 7.7 6.3 13.9 13.9 13.9 5.1 0 9.7-2.7 12.2-7l12.3 7.1C83.3 90.9 74 96.2 64 96.2z"/></svg>
+                    <svg *ngSwitchCase="'py'" viewBox="0 0 128 128" class="w-6 h-6 md:w-7 md:h-7"><linearGradient id="py1a" x1="70.252" x2="170.659" y1="1237.476" y2="1151.089" gradientTransform="translate(-65.5 -1137.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#387eb8"/><stop offset="1" stop-color="#366994"/></linearGradient><path fill="url(#py1a)" d="M63.4 0C30.4 0 32.6 14.4 32.6 14.4l.1 15h31v4.5H20.9S0 31.3 0 64.6s18.3 31 18.3 31h10.9V79.2s-.6-18.3 18-18.3h31.2s17.4.3 17.4-16.8V17.5S98.7 0 63.4 0zm-17 10.2a5.4 5.4 0 110 10.8 5.4 5.4 0 010-10.8z"/><linearGradient id="py2a" x1="209.474" x2="173.62" y1="1098.811" y2="1149.537" gradientTransform="translate(-65.5 -1137.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffe052"/><stop offset="1" stop-color="#ffc331"/></linearGradient><path fill="url(#py2a)" d="M65.1 128c33 0 30.8-14.4 30.8-14.4l-.1-15H64.7v-4.5h42.8s20.9 2.6 20.9-30.7S109.9 32.4 109.9 32.4H99v16.4s.6 18.3-18 18.3H49.8S32.4 66.8 32.4 84v26.4S29.8 128 65.1 128zm17-10.2a5.4 5.4 0 100-10.8 5.4 5.4 0 000 10.8z"/></svg>
+                    <svg *ngSwitchCase="'ts'" viewBox="0 0 128 128" class="w-6 h-6 md:w-7 md:h-7"><path fill="#007acc" d="M10 10h108v108H10z"/><path fill="#fff" d="M67.3 63.5H54.1v37.7h-8.4V63.5H32.5v-7h34.8v7zm26.1 13.6c-1.1-.9-2.8-1.9-5.2-2.9-2.3-1-3.9-1.9-4.8-2.8-.8-.9-1.2-2-1.2-3.3 0-1.3.5-2.3 1.4-3.1 1-.8 2.3-1.2 4.1-1.2 1.6 0 3 .3 4.3.8 1.3.6 2.4 1.2 3.4 2l3.7-5.8c-1.3-1-2.7-1.8-4.2-2.4-1.5-.6-3.4-.9-5.6-.9-2.4 0-4.6.5-6.4 1.4-1.9.9-3.3 2.2-4.3 3.9-1 1.7-1.5 3.6-1.5 5.8 0 2.3.4 4.2 1.3 5.8.9 1.6 2 3 3.5 4.1 1.5 1.1 3.2 2.1 5.2 3 2.2.9 3.7 1.7 4.6 2.6.9.9 1.3 2 1.3 3.3 0 1.4-.5 2.5-1.6 3.3-1 .8-2.5 1.2-4.3 1.2-1.8 0-3.5-.3-5-.9-1.6-.6-3.1-1.5-4.7-2.7l-4 5.7c1.5 1.4 3.4 2.4 5.5 3.2 2.1.8 4.6 1.2 7.4 1.2 2.5 0 4.7-.4 6.6-1.3 1.9-.9 3.4-2.2 4.4-3.9 1-1.7 1.6-3.7 1.6-6 0-2-.4-3.7-1.1-5-.8-1.3-1.8-2.5-3-3.4z"/></svg>
+                    <svg *ngSwitchCase="'js'" viewBox="0 0 128 128" class="w-6 h-6 md:w-7 md:h-7"><path fill="#f7df1e" d="M2 2h124v124H2z"/><path d="M86.1 106.3c2.5 4.1 5.8 7.1 11.6 7.1 4.9 0 8-2.5 8-6 0-4.2-3.3-5.7-8.9-8.2l-3-1.3c-8.7-3.7-14.5-8.4-14.5-18.3 0-9.1 6.9-16 17.7-16 7.7 0 13.2 2.7 17.2 9.7l-9.4 6c-2.1-3.7-4.4-5.2-7.8-5.2-3.5 0-5.8 2.3-5.8 5.2 0 3.6 2.3 5.1 7.6 7.3l3 1.3c10.2 4.4 16 8.9 16 19 0 10.9-8.5 16.8-19.9 16.8-11.2 0-18.5-5.3-22.1-12.3l9.9-5.7zM48.4 107.3c1.9 3.4 3.7 6.2 7.8 6.2 4 0 6.5-1.6 6.5-7.8V58.5h12.1v47.5c0 12.5-7.3 18.2-18 18.2-9.7 0-15.3-5-18.2-11l9.8-5.9z"/></svg>
+                    <svg *ngSwitchCase="'sql'" viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><ellipse cx="32" cy="12" rx="26" ry="8" fill="#2563eb" opacity="0.85"/><path d="M58 12v16c0 4.4-11.6 8-26 8S6 32.4 6 28V12" fill="none" stroke="#2563eb" stroke-width="4"/><ellipse cx="32" cy="28" rx="26" ry="8" fill="#2563eb" opacity="0.2"/><path d="M58 28v16c0 4.4-11.6 8-26 8S6 48.4 6 44V28" fill="none" stroke="#2563eb" stroke-width="4"/><ellipse cx="32" cy="44" rx="26" ry="8" fill="#2563eb" opacity="0.1"/></svg>
+                  </ng-container>
+                  <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping [attr.data-i18n-key]="'HOME.STACK.ITEMS.' + l.k">{{ ('HOME.STACK.ITEMS.' + l.k) | translate }}</span>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- Frameworks & Runtime -->
+          <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
+            <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.FRAMEWORKS.TITLE">{{ 'HOME.STACK.GROUPS.FRAMEWORKS.TITLE' | translate }}</h3>
+            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+              <ng-container *ngFor="let f of [
+                {k:'ANGULAR',svg:'angular'},
+                {k:'NODE',svg:'node'},
+                {k:'TAILWIND',svg:'tailwind'}]; let i = index">
+                <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" [style.animationDelay]="(60 + i*60) + 'ms'" [attr.title]="('HOME.STACK.ITEMS.' + f.k) | translate">
+                  <ng-container [ngSwitch]="f.svg">
+                    <svg *ngSwitchCase="'angular'" viewBox="0 0 250 250" class="w-6 h-6 md:w-7 md:h-7"><path fill="#DD0031" d="M125 30L31 63l14 108 80 44 80-44 14-108z"/><path fill="#C3002F" d="M125 30v32-.1 98.5-.6l63.8-35.2L187 63z"/><path fill="#fff" d="M125 62l-43.2 117.7h16L109 151h31.6l11.2 28.6h16L125 62zm11 73h-22l11-28.7 11 28.7z"/></svg>
+                    <svg *ngSwitchCase="'node'" viewBox="0 0 256 288" class="w-6 h-6 md:w-7 md:h-7"><path fill="#68A063" d="M128 .4L0 73v142l128 72.6 128-72.6V73L128 .4z"/><path fill="#fff" d="M127.9 52.5l74.4 42.9v85.3l-74.4 42.9-74.4-42.9V95.4l74.4-42.9m0-13.1L41.5 95.4v97.1l86.4 56.1 86.4-56.1V95.4L127.9 39.4z"/><path fill="#fff" d="M159 135c0-13.5-7.9-21.6-24.6-24.3-11.7-2-15.6-4-15.6-8.7 0-3.9 3.1-6.5 9.3-6.5 5.6 0 11.2 2 17.1 5.9l9.3-12.3c-7.1-5.1-15.1-7.7-24.2-7.7-16.2 0-27.3 9.4-27.3 24 0 12.8 8.5 20.4 25.7 23.3 11.2 2 14.6 4.4 14.6 9 0 4.6-4.1 7.2-11.2 7.2-7.6 0-14.8-2.6-21.8-7.9l-10 11.7c8.8 7.6 19.6 11.3 31.7 11.3 18.1-.1 27-9.4 27-25zm-50.2 37.6c0 5.4 4.1 9.6 9.5 9.6s9.7-4.3 9.7-9.6c0-5.3-4.3-9.5-9.7-9.5-5.3 0-9.5 4.2-9.5 9.5z"/></svg>
+                    <svg *ngSwitchCase="'tailwind'" viewBox="0 0 48 48" class="w-6 h-6 md:w-7 md:h-7"><path fill="#38bdf8" d="M24 9c-6 0-9.8 3-11.4 9 2.3-3 4.9-4.1 7.9-3.3 1.7.5 2.9 1.7 4.2 3 2.2 2.2 4.7 4.7 10.3 4.7 6 0 9.8-3 11.4-9-2.3 3-4.9 4.1-7.9 3.3-1.7-.5-2.9-1.7-4.2-3C32.6 11.5 30.1 9 24 9zm-11.4 15c-6 0-9.8 3-11.4 9 2.3-3 4.9-4.1 7.9-3.3 1.7.5 2.9 1.7 4.2 3 2.2 2.2 4.7 4.7 10.3 4.7 6 0 9.8-3 11.4-9-2.3 3-4.9 4.1-7.9 3.3-1.7-.5-2.9-1.7-4.2-3-2.2-2.3-4.7-4.7-10.3-4.7z"/></svg>
+                  </ng-container>
+                  <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping [attr.data-i18n-key]="'HOME.STACK.ITEMS.' + f.k">{{ ('HOME.STACK.ITEMS.' + f.k) | translate }}</span>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- Platform / Infra & Data -->
+          <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
+            <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.PLATFORM.TITLE">{{ 'HOME.STACK.GROUPS.PLATFORM.TITLE' | translate }}</h3>
+            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+              <!-- SQLite -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:60ms" title="SQLite">
+                <svg viewBox="0 0 128 128" class="w-6 h-6 md:w-7 md:h-7"><path fill="#0E6EAF" d="M18 15h92v98H18z"/><path fill="#fff" d="M83 28H45v8h15v59h8V36h15z"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.PLATFORM.SQLITE">{{ 'HOME.STACK.GROUPS.PLATFORM.SQLITE' | translate }}</span>
+              </div>
+              <!-- SQL (Relational) -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:120ms" title="Relational SQL">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><ellipse cx="32" cy="12" rx="26" ry="8" fill="#6366f1" opacity="0.85"/><path d="M58 12v16c0 4.4-11.6 8-26 8S6 32.4 6 28V12" fill="none" stroke="#6366f1" stroke-width="4"/><ellipse cx="32" cy="28" rx="26" ry="8" fill="#6366f1" opacity="0.2"/><path d="M58 28v16c0 4.4-11.6 8-26 8S6 48.4 6 44V28" fill="none" stroke="#6366f1" stroke-width="4"/><ellipse cx="32" cy="44" rx="26" ry="8" fill="#6366f1" opacity="0.1"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary hidden sm:inline select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.PLATFORM.REL_SQL">{{ 'HOME.STACK.GROUPS.PLATFORM.REL_SQL' | translate }}</span><span class="text-[10px] md:text-[11px] font-medium text-secondary sm:hidden select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.PLATFORM.REL_SQL">{{ 'HOME.STACK.GROUPS.PLATFORM.REL_SQL' | translate }}</span>
+              </div>
+              <!-- Cloudflare -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:180ms" title="Cloudflare Edge">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><path fill="#fca311" d="M20 40h36a12 12 0 00-12-12h-2A18 18 0 0011 34a10 10 0 009 6z"/><path fill="#ff6f00" d="M14 42h38a10 10 0 01-10 10H24A10 10 0 0114 42z"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.PLATFORM.CLOUDFLARE">{{ 'HOME.STACK.GROUPS.PLATFORM.CLOUDFLARE' | translate }}</span>
+              </div>
+              <!-- Azure -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:240ms" title="Microsoft Azure">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><path fill="#0078d4" d="M8 48L28 8h12L20 48z"/><path fill="#50e6ff" d="M36 16l20 32H24z"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.PLATFORM.AZURE">{{ 'HOME.STACK.GROUPS.PLATFORM.AZURE' | translate }}</span>
+              </div>
+              <!-- Google Cloud -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:300ms" title="Google Cloud Platform">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><circle cx="32" cy="32" r="12" fill="#fff" stroke="#4285f4" stroke-width="4"/><path fill="#ea4335" d="M32 12l8 14H24z"/><path fill="#34a853" d="M20 26l-4 14h16z"/><path fill="#fbbc05" d="M44 26h-8l12 14 4-6z"/><path fill="#4285f4" d="M28 54h8l-4-14z"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.PLATFORM.GCP">{{ 'HOME.STACK.GROUPS.PLATFORM.GCP' | translate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tooling -->
+          <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
+            <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.TOOLING.TITLE">{{ 'HOME.STACK.GROUPS.TOOLING.TITLE' | translate }}</h3>
+            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+              <!-- Git -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.65s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:60ms" title="Git Version Control">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><path fill="#F05133" d="M57.7 30.3L33.7 6.3c-.9-.9-2.4-.9-3.3 0l-6.7 6.7 8.3 8.3a4.6 4.6 0 015.8 5.8l8 8a4.6 4.6 0 11-3.3 3.3l-8-8-.2.2v14.2a4.6 4.6 0 11-3.3 0V29.3a4.6 4.6 0 01-2.5-6.1l-8.1-8.1L6.3 30.3c-.9.9-.9 2.4 0 3.3l24 24c.9.9 2.4.9 3.3 0l24-24c.9-.9.9-2.4 0-3.3z"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.TOOLING.GIT">{{ 'HOME.STACK.GROUPS.TOOLING.GIT' | translate }}</span>
+              </div>
+              <!-- CI / DevOps (tools) -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.65s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:120ms" title="Automation & Pipelines">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><circle cx="32" cy="32" r="10" fill="#8b5cf6"/><path fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M32 14v6M32 44v6M18 32h-6M52 32h-6M22 22l-4-4M42 42l4 4M42 22l4-4M22 42l-4 4"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.TOOLING.PIPELINES">{{ 'HOME.STACK.GROUPS.TOOLING.PIPELINES' | translate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI -->
+          <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
+            <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.AI.TITLE">{{ 'HOME.STACK.GROUPS.AI.TITLE' | translate }}</h3>
+            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+              <!-- Copilot Agents -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.65s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:60ms" title="AI Pair Programming">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><rect x="10" y="14" width="44" height="36" rx="6" ry="6" fill="#0f172a" stroke="#6366f1" stroke-width="2"/><path d="M22 30h20" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/><circle cx="26" cy="24" r="3" fill="#6366f1"/><circle cx="38" cy="24" r="3" fill="#6366f1"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary text-center select-none leading-tight" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.AI.PAIR">{{ 'HOME.STACK.GROUPS.AI.PAIR' | translate }}</span>
+              </div>
+              <!-- AI / LLM -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.65s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:120ms" title="AI / LLM Workflows">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><circle cx="32" cy="32" r="14" fill="#6366f1"/><path d="M32 12v4M32 48v4M16 32h-4M52 32h4M21 21l-3-3M46 46l3 3M21 43l-3 3M46 18l3-3" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.AI.LLM">{{ 'HOME.STACK.GROUPS.AI.LLM' | translate }}</span>
+              </div>
+              <!-- Ollama -->
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.65s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:180ms" title="Ollama (Local Models)">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><rect x="14" y="14" width="36" height="36" rx="8" ry="8" fill="#1e293b" stroke="#8b5cf6" stroke-width="2"/><path d="M24 38c1.5-6 3.5-9 8-9s6.5 3 8 9" stroke="#6366f1" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="28" cy="26" r="3" fill="#6366f1"/><circle cx="36" cy="26" r="3" fill="#6366f1"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.AI.OLLAMA">{{ 'HOME.STACK.GROUPS.AI.OLLAMA' | translate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Creative -->
+          <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
+            <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.CREATIVE.TITLE">{{ 'HOME.STACK.GROUPS.CREATIVE.TITLE' | translate }}</h3>
+            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:60ms" title="Photo Editing">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><rect x="8" y="14" width="48" height="36" rx="4" ry="4" fill="#1e293b" stroke="#8b5cf6" stroke-width="2"/><circle cx="24" cy="30" r="10" fill="#6366f1"/><path d="M8 24h10l4-6h20l4 6h10" stroke="#8b5cf6" stroke-width="2" fill="none"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.CREATIVE.PHOTO">{{ 'HOME.STACK.GROUPS.CREATIVE.PHOTO' | translate }}</span>
+              </div>
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:120ms" title="Video Editing">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><rect x="10" y="14" width="44" height="36" rx="4" ry="4" fill="#1e293b" stroke="#6366f1" stroke-width="2"/><path d="M26 24l14 8-14 8z" fill="#8b5cf6"/><path d="M16 20v24M48 20v24" stroke="#6366f1" stroke-width="2"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.CREATIVE.VIDEO">{{ 'HOME.STACK.GROUPS.CREATIVE.VIDEO' | translate }}</span>
+              </div>
+              <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:180ms" title="World Terrain Editing">
+                <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><path d="M8 44c8-10 16-14 24-12s16 2 24-6v18c-8 10-16 14-24 12s-16-2-24 6V44z" fill="#14532d" stroke="#22c55e" stroke-width="2"/><circle cx="40" cy="20" r="6" fill="#4ade80"/></svg>
+                <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.CREATIVE.TERRAIN">{{ 'HOME.STACK.GROUPS.CREATIVE.TERRAIN' | translate }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>

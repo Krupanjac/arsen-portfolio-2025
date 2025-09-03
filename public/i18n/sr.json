@@ -61,7 +61,31 @@
   "HOME": {
     "LABEL": "Početna/>",
     "TITLE": "Dobrodošli u moj portfolio",
-    "SUBTITLE": "Otkrijte moje projekte, veštine i iskustva. Pridružite se kreativnom putovanju dok delim svoj rad."
+    "SUBTITLE": "Otkrijte moje projekte, veštine i iskustva. Pridružite se kreativnom putovanju dok delim svoj rad.",
+    "STACK": {
+      "TITLE": "$stek",
+      "SUBTITLE": "Neke od tehnologija, alata i kreativnih oblasti sa kojima radim.",
+      "GROUPS": {
+  "LANGUAGES": { "TITLE": "$jezici" },
+  "FRAMEWORKS": { "TITLE": "$frameworki i runtime" },
+  "PLATFORM": { "TITLE": "$platforma / infra & podaci", "SQLITE": "SQLite", "REL_SQL": "Relacijski SQL", "CLOUDFLARE": "Cloudflare", "AZURE": "Azure", "GCP": "Google Cloud" },
+  "TOOLING": { "TITLE": "$alati", "GIT": "Git", "PIPELINES": "Pipelines" },
+  "AI": { "TITLE": "$ai", "PAIR": "AI pair programiranje", "LLM": "AI / LLM", "OLLAMA": "Ollama" },
+  "CREATIVE": { "TITLE": "$kreativno", "PHOTO": "Obrada fotografija", "VIDEO": "Video montaža", "TERRAIN": "Uređivanje terena svetova" }
+      }
+      ,
+      "ITEMS": {
+        "C": "C",
+        "CPP": "C++",
+        "PYTHON": "Python",
+        "TYPESCRIPT": "TypeScript",
+        "JAVASCRIPT": "JavaScript",
+        "SQL": "SQL",
+        "ANGULAR": "Angular",
+        "NODE": "Node.js",
+        "TAILWIND": "Tailwind"
+      }
+    }
   },
   "PROJECTS": {
     "LABEL": "Projekti/>"

@@ -61,7 +61,31 @@
   "HOME": {
     "LABEL": "Home/>",
     "TITLE": "Welcome to My Portfolio",
-    "SUBTITLE": "Discover my projects, skills, and experiences. Join me on a creative journey as I share my work."
+    "SUBTITLE": "Discover my projects, skills, and experiences. Join me on a creative journey as I share my work.",
+    "STACK": {
+      "TITLE": "$stack",
+      "SUBTITLE": "Some of the technologies, tools & creative domains I work with.",
+      "GROUPS": {
+  "LANGUAGES": { "TITLE": "$languages" },
+  "FRAMEWORKS": { "TITLE": "$frameworks & runtime" },
+  "PLATFORM": { "TITLE": "$platform / infra & data", "SQLITE": "SQLite", "REL_SQL": "Relational SQL", "CLOUDFLARE": "Cloudflare", "AZURE": "Azure", "GCP": "Google Cloud" },
+  "TOOLING": { "TITLE": "$tooling", "GIT": "Git", "PIPELINES": "Pipelines" },
+  "AI": { "TITLE": "$ai", "PAIR": "AI Pair Programming", "LLM": "AI / LLM", "OLLAMA": "Ollama" },
+  "CREATIVE": { "TITLE": "$creative", "PHOTO": "Photo Editing", "VIDEO": "Video Editing", "TERRAIN": "World Terrain Editing" }
+      }
+      ,
+      "ITEMS": {
+        "C": "C",
+        "CPP": "C++",
+        "PYTHON": "Python",
+        "TYPESCRIPT": "TypeScript",
+        "JAVASCRIPT": "JavaScript",
+        "SQL": "SQL",
+        "ANGULAR": "Angular",
+        "NODE": "Node.js",
+        "TAILWIND": "Tailwind"
+      }
+    }
   },
   "PROJECTS": {
     "LABEL": "Projects/>"
