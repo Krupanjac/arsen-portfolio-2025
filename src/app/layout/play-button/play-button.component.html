@@ -1,8 +1,9 @@
-<div class="flex justify-center items-center py-8">
-  <div class="group relative inline-block">
+<div class="flex justify-center items-center py-8 relative" [class.pointer-events-none]="playStateService.isPlaying">
+  <div class="group relative inline-block z-10" [class.opacity-0]="playStateService.isPlaying" [class.scale-75]="playStateService.isPlaying" [class.translate-y-4]="playStateService.isPlaying" [class.pointer-events-none]="playStateService.isPlaying" style="transition:all .6s cubic-bezier(.4,0,.2,1)">
     <button
       (click)="onPlay()"
       aria-describedby="play-tooltip"
+      [attr.tabindex]="playStateService.isPlaying ? -1 : 0"
       class="play-button relative isolate font-semibold tracking-[0.025em] text-lg px-6 py-3 rounded-full border border-[rgba(var(--color-accent-rgb)/0.55)]
              bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-alt)]
              text-[var(--color-text)] shadow-md shadow-[rgba(0,0,0,0.18)]
@@ -23,5 +24,39 @@
     >
       {{ 'PLAY.TOOLTIP' | translate }}
     </div>
+  </div>
+
+  <!-- Unified Help Menu -->
+  <div *ngIf="showHelp"
+       class="help-menu-container"
+       [class.full]="!isCompact"
+       [class.compact]="isCompact">
+    <ng-container *ngIf="!isCompact; else compactTpl">
+      <div class="help-menu-full-inner">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="text-base font-semibold tracking-wide">{{ 'HELP.TITLE' | translate }}</span>
+          <span class="text-xs opacity-70">{{ 'HELP.TIP' | translate }}</span>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div *ngFor="let c of commandKeys" class="flex items-center gap-3 text-sm bg-white/5 rounded-lg px-3 py-2 border border-white/10">
+            <kbd class="inline-flex min-w-9 justify-center items-center px-2 py-1 rounded-md bg-gradient-to-b from-white/15 to-white/5 border border-white/20 text-[13px] font-medium tracking-wide shadow-inner">
+              {{ c.key }}
+            </kbd>
+            <span class="opacity-85 text-[13px]">{{ c.label | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #compactTpl>
+      <div class="help-menu-compact-inner">
+        <div class="font-semibold text-[12px] mb-1 tracking-wide">{{ 'HELP.TITLE' | translate }}</div>
+        <div class="flex flex-wrap gap-2">
+          <div *ngFor="let c of commandKeys" class="flex items-center gap-1">
+            <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/20 text-[10px] font-medium shadow-inner">{{ c.key }}</kbd>
+            <span class="opacity-80">{{ c.label | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </div>

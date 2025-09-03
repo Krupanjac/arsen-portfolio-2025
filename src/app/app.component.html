@@ -16,7 +16,8 @@
 <!-- Single page layout now delegates each section to its own standalone component -->
 <section id="home" class="min-h-screen">
   <app-hero [showOnlyBackground]="playState.isPlaying"></app-hero>
-  <app-play-button *ngIf="!playState.isPlaying"></app-play-button>
+  <!-- Keep play button in DOM so help menu can persist after activation -->
+  <app-play-button></app-play-button>
   <app-home *ngIf="!playState.isPlaying"></app-home>
 </section>
 

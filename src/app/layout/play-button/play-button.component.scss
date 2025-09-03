@@ -24,7 +24,65 @@
 	box-shadow: -1px 1px 2px rgba(0,0,0,0.25);
 }
 
+/* Help menu shared styles */
+/* Unified help menu container (full state baseline) */
+.help-menu-container {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%) scale(.9);
+	width: min(92vw, 680px);
+	padding: 1.3rem 1.55rem 1.45rem;
+	border-radius: 1.25rem;
+	border: 1px solid rgba(var(--color-accent-rgb)/0.35);
+	backdrop-filter: blur(18px) saturate(140%);
+	-webkit-backdrop-filter: blur(18px) saturate(140%);
+	background: linear-gradient(160deg, rgba(var(--color-surface-rgb,20,20,25)/0.80), rgba(var(--color-surface-rgb,20,20,25)/0.58));
+	box-shadow: 0 10px 46px -10px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,0.04);
+	color: var(--color-text);
+	font-family: var(--font-sans, system-ui, "Segoe UI", Roboto, Ubuntu, Cantarell, sans-serif);
+	-webkit-font-smoothing: antialiased;
+	line-height: 1.25;
+	overflow: visible; /* allow shadow & glow to render fully */
+	animation: helpIntro .5s cubic-bezier(.4,0,.2,1) forwards;
+	transition: left .85s cubic-bezier(.7,-0.35,.25,1.35), top .85s cubic-bezier(.7,-0.35,.25,1.35), transform .85s cubic-bezier(.7,-0.35,.25,1.35), width .55s ease, padding .55s ease, border-radius .55s ease, background .55s ease, box-shadow .55s ease;
+	z-index: 40;
+}
+
+@keyframes helpIntro { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.6); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+
+/* Compact (top-left) state: diagonal move + scale down */
+.help-menu-container.compact {
+	/* Add safe-area padding and a bit more inset so shadow & glow are not clipped */
+	left: calc(env(safe-area-inset-left, 0px) + 1.1rem);
+	top: calc(env(safe-area-inset-top, 0px) + 1.1rem);
+	transform-origin: top left;
+	/* Slight translate to keep the visual panel fully inside after scale */
+	transform: translate(0,0) scale(.9);
+	width: max-content;
+	max-width: 300px;
+	min-width: 180px;
+	padding: .78rem .95rem .9rem;
+	border-radius: .9rem;
+	background: linear-gradient(160deg, rgba(var(--color-surface-rgb,20,20,25)/0.68), rgba(var(--color-surface-rgb,20,20,25)/0.45));
+	box-shadow: 0 5px 22px -6px rgba(0,0,0,.48), 0 0 0 1px rgba(255,255,255,0.05);
+  overflow: visible;
+}
+
+.help-menu-full-inner { font-size: 14px; }
+.help-menu-compact-inner { font-size: 11px; line-height: 1.2; }
+
+/* Desktop tweak: keep centered start, only adjust compact spacing */
+@media (min-width: 768px) {
+	.help-menu-container.compact { left: calc(env(safe-area-inset-left, 0px) + 1.3rem); top: calc(env(safe-area-inset-top, 0px) + 1.2rem); }
+}
+
+@media (max-width: 640px) {
+	.help-menu-full-inner { font-size: 13px; }
+}
+
 @media (forced-colors: active) {
 	.play-tooltip { background: Canvas; color: CanvasText; border: 1px solid CanvasText; box-shadow: none; }
 	.play-tooltip::after { border-color: CanvasText; box-shadow: none; }
+	.help-menu-container { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
 }

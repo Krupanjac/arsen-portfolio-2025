@@ -1,5 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { PlayButtonComponent } from './play-button.component';
 
 describe('PlayButtonComponent', () => {
@@ -20,4 +19,15 @@ describe('PlayButtonComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should show help then hide after timeout (no compact)', fakeAsync(() => {
+    component.onPlay();
+    fixture.detectChanges();
+    expect(component.showHelp).toBeTrue();
+    expect(component.isCompact).toBeFalse(); // compact disabled
+    tick(component.helpFullDuration + 10);
+    fixture.detectChanges();
+    expect(component.showHelp).toBeFalse();
+    expect(component.isCompact).toBeFalse();
+  }));
 });
