@@ -2,7 +2,7 @@
   "NAV": {
     "START": "Početna/",
     "PROJECTS": "Projekti/",
-    "EXPERIENCE": "Rad/",
+    "EXPERIENCE": "Iskustvo/",
     "ABOUT": "O meni/",
     "CONTACT": "Kontakt/",
     "LANG": {
@@ -61,7 +61,7 @@
   "HOME": {
     "LABEL": "Početna/>",
     "TITLE": "Dobrodošli u moj portfolio",
-    "SUBTITLE": "Otkrijte moje projekte, veštine i iskustva. Pridružite se kreativnom putovanju dok delim svoj rad.",
+    "SUBTITLE": "Otkrijte moje projekte, veštine i iskustva. Pridružite se kreativnom putovanju dok delim svoj Iskustvo.",
     "STACK": {
       "TITLE": "$stek",
       "SUBTITLE": "Neke od tehnologija, alata i kreativnih oblasti sa kojima radim.",
@@ -94,7 +94,7 @@
     "LABEL": "Projekti/>"
   },
   "EXPERIENCE": {
-    "LABEL": "Rad/>"
+    "LABEL": "Iskustvo/>"
   },
   "PLAY": {
     "TOOLTIP": "Klikni da se igraš sa zvezdama"
