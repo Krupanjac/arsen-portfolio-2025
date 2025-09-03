@@ -21,7 +21,7 @@ export async function onRequest({ request, env, next }) {
   // Make Angular component routes public so users can view the site without auth
   '/',
   '/projects',
-  '/work',
+  '/experience',
   '/about',
   '/contact',
   '/home',

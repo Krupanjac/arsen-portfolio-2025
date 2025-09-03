@@ -72,7 +72,7 @@ The background component now includes interactive gravity field creation that in
 - Gravity fields fade out visually over time but retain their attractive force
 - Long-range attraction ensures distant stars are drawn to your shapes
 - Gravity fields are shown as subtle glowing indicators that fade with age
-- All interactions work alongside the existing mouse attraction and particle effects
+- All interactions experience alongside the existing mouse attraction and particle effects
 
 ### Controls Summary
 - `D` - Toggle gravity field mode

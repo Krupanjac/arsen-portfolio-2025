@@ -6,14 +6,14 @@ import { RailComponent } from '../layout/rail/rail.component';
 import { BlogService, BlogPost } from '../blog.service';
 
 @Component({
-  selector: 'app-work',
+  selector: 'app-experience',
   standalone: true,
   imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective],
-  templateUrl: './work.component.html',
-  styleUrls: ['./work.component.scss']
+  templateUrl: './experience.component.html',
+  styleUrls: ['./experience.component.scss']
 })
 export class WorkComponent implements OnInit {
-  // Work experiences extracted from blog posts with category 'work'
+  // Experience experiences extracted from blog posts with category 'experience'
   workPosts: BlogPost[] = [];
 
   constructor(private blogService: BlogService, @Inject(PLATFORM_ID) private platformId: Object) {}
@@ -27,8 +27,8 @@ export class WorkComponent implements OnInit {
 
   loadBlogPosts() {
     this.blogService.list().subscribe(posts => {
-      // Only keep category 'work'
-      this.workPosts = posts.filter(post => post.category === 'work');
+      // Only keep category 'experience'
+      this.workPosts = posts.filter(post => post.category === 'experience');
       // Sort descending by date (most recent first) if dates exist
       this.workPosts.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
     });

@@ -39,7 +39,7 @@ Allow: /
 # Explicitly list primary public routes (for clarity only)
 Allow: /$
 Allow: /projects
-Allow: /work
+Allow: /experience
 Allow: /about
 Allow: /contact
 

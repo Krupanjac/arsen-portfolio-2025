@@ -2,7 +2,7 @@
   "NAV": {
     "START": "Početna/",
     "PROJECTS": "Projekti/",
-    "WORK": "Rad/",
+    "EXPERIENCE": "Rad/",
     "ABOUT": "O meni/",
     "CONTACT": "Kontakt/",
     "LANG": {
@@ -90,7 +90,7 @@
   "PROJECTS": {
     "LABEL": "Projekti/>"
   },
-  "WORK": {
+  "EXPERIENCE": {
     "LABEL": "Rad/>"
   },
   "PLAY": {

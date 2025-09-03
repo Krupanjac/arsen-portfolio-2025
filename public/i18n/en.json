@@ -2,7 +2,7 @@
   "NAV": {
     "START": "Start/",
     "PROJECTS": "Projects/",
-    "WORK": "Work/",
+    "EXPERIENCE": "Experience/",
     "ABOUT": "About/",
     "CONTACT": "Contact/",
     "LANG": {
@@ -61,10 +61,10 @@
   "HOME": {
     "LABEL": "Home/>",
     "TITLE": "Welcome to My Portfolio",
-    "SUBTITLE": "Discover my projects, skills, and experiences. Join me on a creative journey as I share my work.",
+    "SUBTITLE": "Discover my projects, skills, and experiences. Join me on a creative journey as I share my experience.",
     "STACK": {
       "TITLE": "$stack",
-      "SUBTITLE": "Some of the technologies, tools & creative domains I work with.",
+      "SUBTITLE": "Some of the technologies, tools & creative domains I experience with.",
       "GROUPS": {
   "LANGUAGES": { "TITLE": "$languages" },
   "FRAMEWORKS": { "TITLE": "$frameworks & runtime" },
@@ -90,8 +90,8 @@
   "PROJECTS": {
     "LABEL": "Projects/>"
   },
-  "WORK": {
-    "LABEL": "Work/>"
+  "EXPERIENCE": {
+    "LABEL": "Experience/>"
   },
   "PLAY": {
     "TOOLTIP": "Click to play with the stars"

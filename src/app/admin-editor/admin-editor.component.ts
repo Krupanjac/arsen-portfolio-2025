@@ -45,8 +45,8 @@ export class AdminEditorComponent implements OnInit {
     if (!this.editing) return;
     // normalize tags from text field
     this.editing.tags = this.tagsText ? this.tagsText.split(',').map((s: string) => s.trim()).filter(Boolean) : [];
-    // If category is 'work', ignore any images
-    if (this.editing.category === 'work') {
+    // If category is 'experience', ignore any images
+    if (this.editing.category === 'experience') {
       this.images = [];
       this.editing.images = [];
     } else {
@@ -100,7 +100,7 @@ export class AdminEditorComponent implements OnInit {
     }
   }
   
-  isWorkCategory(): boolean { return this.editing?.category === 'work'; }
+  isWorkCategory(): boolean { return this.editing?.category === 'experience'; }
 
   // Helpers for created_at binding
   get createdAtLocal(): string {

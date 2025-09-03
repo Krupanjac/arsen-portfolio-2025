@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS posts (
   description TEXT,
   tags TEXT, -- JSON array
   images TEXT, -- JSON array of image URLs
-  category TEXT, -- 'project' or 'work'
+  category TEXT, -- 'project' or 'experience'
   created_by TEXT,
   updated_by TEXT,
   created_at INTEGER,

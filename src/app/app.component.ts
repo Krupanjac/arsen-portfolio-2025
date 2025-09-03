@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ContactComponent } from './contact/contact.component';
 import { HomeComponent } from './home/home.component';
 import { ProjectsComponent } from './projects/projects.component';
-import { WorkComponent } from './work/work.component';
+import { WorkComponent } from './experience/experience.component';
 import { AboutComponent } from './about/about.component';
 import { PlayStateService } from './play-state.service';
 import { PlayButtonComponent } from './layout/play-button/play-button.component';
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private loadListenerBound = this.onWindowLoad.bind(this);
   private fallbackTimeoutId: any = null;
 
-  // Data moved into respective standalone components (Home, Projects, Work, About, Contact)
+  // Data moved into respective standalone components (Home, Projects, Experience, About, Contact)
 
   private isBrowser: boolean;
 

@@ -28,7 +28,7 @@ describe('AppComponent', () => {
     expect(compiled.querySelector('app-nav')).toBeTruthy();
     expect(compiled.querySelector('app-home')).toBeTruthy();
     expect(compiled.querySelector('app-projects')).toBeTruthy();
-    expect(compiled.querySelector('app-work')).toBeTruthy();
+    expect(compiled.querySelector('app-experience')).toBeTruthy();
     expect(compiled.querySelector('app-about')).toBeTruthy();
     expect(compiled.querySelector('app-contact')).toBeTruthy();
   });
