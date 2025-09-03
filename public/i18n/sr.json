@@ -68,8 +68,8 @@
       "GROUPS": {
   "LANGUAGES": { "TITLE": "$jezici" },
   "FRAMEWORKS": { "TITLE": "$frameworki i runtime" },
-  "PLATFORM": { "TITLE": "$platforma / infra & podaci", "SQLITE": "SQLite", "REL_SQL": "Relacijski SQL", "CLOUDFLARE": "Cloudflare", "AZURE": "Azure", "GCP": "Google Cloud" },
-  "TOOLING": { "TITLE": "$alati", "GIT": "Git", "PIPELINES": "Pipelines" },
+  "PLATFORM": { "TITLE": "$platforma / infra & podaci", "SQLITE": "SQLite", "REL_SQL": "Relacijski SQL", "CLOUDFLARE": "Cloudflare", "AZURE": "Azure", "GCP": "Google Cloud", "LINUX": "Linux" },
+  "TOOLING": { "TITLE": "$alati", "GIT": "Git", "PIPELINES": "Pipelines", "ALGO_DS": "Algoritmi i strukture podataka", "DESIGN_PATTERNS": "Dizajn paterni" },
   "AI": { "TITLE": "$ai", "PAIR": "AI pair programiranje", "LLM": "AI / LLM", "OLLAMA": "Ollama" },
   "CREATIVE": { "TITLE": "$kreativno", "PHOTO": "Obrada fotografija", "VIDEO": "Video montaža", "TERRAIN": "Uređivanje terena svetova" }
       }
@@ -77,7 +77,10 @@
       "ITEMS": {
         "C": "C",
         "CPP": "C++",
-        "PYTHON": "Python",
+  "PYTHON": "Python",
+  "JAVA": "Java",
+  "CSHARP": "C#",
+  "PHP": "PHP",
         "TYPESCRIPT": "TypeScript",
         "JAVASCRIPT": "JavaScript",
         "SQL": "SQL",

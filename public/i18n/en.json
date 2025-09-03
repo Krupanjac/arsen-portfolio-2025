@@ -68,8 +68,8 @@
       "GROUPS": {
   "LANGUAGES": { "TITLE": "$languages" },
   "FRAMEWORKS": { "TITLE": "$frameworks & runtime" },
-  "PLATFORM": { "TITLE": "$platform / infra & data", "SQLITE": "SQLite", "REL_SQL": "Relational SQL", "CLOUDFLARE": "Cloudflare", "AZURE": "Azure", "GCP": "Google Cloud" },
-  "TOOLING": { "TITLE": "$tooling", "GIT": "Git", "PIPELINES": "Pipelines" },
+  "PLATFORM": { "TITLE": "$platform / infra & data", "SQLITE": "SQLite", "REL_SQL": "Relational SQL", "CLOUDFLARE": "Cloudflare", "AZURE": "Azure", "GCP": "Google Cloud", "LINUX": "Linux" },
+  "TOOLING": { "TITLE": "$tooling", "GIT": "Git", "PIPELINES": "Pipelines", "ALGO_DS": "Algorithms & Data Structures", "DESIGN_PATTERNS": "Design Patterns" },
   "AI": { "TITLE": "$ai", "PAIR": "AI Pair Programming", "LLM": "AI / LLM", "OLLAMA": "Ollama" },
   "CREATIVE": { "TITLE": "$creative", "PHOTO": "Photo Editing", "VIDEO": "Video Editing", "TERRAIN": "World Terrain Editing" }
       }
@@ -77,7 +77,10 @@
       "ITEMS": {
         "C": "C",
         "CPP": "C++",
-        "PYTHON": "Python",
+  "PYTHON": "Python",
+  "JAVA": "Java",
+  "CSHARP": "C#",
+  "PHP": "PHP",
         "TYPESCRIPT": "TypeScript",
         "JAVASCRIPT": "JavaScript",
         "SQL": "SQL",
