@@ -24,12 +24,12 @@
           <p class="mt-3 text-sm md:text-base text-secondary max-w-2xl mx-auto" appTerminalTyping data-i18n-key="HOME.STACK.SUBTITLE">{{ 'HOME.STACK.SUBTITLE' | translate }}</p>
         </div>
 
-        <div class="space-y-10 md:space-y-12">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
           <!-- Helper: reusable icon card -->
           <!-- Languages -->
           <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
             <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.LANGUAGES.TITLE">{{ 'HOME.STACK.GROUPS.LANGUAGES.TITLE' | translate }}</h3>
-            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+            <div class="grid grid-cols-3 gap-3 md:gap-4">
               <ng-container *ngFor="let l of [
                 {k:'C',svg:'c'},
                 {k:'CPP',svg:'cpp'},
@@ -55,7 +55,7 @@
           <!-- Frameworks & Runtime -->
           <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
             <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.FRAMEWORKS.TITLE">{{ 'HOME.STACK.GROUPS.FRAMEWORKS.TITLE' | translate }}</h3>
-            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+            <div class="grid grid-cols-3 gap-3 md:gap-4">
               <ng-container *ngFor="let f of [
                 {k:'ANGULAR',svg:'angular'},
                 {k:'NODE',svg:'node'},
@@ -75,7 +75,7 @@
           <!-- Platform / Infra & Data -->
           <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
             <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.PLATFORM.TITLE">{{ 'HOME.STACK.GROUPS.PLATFORM.TITLE' | translate }}</h3>
-            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+            <div class="grid grid-cols-3 gap-3 md:gap-4">
               <!-- SQLite -->
               <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:60ms" title="SQLite">
                 <svg viewBox="0 0 128 128" class="w-6 h-6 md:w-7 md:h-7"><path fill="#0E6EAF" d="M18 15h92v98H18z"/><path fill="#fff" d="M83 28H45v8h15v59h8V36h15z"/></svg>
@@ -107,7 +107,7 @@
           <!-- Tooling -->
           <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
             <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.TOOLING.TITLE">{{ 'HOME.STACK.GROUPS.TOOLING.TITLE' | translate }}</h3>
-            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+            <div class="grid grid-cols-3 gap-3 md:gap-4">
               <!-- Git -->
               <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.65s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:60ms" title="Git Version Control">
                 <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><path fill="#F05133" d="M57.7 30.3L33.7 6.3c-.9-.9-2.4-.9-3.3 0l-6.7 6.7 8.3 8.3a4.6 4.6 0 015.8 5.8l8 8a4.6 4.6 0 11-3.3 3.3l-8-8-.2.2v14.2a4.6 4.6 0 11-3.3 0V29.3a4.6 4.6 0 01-2.5-6.1l-8.1-8.1L6.3 30.3c-.9.9-.9 2.4 0 3.3l24 24c.9.9 2.4.9 3.3 0l24-24c.9-.9.9-2.4 0-3.3z"/></svg>
@@ -124,7 +124,7 @@
           <!-- AI -->
           <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
             <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.AI.TITLE">{{ 'HOME.STACK.GROUPS.AI.TITLE' | translate }}</h3>
-            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+            <div class="grid grid-cols-3 gap-3 md:gap-4">
               <!-- Copilot Agents -->
               <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.65s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:60ms" title="AI Pair Programming">
                 <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><rect x="10" y="14" width="44" height="36" rx="6" ry="6" fill="#0f172a" stroke="#6366f1" stroke-width="2"/><path d="M22 30h20" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/><circle cx="26" cy="24" r="3" fill="#6366f1"/><circle cx="38" cy="24" r="3" fill="#6366f1"/></svg>
@@ -146,7 +146,7 @@
           <!-- Creative -->
           <div class="rounded-xl border border-divider/60 p-5 md:p-6 bg-surface/40 backdrop-blur-sm">
             <h3 class="text-[0.65rem] md:text-xs font-semibold uppercase tracking-[0.18em] text-secondary mb-4 flex items-center gap-2 after:flex-1 after:h-px after:bg-gradient-to-r after:from-accent/40 after:to-transparent" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.CREATIVE.TITLE">{{ 'HOME.STACK.GROUPS.CREATIVE.TITLE' | translate }}</h3>
-            <div class="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 md:gap-4">
+            <div class="grid grid-cols-3 gap-3 md:gap-4">
               <div class="group flex flex-col items-center gap-1.5 p-2 rounded-md border border-divider/50 bg-surface-alt/40 hover:bg-surface-alt/70 transition duration-300 ease-out shadow-sm hover:shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-surface-alt/80 hover:bg-accent/10 dark:hover:bg-accent/20 dark:hover:border-accent/60 transform-gpu will-change-transform animate-[fadeUp_.6s_cubic-bezier(.25,.6,.3,1)_both]" style="animation-delay:60ms" title="Photo Editing">
                 <svg viewBox="0 0 64 64" class="w-6 h-6 md:w-7 md:h-7"><rect x="8" y="14" width="48" height="36" rx="4" ry="4" fill="#1e293b" stroke="#8b5cf6" stroke-width="2"/><circle cx="24" cy="30" r="10" fill="#6366f1"/><path d="M8 24h10l4-6h20l4 6h10" stroke="#8b5cf6" stroke-width="2" fill="none"/></svg>
                 <span class="text-[10px] md:text-[11px] font-medium text-secondary select-none" appTerminalTyping data-i18n-key="HOME.STACK.GROUPS.CREATIVE.PHOTO">{{ 'HOME.STACK.GROUPS.CREATIVE.PHOTO' | translate }}</span>

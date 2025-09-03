@@ -20,12 +20,12 @@
   <app-home *ngIf="!playState.isPlaying"></app-home>
 </section>
 
-<section id="projects" class="min-h-screen" *ngIf="!playState.isPlaying">
-  <app-projects></app-projects>
-</section>
-
 <section id="work" class="min-h-screen" *ngIf="!playState.isPlaying">
   <app-work></app-work>
+</section>
+
+<section id="projects" class="min-h-screen" *ngIf="!playState.isPlaying">
+  <app-projects></app-projects>
 </section>
 
 <section id="about" class="min-h-screen" *ngIf="!playState.isPlaying">
