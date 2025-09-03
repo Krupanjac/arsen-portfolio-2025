@@ -97,7 +97,8 @@
     "LABEL": "Experience/>"
   },
   "PLAY": {
-    "TOOLTIP": "Click to play with the stars"
+  "TOOLTIP": "Click to play with the stars",
+  "BUTTON": "Play"
   },
   "HELP": {
     "TITLE": "Interactive Commands",

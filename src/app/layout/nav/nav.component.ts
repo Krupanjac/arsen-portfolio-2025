@@ -220,6 +220,20 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
+  // Current language helper (falls back to stored/local default)
+  get currentLang(): 'en' | 'sr' {
+    const lang = (this.translate as any).currentLang ||
+      ((this.translate as any).getCurrentLang ? (this.translate as any).getCurrentLang() : null) ||
+      (typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : null) || 'en';
+    return (lang === 'sr' ? 'sr' : 'en');
+  }
+
+  // Toggle between en and sr using existing setLang method
+  toggleLang() {
+    const next = this.currentLang === 'en' ? 'sr' : 'en';
+    this.setLang(next);
+  }
+
   // Public handler for desktop navigation clicks
   onNavigate(event: Event, id: string) {
     if (event) {

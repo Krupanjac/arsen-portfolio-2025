@@ -36,12 +36,11 @@ Disallow: /
 User-agent: *
 Allow: /
 
-# Explicitly list primary public routes (for clarity only)
+# Explicitly allow root (pattern with $ end anchor is fine for Google, optional)
 Allow: /$
-Allow: #projects
-Allow: #experience
-Allow: #about
-Allow: #contact
+
+# NOTE: Fragment identifiers (#section) are not part of HTTP requests and cannot be
+# allowed/disallowed here; previous Allow lines with # have been removed as they had no effect.
 
 # Keep static resources crawlable so search engines can render pages
 Allow: /assets/

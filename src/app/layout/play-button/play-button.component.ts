@@ -2,10 +2,11 @@ import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { PlayStateService } from '../../play-state.service';
+import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
 
 @Component({
   selector: 'app-play-button',
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, TerminalTypingDirective],
   templateUrl: './play-button.component.html',
   styleUrl: './play-button.component.scss'
 })

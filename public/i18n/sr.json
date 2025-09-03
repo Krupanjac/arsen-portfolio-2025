@@ -97,7 +97,8 @@
     "LABEL": "Iskustvo/>"
   },
   "PLAY": {
-    "TOOLTIP": "Klikni da se igraš sa zvezdama"
+  "TOOLTIP": "Klikni da se igraš sa zvezdama",
+  "BUTTON": "Igraj"
   },
   "HELP": {
     "TITLE": "Interaktivne komande",
