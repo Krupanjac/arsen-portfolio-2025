@@ -99,6 +99,18 @@
   "PLAY": {
     "TOOLTIP": "Klikni da se igraš sa zvezdama"
   },
+  "HELP": {
+    "TITLE": "Interaktivne komande",
+    "COMMANDS": {
+      "D": "Uključi/isključi crtanje",
+      "C": "Obriši sva crtanja", 
+      "T": "Dodaj tekst oblik",
+      "S": "Dodaj nasumične zvezde (u crtanju)",
+      "CLICK": "Klik za čestice",
+      "SHIFT_CLICK": "Počni/zaustavi crtanje (u crtanju)"
+    },
+    "TIP": "Pritisni bilo koji taster iznad za interakciju!"
+  },
   "HERO": {
     "MY_NAME_IS": "Moje ime je",
     "TAGLINE": "Kreativna rešenja za digitalni svet"

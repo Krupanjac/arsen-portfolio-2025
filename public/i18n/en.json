@@ -99,6 +99,18 @@
   "PLAY": {
     "TOOLTIP": "Click to play with the stars"
   },
+  "HELP": {
+    "TITLE": "Interactive Commands",
+    "COMMANDS": {
+      "D": "Toggle Drawing Mode",
+      "C": "Clear All Drawings", 
+      "T": "Add Text Shape",
+      "S": "Add Random Stars (in drawing mode)",
+      "CLICK": "Click to create particles",
+      "SHIFT_CLICK": "Start/Stop drawing (in drawing mode)"
+    },
+    "TIP": "Press any key above to interact!"
+  },
   "HERO": {
     "MY_NAME_IS": "My name is",
     "TAGLINE": "Creative solutions for the digital world"

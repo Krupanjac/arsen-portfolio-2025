@@ -38,14 +38,13 @@ Allow: /
 
 # Explicitly list primary public routes (for clarity only)
 Allow: /$
-Allow: /projects
-Allow: /experience
-Allow: /about
-Allow: /contact
+Allow: #projects
+Allow: #experience
+Allow: #about
+Allow: #contact
 
 # Keep static resources crawlable so search engines can render pages
 Allow: /assets/
-Allow: /projectImg/
 Allow: /i18n/
 
 # Sitemap

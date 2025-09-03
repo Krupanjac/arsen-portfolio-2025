@@ -1,7 +1,7 @@
 <header class="fixed top-0 left-0 w-full bg-transparent px-4 py-3 z-50 backdrop-blur-[4px]">
   <div class="w-full max-w-[1100px] mx-auto flex items-center justify-between">
-  <p class="text-2xl md:text-3xl font-bold transition-transform duration-200 ease-out hover:scale-110 text-primary">
-      <a href="/" class="flex items-center text-accent" (click)="onLogoClick($event)">
+  <p class="text-2xl md:text-3xl font-bold text-primary">
+      <a href="/" class="relative inline-block text-accent transition-colors duration-300 hover:text-accent after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto" (click)="onLogoClick($event)">
         <span class="text-accent">&lt;</span>Krupanjac.h<span class="text-accent">&gt;</span>
       </a>
     </p>
@@ -56,9 +56,9 @@
   </a>
     <div class="flex items-center gap-2 ml-4">
   <!-- Auth / Dashboard button (image) -->
-  <button (click)="onAuthClick()" class="flex items-center mr-2 p-1 rounded hover:scale-105 focus:outline-none" title="Open dashboard" aria-label="Open dashboard">
+  <button (click)="onAuthClick()" class="relative inline-block mr-2 p-1 rounded transition-colors duration-300 hover:text-accent focus:outline-none after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto" title="Open dashboard" aria-label="Open dashboard">
     <!-- Minimal monochrome SVG avatar (stroke-based, uses currentColor) -->
-    <svg role="img" aria-label="Dashboard" class="h-8 w-8 rounded-full border border-transparent hover:border-accent p-1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false">
+    <svg role="img" aria-label="Dashboard" class="h-8 w-8 rounded-full p-1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false">
       <title>Dashboard</title>
       <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <!-- head -->
@@ -69,16 +69,16 @@
     </svg>
   </button>
 
-  <button class="px-3 py-2 text-sm rounded border border-transparent hover:border-accent disabled:opacity-50 hover:text-accent"
+  <button class="relative inline-block px-3 py-2 text-sm rounded transition-colors duration-300 hover:text-accent disabled:opacity-50 after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto"
       [ngClass]="theme==='dark' ? 'text-secondary' : 'text-secondary'" [disabled]="isLangLoading" (click)="setLang('en')" aria-label="Switch language to English">EN</button>
   <span class="text-secondary">|</span>
-  <button class="px-3 py-2 text-sm rounded border border-transparent hover:border-accent disabled:opacity-50 hover:text-accent"
+  <button class="relative inline-block px-3 py-2 text-sm rounded transition-colors duration-300 hover:text-accent disabled:opacity-50 after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto"
       [ngClass]="theme==='dark' ? 'text-secondary' : 'text-secondary'" [disabled]="isLangLoading" (click)="setLang('sr')" aria-label="Switch language to Serbian">SR</button>
   <svg *ngIf="isLangLoading" class="animate-spin h-4 w-4 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
       </svg>
-  <button (click)="toggleTheme()" class="ml-2 px-3 py-2 text-sm rounded border border-transparent hover:border-accent text-secondary hover:text-accent focus-ring" [attr.aria-label]="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
+  <button (click)="toggleTheme()" class="relative inline-block ml-2 px-3 py-2 text-sm rounded transition-colors duration-300 text-secondary hover:text-accent focus-ring after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto" [attr.aria-label]="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
         <span *ngIf="theme==='dark'">🌙</span>
         <span *ngIf="theme==='light'">☀️</span>
       </button>
@@ -136,15 +136,15 @@
   <a href="javascript:void(0)" (click)="onNavigateMobile($event, 'contact')" [attr.aria-current]="activeId === 'contact' ? 'true' : null"
     class="relative inline-block font-semibold text-secondary hover:text-accent text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.CONTACT' | translate }}</a>
   <div class="flex items-center gap-3 pt-2">
-  <button class="px-4 py-2 text-sm rounded border border-transparent hover:border-accent disabled:opacity-50 hover:text-accent"
+  <button class="relative inline-block px-4 py-2 text-sm rounded transition-colors duration-300 disabled:opacity-50 hover:text-accent after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto"
       [ngClass]="theme==='dark' ? 'text-secondary' : 'text-secondary'" [disabled]="isLangLoading" (click)="setLang('en'); toggleNav()" aria-label="Switch language to English">EN</button>
-  <button class="px-4 py-2 text-sm rounded border border-transparent hover:border-accent disabled:opacity-50 hover:text-accent"
+  <button class="relative inline-block px-4 py-2 text-sm rounded transition-colors duration-300 disabled:opacity-50 hover:text-accent after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto"
       [ngClass]="theme==='dark' ? 'text-secondary' : 'text-secondary'" [disabled]="isLangLoading" (click)="setLang('sr'); toggleNav()" aria-label="Switch language to Serbian">SR</button>
   <svg *ngIf="isLangLoading" class="animate-spin h-4 w-4 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
       </svg>
-  <button (click)="toggleTheme(); toggleNav()" class="px-4 py-2 text-sm rounded border border-transparent hover:border-accent text-secondary hover:text-accent focus-ring" [attr.aria-label]="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
+  <button (click)="toggleTheme(); toggleNav()" class="relative inline-block px-4 py-2 text-sm rounded transition-colors duration-300 text-secondary hover:text-accent focus-ring after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto" [attr.aria-label]="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
         <span *ngIf="theme==='dark'">🌙</span>
         <span *ngIf="theme==='light'">☀️</span>
       </button>
