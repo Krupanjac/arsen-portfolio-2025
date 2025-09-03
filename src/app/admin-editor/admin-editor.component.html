@@ -19,51 +19,62 @@
     </div>
   </div>
 
-  <div *ngIf="editing" class="editor mt-4 p-4 border border-base rounded bg-surface">
-    <label class="text-primary">Title</label>
-    <input [(ngModel)]="editing.title" class="w-full p-2 border border-base rounded mb-2 bg-surface text-primary" />
-    <label class="text-primary">Description</label>
-    <textarea [(ngModel)]="editing.description" class="w-full p-2 border border-base rounded mb-2 bg-surface text-primary"></textarea>
-  <label class="text-primary">Category</label>
-  <select [(ngModel)]="editing.category" class="w-full p-2 border border-base rounded mb-2 bg-surface text-primary">
-    <option value="">Select category</option>
-    <option value="project">Project</option>
-    <option value="work">Work</option>
-  </select>
-  <div *ngIf="isWorkCategory()" class="mb-2 text-xs text-accent/80 italic">Images are disabled for Work entries.</div>
-  <label class="text-primary">Tags (comma separated)</label>
-  <input [(ngModel)]="tagsText" class="w-full p-2 border border-base rounded mb-2 bg-surface text-primary" />
-  <ng-container *ngIf="!isWorkCategory()">
-    <label>Images</label>
-    <div class="mb-4">
-      <div *ngFor="let image of images; let i = index" class="flex items-center gap-2 mb-2">
-        <img [src]="image" alt="Preview" class="w-20 h-20 object-cover rounded border border-base" />
-        <button (click)="removeImage(i)" class="px-1 py-0.5 border border-red-300 bg-red-50 rounded hover:bg-red-100 transition-colors">Remove</button>
+  <div *ngIf="editing" class="editor-overlay" tabindex="-1">
+    <div class="editor-modal">
+      <div class="modal-header flex items-start justify-between mb-2 gap-4">
+        <h2 class="text-lg font-semibold text-primary m-0">{{ editing.id ? 'Edit Post' : 'New Post' }}</h2>
+        <button (click)="editing = null" class="px-2 py-1 border border-base rounded bg-surface-alt hover:bg-surface transition-colors text-xs">✕</button>
       </div>
-      <button (click)="addImageSlot()" class="px-1 py-0.5 border border-base rounded bg-surface hover:bg-surface-alt transition-colors" [disabled]="loading">
-        <span *ngIf="!loading">+</span>
-        <span *ngIf="loading">Uploading...</span>
-      </button>
-      <input 
-        id="imageInput" 
-        type="file" 
-        accept="image/*" 
-        multiple 
-        (change)="onFileSelected($event)" 
-        class="hidden" 
-      />
-    </div>
-  </ng-container>
-
-  <label class="text-primary">Created At (UTC)</label>
-  <input type="datetime-local"
-         class="w-full p-2 border border-base rounded mb-4 bg-surface text-primary"
-         [ngModel]="createdAtLocal"
-         (ngModelChange)="onCreatedAtChange($event)" />
-
-    <div class="flex gap-2">
-      <button (click)="save()" class="px-1.5 py-1 border border-base rounded bg-accent text-white hover:bg-accent/90 transition-colors">Save</button>
-      <button (click)="editing = null" class="px-1.5 py-1 border border-base rounded bg-surface hover:bg-surface-alt transition-colors">Cancel</button>
+      <div class="form-grid">
+        <div class="form-group col-span-2">
+          <label>Title</label>
+          <input [(ngModel)]="editing.title" class="w-full p-2 border border-base rounded bg-surface text-primary" />
+        </div>
+        <div class="form-group col-span-2">
+          <label>Description</label>
+          <textarea [(ngModel)]="editing.description" rows="4" class="w-full p-2 border border-base rounded resize-y bg-surface text-primary"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select [(ngModel)]="editing.category" class="w-full p-2 border border-base rounded bg-surface text-primary">
+            <option value="">Select category</option>
+            <option value="project">Project</option>
+            <option value="work">Work</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Created At (UTC)</label>
+          <input type="datetime-local" class="w-full p-2 border border-base rounded bg-surface text-primary"
+                 [ngModel]="createdAtLocal" (ngModelChange)="onCreatedAtChange($event)" />
+        </div>
+        <div class="form-group col-span-2 -mt-1 mb-1" *ngIf="isWorkCategory()">
+          <div class="text-xs text-accent/80 italic">Images are disabled for Work entries.</div>
+        </div>
+        <div class="form-group col-span-2">
+          <label>Tags (comma separated)</label>
+          <input [(ngModel)]="tagsText" class="w-full p-2 border border-base rounded bg-surface text-primary" />
+        </div>
+        <div class="form-group col-span-2" *ngIf="!isWorkCategory()">
+          <label class="flex items-center justify-between">Images
+            <button (click)="addImageSlot()" class="ml-auto px-1 py-0.5 border border-base rounded bg-surface hover:bg-surface-alt transition-colors text-xs" [disabled]="loading">
+              <span *ngIf="!loading">Add</span>
+              <span *ngIf="loading">Uploading...</span>
+            </button>
+          </label>
+          <div class="images-grid">
+            <div *ngFor="let image of images; let i = index" class="image-tile">
+              <img [src]="image" alt="Preview" />
+              <button (click)="removeImage(i)" class="remove-img" title="Remove">✕</button>
+            </div>
+            <div *ngIf="!images.length" class="text-xs text-secondary italic py-2">No images yet.</div>
+          </div>
+          <input id="imageInput" type="file" accept="image/*" multiple (change)="onFileSelected($event)" class="hidden" />
+        </div>
+      </div>
+      <div class="actions">
+        <button (click)="save()" class="px-2 py-1 border border-base rounded bg-accent text-white hover:bg-accent/90 transition-colors">Save</button>
+        <button (click)="editing = null" class="px-2 py-1 border border-base rounded bg-surface hover:bg-surface-alt transition-colors">Cancel</button>
+      </div>
     </div>
   </div>
 </div>
