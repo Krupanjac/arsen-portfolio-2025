@@ -1,1 +1,49 @@
+// Subtle animated glow on the focused modal container
+.modal-overlay > div {
+	position: relative;
+	isolation: isolate;
+}
+
+.modal-overlay > div::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	padding: 1px; /* creates inner stroke glow */
+	background: linear-gradient(135deg, rgba(var(--accent-rgb,255,85,0),0.35), rgba(255,255,255,0.05));
+		-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+		mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	opacity: 0.4;
+	pointer-events: none;
+}
+
+.modal-overlay > div::after {
+	content: "";
+	position: absolute;
+	top: -10%;
+	left: -10%;
+	width: 120%;
+	height: 120%;
+	background: radial-gradient(circle at 30% 20%, rgba(var(--accent-rgb,255,85,0),0.15), transparent 60%),
+							radial-gradient(circle at 70% 80%, rgba(255,255,255,0.06), transparent 65%);
+	filter: blur(32px);
+	z-index: -1;
+	opacity: 0.6;
+	animation: ambientFloat 12s linear infinite;
+	pointer-events: none;
+}
+
+@keyframes ambientFloat {
+	0% { transform: translate3d(0,0,0) scale(1); }
+	50% { transform: translate3d(2%, -2%, 0) scale(1.02); }
+	100% { transform: translate3d(0,0,0) scale(1); }
+}
+
+/* Scrollbar styling (WebKit) */
+.modal-overlay > div::-webkit-scrollbar { width: 10px; }
+.modal-overlay > div::-webkit-scrollbar-track { background: transparent; }
+.modal-overlay > div::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 20px; border: 2px solid transparent; background-clip: padding-box; }
+.modal-overlay > div::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 

@@ -10,11 +10,14 @@ import { Subscription } from 'rxjs';
 @Directive({
   selector: '[appTerminalTyping]',
   standalone: true,
+  exportAs: 'terminalTyping',
   host: { }
 })
 export class TerminalTypingDirective implements OnInit, OnDestroy {
   // accept either a number or string so the directive can be used as a bare attribute
   @Input('appTerminalTyping') speed: number | string | undefined;
+  // Defer typing until manually triggered (e.g., on hover)
+  @Input() defer: boolean = false;
 
   private actualSpeed = 20; // coerced numeric speed (ms per character)
   private originalText = '';
@@ -74,15 +77,30 @@ export class TerminalTypingDirective implements OnInit, OnDestroy {
    * If `targetOverride` is provided, use that string as the final text to type.
    * Otherwise, read the element's innerHTML as the target.
    */
+  private hasTyped = false;
+
   private playFastRewrite(targetOverride?: string): void {
+    if (this.defer && !this.hasTyped) {
+      // If deferred and not yet typed, do nothing now; will type on manual trigger
+      return;
+    }
+    this.startTyping(targetOverride);
+  }
+
+  // Exposed method to manually trigger typing (e.g., on hover)
+  public triggerTyping(text?: string) {
+    if (this.hasTyped) return; // Only animate once for hover tooltips
+    const t = typeof text === 'string' ? text : (this.originalText || this.getTextContent());
+    this.startTyping(t);
+    this.hasTyped = true;
+  }
+
+  private startTyping(target: string | undefined) {
     if (this.typingTimeout) {
       clearTimeout(this.typingTimeout);
       this.typingTimeout = null;
     }
-
-    // Read the updated translated content (Translate pipe updates DOM before subscriber runs in many cases,
-    // but to be safe, we query TranslateService for the key if element has a data-i18n-key attr; otherwise read innerHTML)
-  const target = typeof targetOverride === 'string' ? targetOverride : this.getTextContent();
+    if (!target) target = this.getTextContent();
 
     // Quick erase animation: remove characters quickly
     const el = this.el.nativeElement;
@@ -101,7 +119,7 @@ export class TerminalTypingDirective implements OnInit, OnDestroy {
       }
     };
 
-    eraseStep();
+  eraseStep();
   }
 
   private typeInTarget(target: string) {

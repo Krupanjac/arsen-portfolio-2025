@@ -10,20 +10,24 @@
   <!-- Work grid -->
   <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
-      <div *ngFor="let post of blogPosts" class="work-card border border-divider rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer" (click)="openModal(post)">
-        <div *ngIf="post.images && post.images.length > 0" class="mb-3">
-          <img [src]="getPreviewImageUrl(post.images[0])" [alt]="post.title" class="w-full h-48 object-cover rounded-sm" />
+      <div *ngFor="let post of blogPosts" class="work-card group border border-divider/60 rounded-xl overflow-hidden bg-gradient-to-br from-surface/60 via-surface/40 to-surface-alt/30 backdrop-blur-sm relative cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:border-accent/60" (click)="openModal(post)">
+        <div class="relative aspect-video overflow-hidden">
+          <img *ngIf="post.images && post.images.length > 0" [src]="getPreviewImageUrl(post.images[0])" [alt]="post.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
+          <div class="absolute bottom-2 left-3 right-3 flex flex-wrap gap-1">
+            <span *ngFor="let tag of (post.tags || []).slice(0,3)" class="px-2 py-0.5 bg-accent/80 text-white text-[10px] rounded-full tracking-wide uppercase">{{ tag }}</span>
+            <span *ngIf="post.tags && post.tags.length>3" class="px-2 py-0.5 bg-accent/40 text-white text-[10px] rounded-full">+{{ post.tags.length-3 }}</span>
+          </div>
         </div>
-        <h3 class="text-lg font-semibold mb-2">{{ post.title }}</h3>
-        <p class="text-secondary text-sm mb-3" *ngIf="post.description">{{ post.description }}</p>
-        <div class="flex flex-wrap gap-1 mb-3" *ngIf="post.tags && post.tags.length > 0">
-          <span *ngFor="let tag of post.tags" class="px-2 py-1 bg-accent/10 text-accent text-xs rounded">
-            {{ tag }}
-          </span>
+        <div class="p-4">
+          <h3 class="text-base font-semibold mb-1 line-clamp-1 text-primary group-hover:text-accent transition-colors">{{ post.title }}</h3>
+          <p class="text-secondary text-xs mb-2 line-clamp-2" *ngIf="post.description">{{ post.description }}</p>
+          <div class="flex justify-between items-center text-[10px] text-faint">
+            <span *ngIf="post.created_at">{{ post.created_at | date:'mediumDate' }}</span>
+            <span class="inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity text-accent"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9.4 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9.4a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09c0 .69.4 1.31 1 1.51.61.21 1.28.05 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06c-.38.54-.54 1.21-.33 1.82.21.61.83 1 1.51 1H21a2 2 0 0 1 0 4h-.09c-.69 0-1.31.4-1.51 1Z"/></svg>Open</span>
+          </div>
         </div>
-        <div class="text-xs text-secondary" *ngIf="post.created_at">
-          {{ post.created_at | date:'mediumDate' }}
-        </div>
+        <div class="absolute inset-0 ring-1 ring-inset ring-accent/0 group-hover:ring-accent/30 rounded-xl pointer-events-none transition-colors"></div>
       </div>
       
       <!-- Show message if no work posts -->

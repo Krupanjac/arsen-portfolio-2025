@@ -1,8 +1,27 @@
 <div class="flex justify-center items-center py-8">
-  <button
-    (click)="onPlay()"
-    class="bg-accent text-white px-6 py-3 rounded-full font-bold text-lg hover:bg-accent/80 transition-colors"
-  >
-    ▶ Play
-  </button>
+  <div class="group relative inline-block">
+    <button
+      (click)="onPlay()"
+      aria-describedby="play-tooltip"
+      class="play-button relative isolate font-semibold tracking-[0.025em] text-lg px-6 py-3 rounded-full border border-[rgba(var(--color-accent-rgb)/0.55)]
+             bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-alt)]
+             text-[var(--color-text)] shadow-md shadow-[rgba(0,0,0,0.18)]
+             transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0
+             hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]
+             focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
+    >
+      ▶ Play
+    </button>
+    <div
+      id="play-tooltip"
+      role="tooltip"
+      class="play-tooltip absolute left-1/2 top-full mt-2 -translate-x-1/2 translate-y-1 scale-95 opacity-0
+             group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100
+             group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:scale-100
+             transition-all duration-300 ease-out text-[var(--color-text)]
+             pointer-events-none"
+    >
+      {{ 'PLAY.TOOLTIP' | translate }}
+    </div>
+  </div>
 </div>

@@ -1,6 +1,6 @@
 <!-- Blog Modal Overlay -->
-<div class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex justify-center items-center z-50 p-5" *ngIf="visible" @modalAnimation (click)="onOverlayClick($event)">
-  <div class="bg-surface border border-base rounded-lg p-4 sm:p-6 max-w-[95vw] sm:max-w-[90vw] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative box-shadow-xl" (click)="$event.stopPropagation()">
+<div class="fixed inset-0 bg-transparent backdrop-blur-[2px] flex justify-center items-center z-50 p-5 modal-overlay" *ngIf="visible" @modalAnimation (click)="onOverlayClick($event)">
+  <div class="bg-gradient-to-br from-surface/95 via-surface/80 to-surface-alt/70 border border-divider/60 rounded-2xl p-4 sm:p-6 max-w-[95vw] sm:max-w-[85vw] lg:max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative shadow-2xl shadow-black/50 ring-1 ring-base/40" (click)="$event.stopPropagation()">
     <!-- Close button -->
     <button class="absolute top-3 right-3 bg-transparent border-none text-secondary cursor-pointer p-2 rounded hover:text-primary hover:bg-surface-alt transition-colors z-10" (click)="close()" aria-label="Close modal">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -10,18 +10,21 @@
     </button>
 
     <!-- Post title -->
-    <h2 class="text-lg sm:text-xl font-semibold text-primary mb-5 pr-8 sm:pr-10">{{ post?.title }}</h2>
+    <h2 class="text-lg sm:text-2xl font-semibold text-primary mb-5 pr-8 sm:pr-10 tracking-tight flex items-start gap-3">
+      <span class="inline-block w-1 h-6 rounded bg-accent mt-0.5"></span>
+      <span>{{ post?.title }}</span>
+    </h2>
 
     <!-- Image display -->
     <div class="relative mb-5" *ngIf="post?.images && post!.images!.length > 0">
       <!-- Main image -->
-      <div class="text-center mb-2.5">
+    <div class="text-center mb-2.5 rounded-xl overflow-hidden border border-base/40 bg-black/20">
         <img
           [src]="getModalImageUrls(post!.images![currentImageIndex]).src"
           [srcset]="getModalImageUrls(post!.images![currentImageIndex]).srcset"
           [sizes]="getModalImageUrls(post!.images![currentImageIndex]).sizes"
           [alt]="post!.title + ' - Image ' + (currentImageIndex + 1)"
-          class="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded"
+      class="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain"
           loading="lazy" />
       </div>
 
@@ -61,18 +64,18 @@
     </div>
 
     <!-- Post description -->
-    <div class="mb-4" *ngIf="post?.description">
-      <p class="text-secondary leading-relaxed m-0">{{ post!.description }}</p>
+    <div class="mb-4 prose prose-invert max-w-none" *ngIf="post?.description">
+      <p class="text-secondary leading-relaxed m-0 text-sm sm:text-base">{{ post!.description }}</p>
     </div>
 
     <!-- Post tags -->
     <div class="flex flex-wrap gap-2 mb-4" *ngIf="post?.tags && post!.tags!.length > 0">
-      <span *ngFor="let tag of post!.tags!" class="bg-accent text-white px-2 py-1 rounded text-sm">{{ tag }}</span>
+      <span *ngFor="let tag of post!.tags!" class="bg-accent/90 hover:bg-accent text-white px-2 py-1 rounded-full text-xs tracking-wide uppercase transition-colors">{{ tag }}</span>
     </div>
 
     <!-- Post date -->
     <div class="text-right" *ngIf="post?.created_at">
-      <p class="text-faint text-sm m-0">{{ post!.created_at | date:'mediumDate' }}</p>
+      <p class="text-faint text-xs sm:text-sm m-0">{{ post!.created_at | date:'mediumDate' }}</p>
     </div>
   </div>
 </div>

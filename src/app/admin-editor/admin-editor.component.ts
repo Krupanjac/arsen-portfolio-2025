@@ -31,12 +31,12 @@ export class AdminEditorComponent implements OnInit {
   reload() { this.svc.list().subscribe(r => this.posts = r); }
 
   newPost() { 
-    this.editing = { title: '', description: '', tags: [], images: [], category: undefined };
+  this.editing = { title: '', description: '', tags: [], images: [], category: undefined, created_at: Math.floor(Date.now()/1000) };
     this.images = [];
   }
 
   edit(p: BlogPost) { 
-    this.editing = { ...p }; 
+  this.editing = { ...p }; 
     this.tagsText = (p.tags || []).join(', '); 
     this.images = p.images || []; 
   }
@@ -92,5 +92,20 @@ export class AdminEditorComponent implements OnInit {
     if (fileInput) {
       fileInput.click();
     }
+  }
+
+  // Helpers for created_at binding
+  get createdAtLocal(): string {
+    if (!this.editing?.created_at) return '';
+    try {
+      return new Date(this.editing.created_at * 1000).toISOString().slice(0,16);
+    } catch { return ''; }
+  }
+
+  onCreatedAtChange(v: string) {
+    if (!this.editing) return;
+    if (!v) { this.editing.created_at = undefined; return; }
+    const ms = Date.parse(v);
+    if (!isNaN(ms)) this.editing.created_at = Math.floor(ms / 1000);
   }
 }

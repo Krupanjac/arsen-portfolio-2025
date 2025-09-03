@@ -73,14 +73,21 @@ export async function onRequestPost(context) {
     if (!payload) return unauthorizedJSON();
 
     const body = await request.json().catch(() => ({}));
-    const { title, description, tags, images, category } = body;
+    const { title, description, tags, images, category, created_at } = body;
     if (!title) return new Response(JSON.stringify({ error: 'Missing title' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 
     try {
-      const now = Math.floor(Date.now() / 1000);
+      // Allow manual created_at override (seconds). If ms provided, convert.
+      let createdAt = created_at ? parseInt(created_at, 10) : undefined;
+      if (createdAt && createdAt > 1e12) { // looks like ms
+        createdAt = Math.floor(createdAt / 1000);
+      }
+      if (!createdAt || !isFinite(createdAt)) {
+        createdAt = Math.floor(Date.now() / 1000);
+      }
       const res = await env.PORTFOLIO.prepare(
         `INSERT INTO posts (title, description, tags, images, category, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
-      ).bind(title, description || null, JSON.stringify(tags || []), JSON.stringify(images || []), category || null, payload.username, now).run();
+      ).bind(title, description || null, JSON.stringify(tags || []), JSON.stringify(images || []), category || null, payload.username, createdAt).run();
 
       return jsonOK({ success: true, insertedId: res.lastInsertRowid || null });
     } catch (e) {
@@ -123,14 +130,18 @@ export async function onRequestPut({ request, env }) {
 
   const body = await request.json().catch(() => ({}));
   console.log('PUT request body:', body); // Debug log
-  const { id, title, description, tags, images, category } = body;
+  const { id, title, description, tags, images, category, created_at } = body;
   if (!id) return new Response(JSON.stringify({ error: 'Missing id' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 
   try {
     const now = Math.floor(Date.now() / 1000);
+    let createdAt = created_at ? parseInt(created_at, 10) : undefined;
+    if (createdAt && createdAt > 1e12) createdAt = Math.floor(createdAt / 1000);
+    if (createdAt && !isFinite(createdAt)) createdAt = undefined;
+
     await env.PORTFOLIO.prepare(
-      `UPDATE posts SET title = ?, description = ?, tags = ?, images = ?, category = ?, updated_by = ?, updated_at = ? WHERE id = ?`
-    ).bind(title || null, description || null, JSON.stringify(tags || []), JSON.stringify(images || []), category || null, payload.username, now, id).run();
+      `UPDATE posts SET title = ?, description = ?, tags = ?, images = ?, category = ?, created_at = COALESCE(?, created_at), updated_by = ?, updated_at = ? WHERE id = ?`
+    ).bind(title || null, description || null, JSON.stringify(tags || []), JSON.stringify(images || []), category || null, createdAt || null, payload.username, now, id).run();
 
     return jsonOK({ success: true });
   } catch (e) {

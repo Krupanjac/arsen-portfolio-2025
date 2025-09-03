@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { PlayStateService } from '../../play-state.service';
 
 @Component({
   selector: 'app-play-button',
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './play-button.component.html',
   styleUrl: './play-button.component.scss'
 })

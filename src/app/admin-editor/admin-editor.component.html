@@ -52,6 +52,12 @@
     <option value="work">Work</option>
   </select>
 
+  <label class="text-primary">Created At (UTC)</label>
+  <input type="datetime-local"
+         class="w-full p-2 border border-base rounded mb-4 bg-surface text-primary"
+         [ngModel]="createdAtLocal"
+         (ngModelChange)="onCreatedAtChange($event)" />
+
     <div class="flex gap-2">
       <button (click)="save()" class="px-1.5 py-1 border border-base rounded bg-accent text-white hover:bg-accent/90 transition-colors">Save</button>
       <button (click)="editing = null" class="px-1.5 py-1 border border-base rounded bg-surface hover:bg-surface-alt transition-colors">Cancel</button>
