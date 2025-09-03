@@ -45,7 +45,13 @@ export class AdminEditorComponent implements OnInit {
     if (!this.editing) return;
     // normalize tags from text field
     this.editing.tags = this.tagsText ? this.tagsText.split(',').map((s: string) => s.trim()).filter(Boolean) : [];
-    this.editing.images = this.images;
+    // If category is 'work', ignore any images
+    if (this.editing.category === 'work') {
+      this.images = [];
+      this.editing.images = [];
+    } else {
+      this.editing.images = this.images;
+    }
     const op = this.editing.id ? this.svc.update(this.editing) : this.svc.create(this.editing);
     op.subscribe(() => { 
       this.editing = null; 
@@ -93,6 +99,8 @@ export class AdminEditorComponent implements OnInit {
       fileInput.click();
     }
   }
+  
+  isWorkCategory(): boolean { return this.editing?.category === 'work'; }
 
   // Helpers for created_at binding
   get createdAtLocal(): string {

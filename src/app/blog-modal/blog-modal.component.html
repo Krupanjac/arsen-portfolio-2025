@@ -1,6 +1,6 @@
 <!-- Blog Modal Overlay -->
-<div class="fixed inset-0 bg-transparent backdrop-blur-[2px] flex justify-center items-center z-50 p-5 modal-overlay" *ngIf="visible" @modalAnimation (click)="onOverlayClick($event)">
-  <div class="bg-gradient-to-br from-surface/95 via-surface/80 to-surface-alt/70 border border-divider/60 rounded-2xl p-4 sm:p-6 max-w-[95vw] sm:max-w-[85vw] lg:max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative shadow-2xl shadow-black/50 ring-1 ring-base/40" (click)="$event.stopPropagation()">
+<div class="fixed inset-0 bg-transparent backdrop-blur-[2px] flex justify-center items-start sm:items-center z-50 p-4 sm:p-5 overflow-y-auto modal-overlay" *ngIf="visible" @modalAnimation (click)="onOverlayClick($event)">
+  <div class="mt-10 mb-10 sm:my-0 bg-gradient-to-br from-surface/95 via-surface/85 to-surface-alt/70 border border-divider/60 rounded-2xl p-4 sm:p-6 max-w-[95vw] sm:max-w-[85vw] lg:max-w-4xl w-full max-h-none sm:max-h-[92vh] overflow-y-auto relative shadow-2xl shadow-black/50 ring-1 ring-base/40" (click)="$event.stopPropagation()">
     <!-- Close button -->
     <button class="absolute top-3 right-3 bg-transparent border-none text-secondary cursor-pointer p-2 rounded hover:text-primary hover:bg-surface-alt transition-colors z-10" (click)="close()" aria-label="Close modal">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

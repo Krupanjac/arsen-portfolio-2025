@@ -1,0 +1,15 @@
+// Timeline subtle animations
+:host ::ng-deep .group:hover h3 { color: var(--accent, #ff5500); }
+
+.group {
+	transition: transform 0.3s ease, filter 0.3s ease;
+	will-change: transform;
+}
+
+.group:hover > div {
+	filter: brightness(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.group, .group * { transition: none !important; }
+}

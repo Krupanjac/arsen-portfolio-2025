@@ -24,33 +24,36 @@
     <input [(ngModel)]="editing.title" class="w-full p-2 border border-base rounded mb-2 bg-surface text-primary" />
     <label class="text-primary">Description</label>
     <textarea [(ngModel)]="editing.description" class="w-full p-2 border border-base rounded mb-2 bg-surface text-primary"></textarea>
-  <label class="text-primary">Tags (comma separated)</label>
-  <input [(ngModel)]="tagsText" class="w-full p-2 border border-base rounded mb-2 bg-surface text-primary" />
-  <label>Images</label>
-  <div class="mb-4">
-    <div *ngFor="let image of images; let i = index" class="flex items-center gap-2 mb-2">
-      <img [src]="image" alt="Preview" class="w-20 h-20 object-cover rounded border border-base" />
-      <button (click)="removeImage(i)" class="px-1 py-0.5 border border-red-300 bg-red-50 rounded hover:bg-red-100 transition-colors">Remove</button>
-    </div>
-    <button (click)="addImageSlot()" class="px-1 py-0.5 border border-base rounded bg-surface hover:bg-surface-alt transition-colors" [disabled]="loading">
-      <span *ngIf="!loading">+</span>
-      <span *ngIf="loading">Uploading...</span>
-    </button>
-    <input 
-      id="imageInput" 
-      type="file" 
-      accept="image/*" 
-      multiple 
-      (change)="onFileSelected($event)" 
-      class="hidden" 
-    />
-  </div>
   <label class="text-primary">Category</label>
   <select [(ngModel)]="editing.category" class="w-full p-2 border border-base rounded mb-2 bg-surface text-primary">
     <option value="">Select category</option>
     <option value="project">Project</option>
     <option value="work">Work</option>
   </select>
+  <div *ngIf="isWorkCategory()" class="mb-2 text-xs text-accent/80 italic">Images are disabled for Work entries.</div>
+  <label class="text-primary">Tags (comma separated)</label>
+  <input [(ngModel)]="tagsText" class="w-full p-2 border border-base rounded mb-2 bg-surface text-primary" />
+  <ng-container *ngIf="!isWorkCategory()">
+    <label>Images</label>
+    <div class="mb-4">
+      <div *ngFor="let image of images; let i = index" class="flex items-center gap-2 mb-2">
+        <img [src]="image" alt="Preview" class="w-20 h-20 object-cover rounded border border-base" />
+        <button (click)="removeImage(i)" class="px-1 py-0.5 border border-red-300 bg-red-50 rounded hover:bg-red-100 transition-colors">Remove</button>
+      </div>
+      <button (click)="addImageSlot()" class="px-1 py-0.5 border border-base rounded bg-surface hover:bg-surface-alt transition-colors" [disabled]="loading">
+        <span *ngIf="!loading">+</span>
+        <span *ngIf="loading">Uploading...</span>
+      </button>
+      <input 
+        id="imageInput" 
+        type="file" 
+        accept="image/*" 
+        multiple 
+        (change)="onFileSelected($event)" 
+        class="hidden" 
+      />
+    </div>
+  </ng-container>
 
   <label class="text-primary">Created At (UTC)</label>
   <input type="datetime-local"

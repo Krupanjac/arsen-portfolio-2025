@@ -1,2 +1,9 @@
 /* minimal placeholder to satisfy Angular build */
 :host { display: block; }
+
+body.modal-open {
+	position: fixed;
+	left: 0; right: 0;
+	overflow-y: hidden;
+	width: 100%;
+}

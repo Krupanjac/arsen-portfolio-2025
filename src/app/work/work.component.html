@@ -1,46 +1,48 @@
 <div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr]">
   <!-- Mobile label under nav -->
   <div class="md:hidden pt-14 px-4 pb-2 border-b border-divider">
-  <p class="text-base font-semibold text-secondary"><span appTerminalTyping data-i18n-key="WORK.LABEL">{{ 'WORK.LABEL' | translate }}</span></p>
+    <p class="text-base font-semibold text-secondary">
+      <span appTerminalTyping data-i18n-key="WORK.LABEL">{{ 'WORK.LABEL' | translate }}</span>
+    </p>
   </div>
-  <!-- Left rail with vertical line -->
+
+  <!-- Left rail -->
   <app-rail>
-  <span appTerminalTyping data-i18n-key="WORK.LABEL">{{ 'WORK.LABEL' | translate }}</span>
+    <span appTerminalTyping data-i18n-key="WORK.LABEL">{{ 'WORK.LABEL' | translate }}</span>
   </app-rail>
-  <!-- Work grid -->
+
+  <!-- Content area mimicking previous width/centering -->
   <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
-      <div *ngFor="let post of blogPosts" class="work-card group border border-divider/60 rounded-xl overflow-hidden bg-gradient-to-br from-surface/60 via-surface/40 to-surface-alt/30 backdrop-blur-sm relative cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:border-accent/60" (click)="openModal(post)">
-        <div class="relative aspect-video overflow-hidden">
-          <img *ngIf="post.images && post.images.length > 0" [src]="getPreviewImageUrl(post.images[0])" [alt]="post.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
-          <div class="absolute bottom-2 left-3 right-3 flex flex-wrap gap-1">
-            <span *ngFor="let tag of (post.tags || []).slice(0,3)" class="px-2 py-0.5 bg-accent/80 text-white text-[10px] rounded-full tracking-wide uppercase">{{ tag }}</span>
-            <span *ngIf="post.tags && post.tags.length>3" class="px-2 py-0.5 bg-accent/40 text-white text-[10px] rounded-full">+{{ post.tags.length-3 }}</span>
+    <div class="w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto">
+      <div class="relative border-l border-divider/40 ml-4 md:ml-8">
+        <div *ngFor="let post of workPosts; let i = index" class="relative pl-8 pb-10 last:pb-0 group">
+          <!-- Dot -->
+          <div class="absolute -left-3 top-1.5 w-5 h-5 rounded-full bg-gradient-to-br from-accent/90 to-accent shadow-lg shadow-accent/30 flex items-center justify-center ring-2 ring-surface">
+            <div class="w-2.5 h-2.5 rounded-full bg-white/90"></div>
+          </div>
+          <!-- Connector embellishment -->
+            <div class="absolute left-[-1px] top-6 w-px h-full bg-gradient-to-b from-accent/40 via-divider/30 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <!-- Card -->
+          <div class="bg-gradient-to-tr from-surface/70 via-surface/50 to-surface-alt/40 backdrop-blur-sm border border-divider/50 rounded-xl p-4 md:p-5 shadow-sm hover:shadow-accent/20 transition-all duration-300">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+              <h3 class="text-base md:text-lg font-semibold text-primary tracking-tight">{{ post.title || 'Untitled role' }}</h3>
+              <div class="text-xs md:text-[13px] font-medium text-accent/90 bg-accent/10 px-2 py-1 rounded-full self-start md:self-center">
+                <span *ngIf="post.created_at; else noDate">{{ post.created_at | date:'MMM yyyy' }}</span>
+                <ng-template #noDate>—</ng-template>
+              </div>
+            </div>
+            <p *ngIf="post.description" class="text-secondary text-sm leading-relaxed mt-2 whitespace-pre-line">{{ post.description }}</p>
+            <div *ngIf="post.tags?.length" class="flex flex-wrap gap-2 mt-3">
+              <span *ngFor="let t of post.tags" class="text-[10px] tracking-wide uppercase bg-accent/80 text-white px-2 py-0.5 rounded-full">{{ t }}</span>
+            </div>
           </div>
         </div>
-        <div class="p-4">
-          <h3 class="text-base font-semibold mb-1 line-clamp-1 text-primary group-hover:text-accent transition-colors">{{ post.title }}</h3>
-          <p class="text-secondary text-xs mb-2 line-clamp-2" *ngIf="post.description">{{ post.description }}</p>
-          <div class="flex justify-between items-center text-[10px] text-faint">
-            <span *ngIf="post.created_at">{{ post.created_at | date:'mediumDate' }}</span>
-            <span class="inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity text-accent"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9.4 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9.4a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09c0 .69.4 1.31 1 1.51.61.21 1.28.05 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06c-.38.54-.54 1.21-.33 1.82.21.61.83 1 1.51 1H21a2 2 0 0 1 0 4h-.09c-.69 0-1.31.4-1.51 1Z"/></svg>Open</span>
-          </div>
+
+        <!-- Empty state -->
+        <div *ngIf="workPosts.length === 0" class="pl-8 py-8">
+          <p class="text-secondary text-sm italic">No work experience entries yet.</p>
         </div>
-        <div class="absolute inset-0 ring-1 ring-inset ring-accent/0 group-hover:ring-accent/30 rounded-xl pointer-events-none transition-colors"></div>
-      </div>
-      
-      <!-- Show message if no work posts -->
-      <div *ngIf="blogPosts.length === 0" class="col-span-full text-center py-10">
-        <p class="text-secondary">No work posts available yet.</p>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Blog Modal -->
-<app-blog-modal
-  [post]="selectedPost"
-  [visible]="modalVisible"
-  (closeModal)="closeModal()">
-</app-blog-modal>
