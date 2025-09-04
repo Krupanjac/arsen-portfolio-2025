@@ -1,4 +1,4 @@
-<div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr]">
+<div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr] items-stretch">
   <!-- Mobile label under nav -->
   <div class="md:hidden pt-14 px-4 pb-2 border-b border-divider">
     <p class="text-base font-semibold text-secondary">
@@ -7,7 +7,7 @@
   </div>
 
   <!-- Left rail -->
-  <app-rail>
+  <app-rail class="self-stretch">
     <span appTerminalTyping data-i18n-key="EXPERIENCE.LABEL">{{ 'EXPERIENCE.LABEL' | translate }}</span>
   </app-rail>
 

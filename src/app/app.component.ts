@@ -15,6 +15,7 @@ import { WorkComponent } from './experience/experience.component';
 import { AboutComponent } from './about/about.component';
 import { PlayStateService } from './play-state.service';
 import { PlayButtonComponent } from './layout/play-button/play-button.component';
+import { RailComponent } from './layout/rail/rail.component';
 
 @Component({
   selector: 'app-root',
@@ -31,6 +32,7 @@ import { PlayButtonComponent } from './layout/play-button/play-button.component'
     WorkComponent,
   AboutComponent,
   PlayButtonComponent
+  ,RailComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
