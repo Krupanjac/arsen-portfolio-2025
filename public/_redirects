@@ -2,7 +2,6 @@
 /robots.txt         /robots.txt           200
 /sitemap.xml        /sitemap.xml          200
 /assets/*           /assets/:splat        200
-/projectImg/*       /projectImg/:splat    200
 /i18n/*             /i18n/:splat          200
 /*.js               /:splat.js            200
 /*.mjs              /:splat.mjs           200
@@ -22,6 +21,11 @@
 /*.ttf              /:splat.ttf           200
 /*.eot              /:splat.eot           200
 /*.pdf              /:splat.pdf           200
+
+
+# Friendly resume aliases (301 redirect so SEO signals consolidate on the PDF URL)
+/resume             /Arsen_Djurdjev_Resume.pdf 301
+/cv                 /Arsen_Djurdjev_Resume.pdf 301
 
 
 # SPA fallback: everything else to index.html
