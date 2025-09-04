@@ -29,20 +29,21 @@
     <!-- Button content -->
     <div class="flex h-full items-center justify-center md:-ml-[20%] pl-4">
       <div class="w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto flex justify-center">
-        <a
-          href="/Arsen_Djurdjev_Resume.pdf"
-          download
-          target="_blank"
-          rel="noopener"
+        <button
+          type="button"
+          (click)="openResumeModal()"
           class="play-button group relative isolate font-semibold tracking-[0.025em] text-lg px-6 py-3 rounded-full border border-[rgba(var(--color-accent-rgb)/0.55)] bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-alt)] text-[var(--color-text)] shadow-md shadow-[rgba(0,0,0,0.18)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
-          aria-label="Download resume PDF"
+          aria-label="Open resume modal"
         >
           ⬇ <span class="ml-1">Resume</span>
-        </a>
+        </button>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Resume Modal Instance -->
+<app-resume-modal [visible]="resumeVisible" (close)="closeResumeModal()"></app-resume-modal>
 
 <section id="experience" class="min-h-screen" *ngIf="!playState.isPlaying">
   <app-experience></app-experience>

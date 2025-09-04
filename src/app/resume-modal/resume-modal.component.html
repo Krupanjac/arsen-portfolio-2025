@@ -1,0 +1,28 @@
+<div *ngIf="visible" class="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 backdrop-blur-[3px] bg-black/30" @modalAnimation (click)="onOverlayClick($event)">
+  <div class="relative w-[92vw] sm:w-[88vw] md:w-[760px] lg:w-[800px] xl:w-[840px] max-w-[860px] h-[88vh] sm:h-[90vh] max-h-[92vh] bg-gradient-to-br from-surface/95 via-surface/85 to-surface-alt/70 border border-divider/60 rounded-2xl shadow-2xl shadow-black/50 ring-1 ring-base/40 overflow-hidden flex flex-col" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-3 border-b border-divider/50 bg-surface/60 backdrop-blur-sm">
+      <h2 class="m-0 text-lg sm:text-xl font-semibold tracking-tight flex items-center gap-2 text-primary">
+        <span class="inline-block w-1.5 h-6 rounded bg-accent"></span>
+        <span>Resume</span>
+      </h2>
+      <div class="flex items-center gap-3">
+        <a [href]="pdfPath" download class="play-button inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-[rgba(var(--color-accent-rgb)/0.55)] bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-alt)] text-[var(--color-text)] shadow-md hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]">
+          ⬇ <span>Download</span>
+        </a>
+        <button (click)="closeModal()" aria-label="Close" class="p-2 rounded-md text-secondary hover:text-primary hover:bg-surface-alt transition-colors">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- PDF viewer -->
+    <div class="flex-1 relative bg-black/15">
+      <iframe
+        [src]="pdfPath | safeUrl"
+        title="Resume PDF"
+        class="w-full h-full"
+      ></iframe>
+      <div class="absolute inset-x-0 bottom-0 h-10 pointer-events-none bg-gradient-to-t from-surface/80 to-transparent"></div>
+    </div>
+  </div>
+</div>

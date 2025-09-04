@@ -16,6 +16,7 @@ import { AboutComponent } from './about/about.component';
 import { PlayStateService } from './play-state.service';
 import { PlayButtonComponent } from './layout/play-button/play-button.component';
 import { RailComponent } from './layout/rail/rail.component';
+import { ResumeModalComponent } from './resume-modal/resume-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +32,8 @@ import { RailComponent } from './layout/rail/rail.component';
     ProjectsComponent,
     WorkComponent,
   AboutComponent,
-  PlayButtonComponent
+  PlayButtonComponent,
+  ResumeModalComponent
   ,RailComponent
   ],
   templateUrl: './app.component.html',
@@ -41,6 +43,7 @@ import { RailComponent } from './layout/rail/rail.component';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'arsen-portfolio-2025';
   loading = true;
+  resumeVisible = false;
   private loadListenerBound = this.onWindowLoad.bind(this);
   private fallbackTimeoutId: any = null;
 
@@ -91,6 +94,9 @@ export class AppComponent implements OnInit, OnDestroy {
   stopPlaying() {
     this.playStateService.isPlaying = false;
   }
+
+  openResumeModal() { this.resumeVisible = true; }
+  closeResumeModal() { this.resumeVisible = false; }
 
   ngOnDestroy(): void {
     if (this.isBrowser) {
