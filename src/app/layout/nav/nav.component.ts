@@ -208,14 +208,24 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
     if (current === lang || this.isLangLoading) {
       return;
     }
+    // Begin loading + enforce a minimum cooldown of 1s to avoid spam clicks breaking UI
     this.isLangLoading = true;
+    const start = performance.now ? performance.now() : Date.now();
+    const MIN_COOLDOWN = 1000; // ms
+    const finish = () => {
+      const end = performance.now ? performance.now() : Date.now();
+      const elapsed = end - start;
+      const remaining = Math.max(MIN_COOLDOWN - elapsed, 0);
+      setTimeout(() => { this.isLangLoading = false; }, remaining);
+    };
+
     this.translate.use(lang).subscribe({
       next: () => {
-        this.isLangLoading = false;
         try { localStorage.setItem('lang', lang); } catch {}
+        finish();
       },
       error: () => {
-        this.isLangLoading = false;
+        finish();
       }
     });
   }

@@ -127,4 +127,12 @@
   "FAILED": "Prijava neuspešna",
   "COMPLETE_CHALLENGE": "Kompletirajte bezbednosni izazov da biste omogućili prijavu"
   }
+  ,
+  "RESUME": {
+    "BUTTON": "CV",
+    "MODAL": {
+      "TITLE": "CV",
+      "DOWNLOAD": "Preuzmi PDF"
+    }
+  }
 }

@@ -127,4 +127,12 @@
   "FAILED": "Login failed",
   "COMPLETE_CHALLENGE": "Please complete the security challenge to enable login"
   }
+  ,
+  "RESUME": {
+    "BUTTON": "Resume",
+    "MODAL": {
+      "TITLE": "Resume",
+      "DOWNLOAD": "Download PDF"
+    }
+  }
 }

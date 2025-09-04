@@ -17,6 +17,7 @@ import { PlayStateService } from './play-state.service';
 import { PlayButtonComponent } from './layout/play-button/play-button.component';
 import { RailComponent } from './layout/rail/rail.component';
 import { ResumeModalComponent } from './resume-modal/resume-modal.component';
+import { TerminalTypingDirective } from './shared/terminal-typing.directive';
 
 @Component({
   selector: 'app-root',
@@ -35,6 +36,7 @@ import { ResumeModalComponent } from './resume-modal/resume-modal.component';
   PlayButtonComponent,
   ResumeModalComponent
   ,RailComponent
+  ,TerminalTypingDirective
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

@@ -2,11 +2,12 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { SafeUrlPipe } from './safe-url.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-resume-modal',
   standalone: true,
-  imports: [CommonModule, SafeUrlPipe],
+  imports: [CommonModule, SafeUrlPipe, TranslateModule],
   templateUrl: './resume-modal.component.html',
   styleUrls: ['./resume-modal.component.scss'],
   animations: [
@@ -25,6 +26,7 @@ export class ResumeModalComponent implements OnChanges {
   @Input() visible = false;
   @Output() close = new EventEmitter<void>();
   pdfPath = '/Arsen_Djurdjev_Resume.pdf';
+  private _savedScrollY = 0;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['visible']) {
@@ -40,10 +42,20 @@ export class ResumeModalComponent implements OnChanges {
 
   private lockScroll() {
     if (typeof document === 'undefined' || typeof window === 'undefined') return;
-    document.body.classList.add('modal-open');
+    try {
+      this._savedScrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.top = `-${this._savedScrollY}px`;
+      document.body.classList.add('modal-open');
+    } catch {}
   }
   private unlockScroll() {
     if (typeof document === 'undefined') return;
-    document.body.classList.remove('modal-open');
+    try {
+      document.body.classList.remove('modal-open');
+      const y = this._savedScrollY || 0;
+      document.body.style.top = '';
+      window.scrollTo(0, y);
+      this._savedScrollY = 0;
+    } catch {}
   }
 }
