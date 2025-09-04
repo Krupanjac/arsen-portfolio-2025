@@ -13,12 +13,14 @@
   </svg>
 </button>
 
-<!-- Single page layout now delegates each section to its own standalone component -->
-<section id="home" class="min-h-screen">
-  <app-hero [showOnlyBackground]="playState.isPlaying"></app-hero>
-  <!-- Keep play button in DOM so help menu can persist after activation -->
-  <app-play-button></app-play-button>
-  <app-home *ngIf="!playState.isPlaying"></app-home>
+<!-- Hero / start section (full viewport) -->
+<section id="start" class="relative">
+  <app-hero [showOnlyBackground]="playState.isPlaying" (openResumeModal)="openResumeModal()"></app-hero>
+</section>
+
+<!-- Home content now its own section below the fold -->
+<section id="home" class="min-h-screen" *ngIf="!playState.isPlaying">
+  <app-home></app-home>
 </section>
 
 <!-- Resume CTA bridging section -->
@@ -29,14 +31,8 @@
     <!-- Button content -->
     <div class="flex h-full items-center justify-center md:-ml-[20%] pl-4">
       <div class="w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto flex justify-center">
-        <button
-          type="button"
-          (click)="openResumeModal()"
-          class="play-button group relative isolate font-semibold tracking-[0.025em] text-lg px-6 py-3 rounded-full border border-[rgba(var(--color-accent-rgb)/0.55)] bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-alt)] text-[var(--color-text)] shadow-md shadow-[rgba(0,0,0,0.18)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
-          aria-label="Open resume modal"
-        >
-          ⬇ <span class="ml-1" appTerminalTyping data-i18n-key="RESUME.BUTTON">{{ 'RESUME.BUTTON' | translate }}</span>
-        </button>
+  <!-- Play button moved here (swapped with CV button). Note: now hidden during play mode with the section. -->
+  <app-play-button></app-play-button>
       </div>
     </div>
   </div>

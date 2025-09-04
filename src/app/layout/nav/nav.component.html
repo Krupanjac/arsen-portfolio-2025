@@ -34,7 +34,7 @@
 
     <!-- Desktop navigation: visible on md and up -->
   <nav class="hidden md:flex items-center gap-2 mr-1">
-  <a href="#home" (click)="onNavigate($event, 'home')" [attr.aria-current]="activeId === 'home' ? 'true' : null"
+  <a href="#start" (click)="onNavigate($event, 'start')" [attr.aria-current]="activeId === 'start' ? 'true' : null"
     class="relative inline-block px-2 py-1 text-sm font-medium text-secondary hover:text-accent transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">
   <span appTerminalTyping data-i18n-key="NAV.START">{{ 'NAV.START' | translate }}</span>
   </a>
@@ -124,7 +124,7 @@
     [ngClass]="{'translate-y-0 opacity-100': isNavOpen, 'translate-y-[-20px] opacity-0': !isNavOpen}"
     (click)="toggleNav()">
     <nav class="flex flex-col items-center gap-4 p-4" (click)="$event.stopPropagation()">
-  <a href="javascript:void(0)" (click)="onNavigateMobile($event, 'home')" [attr.aria-current]="activeId === 'home' ? 'true' : null"
+  <a href="javascript:void(0)" (click)="onNavigateMobile($event, 'start')" [attr.aria-current]="activeId === 'start' ? 'true' : null"
     class="relative inline-block font-semibold text-secondary hover:text-accent text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.START' | translate }}</a>
   <a href="javascript:void(0)" (click)="onNavigateMobile($event, 'projects')" [attr.aria-current]="activeId === 'projects' ? 'true' : null"
     class="relative inline-block font-semibold text-secondary hover:text-accent text-center px-4 py-2 text-lg after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto aria-[current=true]:text-accent aria-[current=true]:after:w-full aria-[current=true]:after:left-0">{{ 'NAV.PROJECTS' | translate }}</a>

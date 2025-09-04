@@ -1,2 +1,21 @@
-/* Tailwind migration: no component-specific styles needed */
+/* Tailwind migration: minimal custom styles */
+
+.scroll-indicator {
+	animation: scrollPulse 3s ease-in-out infinite;
+	opacity: 1;
+	transform-origin: center;
+	transition: opacity .6s ease, transform .6s ease;
+}
+
+@keyframes scrollPulse {
+	0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+	30% { opacity: 0.85; transform: translateY(-4px); }
+}
+
+.indicator-hidden {
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(6px) scale(.9);
+	animation: none;
+}
   

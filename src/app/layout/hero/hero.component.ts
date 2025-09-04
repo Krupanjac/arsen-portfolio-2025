@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ViewEncapsulation, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ViewEncapsulation, Input, Output, EventEmitter } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,9 +15,12 @@ import { BackgroundComponent } from '../background/background.component';
 })
 export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() showOnlyBackground: boolean = false;
+  @Output() openResumeModal = new EventEmitter<void>();
   private originalName = 'Đurđev';
   private charTimeouts: Map<number, any[]> = new Map();
   private randomSymbolsIntervalId: any = null;
+  showIndicator = true;
+  private scrollHandler = () => {};
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -32,6 +35,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     this.setupNameSpans();
+  this.initIndicatorVisibility();
   }
 
   ngOnDestroy(): void {
@@ -45,6 +49,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       timeouts.forEach(t => clearTimeout(t));
     });
     this.charTimeouts.clear();
+  // remove scroll listener
+  try { window.removeEventListener('scroll', this.scrollHandler, { passive: true } as any); } catch {}
   }
 
   private async randomSymbols(): Promise<void> {
@@ -185,5 +191,57 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private escapeHtml(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  private initIndicatorVisibility(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    // threshold: hide once user scrolls more than 60px from top of hero
+  const threshold = 150; // px before fade-out
+    this.scrollHandler = () => {
+      const y = window.scrollY || 0;
+      const shouldShow = y < threshold;
+      if (shouldShow !== this.showIndicator) {
+        this.showIndicator = shouldShow;
+      }
+    };
+    try { window.addEventListener('scroll', this.scrollHandler, { passive: true }); } catch {}
+    // initial compute
+    this.scrollHandler();
+  }
+
+  // Smooth animated scroll (same easing philosophy as nav) with no header offset
+  scrollToHome(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const target = document.getElementById('home');
+    if (!target) return;
+    const targetY = Math.max(target.getBoundingClientRect().top + window.scrollY, 0);
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    if (Math.abs(distance) < 2) {
+      window.scrollTo(0, targetY);
+      try { history.replaceState(null, '', '#home'); } catch {}
+      return;
+    }
+    const absDist = Math.abs(distance);
+    const minDuration = 400; // ms
+    const maxDuration = 1200; // ms
+    const duration = Math.min(maxDuration, Math.max(minDuration, absDist * 0.5));
+    const startTime = performance.now();
+    const easeInOutCubic = (t: number) => t < 0.5
+      ? 4 * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const step = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeInOutCubic(progress);
+      window.scrollTo(0, startY + distance * eased);
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        try { history.replaceState(null, '', '#home'); } catch {}
+      }
+    };
+    requestAnimationFrame(step);
   }
 }
