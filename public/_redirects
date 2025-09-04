@@ -21,6 +21,7 @@
 /*.woff2            /:splat.woff2         200
 /*.ttf              /:splat.ttf           200
 /*.eot              /:splat.eot           200
+/*.pdf              /:splat.pdf           200
 
 
 # SPA fallback: everything else to index.html
