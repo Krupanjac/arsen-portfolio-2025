@@ -12,7 +12,6 @@ export async function onRequest({ request, env, next }) {
   '/api/login', // API route if used
   '/functions/login', // some hosts expose functions under /functions/
   '/assets',
-  '/projectImg',
   '/public',
   '/i18n',
   // session endpoint (client calls this to check auth)

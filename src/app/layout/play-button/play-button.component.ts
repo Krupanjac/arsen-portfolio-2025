@@ -21,7 +21,6 @@ export class PlayButtonComponent implements OnDestroy {
   readonly commandKeys: Array<{ key: string; label: string }> = [
     { key: 'D', label: 'HELP.COMMANDS.D' },
     { key: 'C', label: 'HELP.COMMANDS.C' },
-    { key: 'T', label: 'HELP.COMMANDS.T' },
     { key: 'S', label: 'HELP.COMMANDS.S' },
     { key: 'CLICK', label: 'HELP.COMMANDS.CLICK' },
     { key: 'SHIFT_CLICK', label: 'HELP.COMMANDS.SHIFT_CLICK' }

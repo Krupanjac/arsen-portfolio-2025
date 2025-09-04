@@ -105,10 +105,9 @@
     "COMMANDS": {
       "D": "Toggle Drawing Mode",
       "C": "Clear All Drawings", 
-      "T": "Add Text Shape",
       "S": "Add Random Stars (in drawing mode)",
       "CLICK": "Click to create particles",
-      "SHIFT_CLICK": "Start/Stop drawing (in drawing mode)"
+  "SHIFT_CLICK": "Hold Shift + Left Click to draw (in drawing mode)"
     },
     "TIP": "Press any key above to interact!"
   },

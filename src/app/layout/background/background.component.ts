@@ -25,6 +25,8 @@ export class BackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
   private mouseMoveListener: ((e: Event) => void) | null = null;
   private pointerOutListener: (() => void) | null = null;
   private clickListener: ((e: MouseEvent) => void) | null = null;
+  private mousedownListener: ((e: MouseEvent) => void) | null = null;
+  private mouseupListener: ((e: MouseEvent) => void) | null = null;
   private keydownListener: ((e: KeyboardEvent) => void) | null = null;
   private particles: Array<{ x: number; y: number; vx: number; vy: number; life: number; r: number; color: string }> = [];
   private twinklePhase = 0;
@@ -402,8 +404,11 @@ private applyShapeGravityField(star: any, stars: any[]): void {
     if (this.pointerOutListener) {
       window.removeEventListener('pointerleave', this.pointerOutListener as any);
     }
-    if (this.clickListener) {
-      window.removeEventListener('click', this.clickListener as any);
+    if (this.mousedownListener) {
+      window.removeEventListener('mousedown', this.mousedownListener as any);
+    }
+    if (this.mouseupListener) {
+      window.removeEventListener('mouseup', this.mouseupListener as any);
     }
     if (this.keydownListener) {
       window.removeEventListener('keydown', this.keydownListener as any);
@@ -624,11 +629,11 @@ private applyShapeGravityField(star: any, stars: any[]): void {
         ctx.font = '14px Arial';
         ctx.fillText('GRAVITY FIELD MODE', 20, 35);
         if (this.isDrawing) {
-          ctx.fillText('Creating gravity points... (Shift+Click to stop)', 20, 55);
+          ctx.fillText('Drawing gravity field... (release to stop)', 20, 55);
         } else {
-          ctx.fillText('Shift+Click to create gravity field', 20, 55);
+          ctx.fillText('Hold Shift + Left Click to draw gravity field', 20, 55);
         }
-        ctx.fillText('C: Clear Fields | T: Add Text Field | S: Add Stars | D: Toggle Mode', 20, 75);
+        ctx.fillText('C: Clear Fields | S: Add Stars | D: Toggle Mode', 20, 75);
       }
     };
 
@@ -773,43 +778,46 @@ private applyShapeGravityField(star: any, stars: any[]): void {
     window.addEventListener('mousemove', this.mouseMoveListener, { passive: true });
     window.addEventListener('pointerleave', this.pointerOutListener);
 
-    // Click listener
-    this.clickListener = (e: MouseEvent) => {
-      if (this.isDrawingMode) {
-        if (e.shiftKey) {
-          // Shift+click to start/stop drawing
-          this.isDrawing = !this.isDrawing;
-        }
-        // Regular clicks in drawing mode do nothing
-      } else {
-        // Original particle effect
-        const rect = canvas.getBoundingClientRect();
-        const cx = e.clientX - rect.left;
-        const cy = e.clientY - rect.top;
-        const count = Math.min(18, 6 + Math.floor(Math.random() * 12));
-
-        for (let i = 0; i < count; i++) {
-          const angle = Math.random() * Math.PI * 2;
-          const speed = 1 + Math.random() * 3;
-          const color = Math.random() > 0.5 ? accent :
-            (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? '#222' : '#fff');
-
-          this.particles.push({
-            x: cx, y: cy,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            life: 30 + Math.floor(Math.random() * 40),
-            r: 1 + Math.random() * 3,
-            color
-          });
-
-          if (this.particles.length > this.MAX_PARTICLES) {
-            this.particles.splice(0, this.particles.length - this.MAX_PARTICLES);
+    // Mouse down/up for drawing (hold Shift + Left Click to draw)
+    this.mousedownListener = (e: MouseEvent) => {
+      if (this.isDrawingMode && e.button === 0 && e.shiftKey) {
+        this.isDrawing = true;
+        // Add an initial point immediately for responsiveness
+        this.drawnPoints.push({ x: e.clientX, y: e.clientY, age: 0, maxAge: 1800 });
+      } else if (!this.isDrawingMode) {
+        // Original particle effect when not in drawing mode
+        if (e.button === 0) {
+          const rect = canvas.getBoundingClientRect();
+          const cx = e.clientX - rect.left;
+          const cy = e.clientY - rect.top;
+          const count = Math.min(18, 6 + Math.floor(Math.random() * 12));
+          for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1 + Math.random() * 3;
+            const color = Math.random() > 0.5 ? accent :
+              (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? '#222' : '#fff');
+            this.particles.push({
+              x: cx, y: cy,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              life: 30 + Math.floor(Math.random() * 40),
+              r: 1 + Math.random() * 3,
+              color
+            });
+            if (this.particles.length > this.MAX_PARTICLES) {
+              this.particles.splice(0, this.particles.length - this.MAX_PARTICLES);
+            }
           }
         }
       }
     };
-    window.addEventListener('click', this.clickListener);
+    this.mouseupListener = (e: MouseEvent) => {
+      if (e.button === 0) {
+        this.isDrawing = false;
+      }
+    };
+    window.addEventListener('mousedown', this.mousedownListener);
+    window.addEventListener('mouseup', this.mouseupListener);
 
     // Keyboard listener for controls
     this.keydownListener = (e: KeyboardEvent) => {
@@ -817,17 +825,12 @@ private applyShapeGravityField(star: any, stars: any[]): void {
         this.toggleDrawingMode();
       } else if (e.key === 'c' || e.key === 'C') {
         this.clearDrawing();
-      } else if (e.key === 't' || e.key === 'T') {
-        const text = prompt('Enter text to add as shape:');
-        if (text) {
-          this.addTextShape(text);
-        }
+      // Text mode disabled per latest requirement (T key removed)
       } else if (this.isDrawingMode && (e.key === 's' || e.key === 'S')) {
-        // Add more stars at random locations
         this.addRandomStars();
       }
     };
-    window.addEventListener('keydown', this.keydownListener);
+    window.addEventListener('keydown', this.keydownListener!);
 
     animate();
   }
