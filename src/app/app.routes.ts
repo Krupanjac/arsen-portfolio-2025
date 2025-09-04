@@ -16,5 +16,8 @@ export const appRoutes: Routes = [
   { path: 'blog', component: BlogListComponent, data: { animation: 'BlogPage' } },
   { path: 'contact', component: ContactComponent, data: { animation: 'ContactPage' } },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard], data: { animation: 'AdminPage' } },
+  // Direct PDF routes
+  { path: 'resume', redirectTo: '/Arsen_Djurdjev_Resume.pdf', pathMatch: 'full' },
+  { path: 'cv', redirectTo: '/Arsen_Djurdjev_Resume.pdf', pathMatch: 'full' },
   { path: '**', redirectTo: '' }
 ];

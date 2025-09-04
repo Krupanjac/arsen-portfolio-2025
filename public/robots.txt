@@ -34,6 +34,8 @@ Disallow: /
 
 # Default policy for other crawlers
 User-agent: *
+# Keep admin area out of the index
+Disallow: /admin
 Allow: /
 
 # Explicitly allow root (pattern with $ end anchor is fine for Google, optional)
@@ -45,6 +47,9 @@ Allow: /$
 # Keep static resources crawlable so search engines can render pages
 Allow: /assets/
 Allow: /i18n/
+
+# PDF resume is intentionally indexable (served at /Arsen_Djurdjev_Resume.pdf). The /resume and /cv
+# Angular client routes just redirect to it client-side, so only the actual PDF needs indexing.
 
 # Sitemap
 Sitemap: https://krupanjac.dev/sitemap.xml
