@@ -1,0 +1,39 @@
+/* Tailwind handles most layout & base styling. This file keeps only bespoke animations & accent-dependent states. */
+
+@keyframes wheelEnter {
+  0% {opacity:0; transform: scale(.85) rotate(-8deg);} 
+  60% {opacity:1; transform: scale(1.03) rotate(1deg);} 
+  100% {opacity:1; transform: scale(1) rotate(0deg);} 
+}
+
+@keyframes groupPop {
+  0% {opacity:0; transform: translate(-50%, -50%) scale(.4) rotate(-12deg);} 
+  55% {opacity:1; transform: translate(-50%, -50%) scale(1.08) rotate(4deg);} 
+  100% {opacity:1; transform: translate(-50%, -50%) scale(1) rotate(0deg);} 
+}
+
+.group-node { 
+  transform: translate(-50%, -50%) scale(.4) rotate(-12deg); 
+  animation: groupPop .9s cubic-bezier(.25,.7,.3,1) calc(var(--delay) * 0.6) forwards; 
+  isolation: isolate;
+}
+.wheel--active .group-node:not(.active) { filter: saturate(.55) brightness(.85); opacity: .55; }
+.group-node .dot { box-shadow: 0 0 0 4px rgba(0,0,0,0.4); background: var(--accent,#6366f1); transition: transform .6s cubic-bezier(.25,.6,.3,1); }
+.group-node:hover, .group-node.active { box-shadow: 0 2px 12px -2px var(--accent), 0 0 0 1px rgba(255,255,255,0.08) inset; border-color: var(--accent); }
+.group-node:hover .dot, .group-node.active .dot { transform: scale(1.35); }
+.group-node.active { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(0,0,0,0.5)); }
+
+@keyframes fadeSlide { 0% {opacity:0; transform: translateY(10px);} 100% {opacity:1; transform: translateY(0);} }
+@keyframes itemsFade { 0% {opacity:0; transform: translateY(10px) scale(.96);} 100% {opacity:1; transform: translateY(0) scale(1);} }
+
+.center--active { background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.5), transparent 70%); }
+.items-wrapper { animation: itemsFade .55s ease .05s both; width: 100%; }
+
+/* Physics simulation container (hooked by TS) */
+.items-sim { aspect-ratio: 1/1; }
+.item-sim:hover { border-color: var(--accent,#6366f1); background: rgba(var(--color-accent-rgb),0.18); box-shadow:0 6px 20px -6px rgba(0,0,0,.75), 0 0 0 1px rgba(var(--color-accent-rgb),0.35); }
+
+@media (max-width:640px){
+  .item-sim { width:50px; height:50px; }
+  .item-sim .icon { width:30px; height:30px; }
+}
