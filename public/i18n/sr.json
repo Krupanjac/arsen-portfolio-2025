@@ -133,5 +133,12 @@
       "TITLE": "CV",
       "DOWNLOAD": "Preuzmi PDF"
     }
+  },
+  "TOOLTIP": {
+    "LINKEDIN": "LinkedIn",
+    "GITHUB": "GitHub",
+    "INSTAGRAM": "Instagram",
+    "RESUME": "Otvori CV",
+    "SCROLL": "Skrol do sadržaja"
   }
 }

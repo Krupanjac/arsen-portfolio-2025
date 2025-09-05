@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { PlayStateService } from '../../play-state.service';
 import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
+import { TooltipDirective } from '../../shared/tooltip.directive';
 
 @Component({
   selector: 'app-play-button',
-  imports: [CommonModule, TranslateModule, TerminalTypingDirective],
+  imports: [CommonModule, TranslateModule, TerminalTypingDirective, TooltipDirective],
   templateUrl: './play-button.component.html',
   styleUrl: './play-button.component.scss'
 })

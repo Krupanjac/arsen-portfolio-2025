@@ -133,5 +133,12 @@
       "TITLE": "Resume",
       "DOWNLOAD": "Download PDF"
     }
+  },
+  "TOOLTIP": {
+    "LINKEDIN": "LinkedIn",
+    "GITHUB": "GitHub",
+    "INSTAGRAM": "Instagram",
+    "RESUME": "Open Resume",
+    "SCROLL": "Scroll to content"
   }
 }

@@ -1,9 +1,10 @@
 <div class="flex justify-center items-center py-8 relative" [class.pointer-events-none]="playStateService.isPlaying">
-  <div class="group relative inline-block z-10" [class.opacity-0]="playStateService.isPlaying" [class.scale-75]="playStateService.isPlaying" [class.translate-y-4]="playStateService.isPlaying" [class.pointer-events-none]="playStateService.isPlaying" style="transition:all .6s cubic-bezier(.4,0,.2,1)">
+  <div class="relative inline-block z-10" [class.opacity-0]="playStateService.isPlaying" [class.scale-75]="playStateService.isPlaying" [class.translate-y-4]="playStateService.isPlaying" [class.pointer-events-none]="playStateService.isPlaying" style="transition:all .6s cubic-bezier(.4,0,.2,1)">
     <button
       (click)="onPlay()"
-      aria-describedby="play-tooltip"
       [attr.tabindex]="playStateService.isPlaying ? -1 : 0"
+      appTooltip="PLAY.TOOLTIP"
+      tooltipPlacement="bottom"
       class="play-button relative isolate font-semibold tracking-[0.025em] text-lg px-6 py-3 rounded-full border border-[rgba(var(--color-accent-rgb)/0.55)]
              bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-alt)]
              text-[var(--color-text)] shadow-md shadow-[rgba(0,0,0,0.18)]
@@ -13,17 +14,6 @@
     >
       ▶ <span appTerminalTyping data-i18n-key="PLAY.BUTTON">{{ 'PLAY.BUTTON' | translate }}</span>
     </button>
-    <div
-      id="play-tooltip"
-      role="tooltip"
-      class="play-tooltip absolute left-1/2 top-full mt-2 -translate-x-1/2 translate-y-1 scale-95 opacity-0
-             group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100
-             group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:scale-100
-             transition-all duration-300 ease-out text-[var(--color-text)] whitespace-nowrap px-3 py-1 rounded-md text-sm font-medium
-             pointer-events-none"
-    >
-      {{ 'PLAY.TOOLTIP' | translate }}
-    </div>
   </div>
 
   <!-- Unified Help Menu -->

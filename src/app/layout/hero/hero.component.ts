@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
 import { BackgroundComponent } from '../background/background.component';
+import { TooltipDirective } from '../../shared/tooltip.directive';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, TranslateModule, TerminalTypingDirective, BackgroundComponent],
+  imports: [CommonModule, TranslateModule, TerminalTypingDirective, BackgroundComponent, TooltipDirective],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.scss'],
   encapsulation: ViewEncapsulation.None
