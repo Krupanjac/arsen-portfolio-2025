@@ -6,6 +6,7 @@ import { RailComponent } from '../layout/rail/rail.component';
 import { BlogService, BlogPost } from '../blog.service';
 import { BlogModalComponent } from '../blog-modal/blog-modal.component';
 import { ImagekitService } from '../imagekit.service';
+import { MarkdownInlinePipe } from '../shared/markdown.pipe';
 import { isPlatformBrowser } from '@angular/common';
 
 interface Project {
@@ -17,7 +18,7 @@ interface Project {
 @Component({
   selector: 'app-projects',
   standalone: true, // Standalone component
-  imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective, BlogModalComponent], // <-- Add CommonModule here
+  imports: [CommonModule, TranslateModule, RailComponent, TerminalTypingDirective, BlogModalComponent, MarkdownInlinePipe], // <-- Add CommonModule here
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss']
 })

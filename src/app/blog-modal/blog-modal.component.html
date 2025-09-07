@@ -63,10 +63,8 @@
       </div>
     </div>
 
-    <!-- Post description -->
-    <div class="mb-4 prose prose-invert max-w-none" *ngIf="post?.description">
-      <p class="text-secondary leading-relaxed m-0 text-sm sm:text-base">{{ post!.description }}</p>
-    </div>
+  <!-- Post description -->
+  <div class="mb-4 prose prose-invert max-w-none text-secondary text-sm sm:text-base" *ngIf="post?.description" [innerHTML]="post!.description | markdown"></div>
 
     <!-- Post tags -->
     <div class="flex flex-wrap gap-2 mb-4" *ngIf="post?.tags && post!.tags!.length > 0">

@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { BlogService, BlogPost } from '../blog.service';
 import { ImagekitService } from '../imagekit.service';
 import { isPlatformBrowser } from '@angular/common';
+import { MarkdownPipe } from '../shared/markdown.pipe';
 
 @Component({
   selector: 'app-admin-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MarkdownPipe],
   templateUrl: './admin-editor.component.html',
   styleUrls: ['./admin-editor.component.scss']
 })

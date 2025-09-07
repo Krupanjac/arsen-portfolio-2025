@@ -2,12 +2,13 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDes
 import { CommonModule } from '@angular/common';
 import { BlogPost } from '../blog.service';
 import { ImagekitService } from '../imagekit.service';
+import { MarkdownPipe } from '../shared/markdown.pipe';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-blog-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MarkdownPipe],
   templateUrl: './blog-modal.component.html',
   styleUrls: ['./blog-modal.component.scss'],
   animations: [
