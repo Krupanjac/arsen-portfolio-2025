@@ -1,7 +1,7 @@
 import { Component, signal, computed, ElementRef, ViewChild, ViewChildren, QueryList, AfterViewInit, OnDestroy, NgZone, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
-import { TooltipDirective } from '../shared/tooltip.directive';
+import { TooltipDirective } from '../../shared/tooltip.directive';
 import { TranslateModule } from '@ngx-translate/core';
 
 interface TechItem {
