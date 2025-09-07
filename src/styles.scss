@@ -23,7 +23,7 @@
   --color-accent-alt: #5d2f8a;
   --color-terminal-bg: #000000e6;
   --color-terminal-green: #00ff00;
-  --color-terminal-directive: #272727;
+  --color-terminal-directive: #000000; /* typing cursor (light theme): black */
   --color-terminal-line: #003300;
   --glow-accent: 0 0 10px rgba(var(--color-accent-rgb)/0.55), 0 0 22px rgba(var(--color-accent-rgb)/0.3);
 }

@@ -1,0 +1,27 @@
+<footer class="w-full border-t border-divider bg-transparent">
+  <div class="grid grid-cols-1 md:grid-cols-[20%_1fr] items-stretch">
+    <!-- Left rail echo for visual continuity -->
+    <div class="hidden md:flex border-r-2 rail-separator items-start justify-end pr-4 py-4">
+      <span class="text-xs tracking-widest text-secondary uppercase select-none">Footer/></span>
+    </div>
+
+    <!-- Content -->
+    <div class="flex justify-center items-center py-6 md:-ml-[20%] pl-4">
+      <div class="w-[92%] sm:w-[85%] md:w-[75%] lg:w-[65%] mx-auto flex flex-col items-center justify-center gap-2 text-center">
+        <p class="m-0 text-sm text-secondary">
+          <span class="inline-flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full" style="background: var(--color-accent)"></span>
+            <a href="https://github.com/Krupanjac" target="_blank" rel="noopener" aria-label="Open GitHub profile" class="name-wrap relative inline-block after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-[-2px] after:left-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full">
+              <span class="brand-swap">
+                <span class="brand-a font-semibold text-primary">Krupanjac</span>
+                <span class="brand-b font-semibold text-primary">Arsen Đurđev</span>
+              </span>
+            </a>
+            <span class="text-secondary">• © {{ year }}</span>
+          </span>
+        </p>
+        <a (click)="onBackToTop($event)" href="#start" class="relative inline-block text-secondary hover:text-accent transition-colors after:content-[''] after:absolute after:h-[2px] after:w-0 after:bottom-0 after:right-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full hover:after:left-0 hover:after:right-auto">{{ 'FOOTER.BACK_TO_TOP' | translate }}</a>
+      </div>
+    </div>
+  </div>
+</footer>

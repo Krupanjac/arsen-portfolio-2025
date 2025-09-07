@@ -17,6 +17,7 @@ import { PlayStateService } from './play-state.service';
 import { PlayButtonComponent } from './layout/play-button/play-button.component';
 import { RailComponent } from './layout/rail/rail.component';
 import { ResumeModalComponent } from './resume-modal/resume-modal.component';
+import { FooterComponent } from './layout/footer/footer.component';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +35,8 @@ import { ResumeModalComponent } from './resume-modal/resume-modal.component';
   AboutComponent,
   PlayButtonComponent,
   ResumeModalComponent,
-  RailComponent
+  RailComponent,
+  FooterComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

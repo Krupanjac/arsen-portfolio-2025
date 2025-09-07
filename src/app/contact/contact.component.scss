@@ -1,0 +1,67 @@
+/* Contact modern card styles (non-terminal) */
+.contact-card {
+	position: relative;
+	width: 100%;
+	border-radius: 14px;
+	border: 1px solid var(--color-border);
+	padding: 14px 16px;
+	text-align: left;
+	background: var(--color-surface);
+	color: var(--color-text);
+	box-shadow: 0 6px 20px -10px rgba(0,0,0,0.2);
+	transition: transform 200ms ease, box-shadow 200ms ease, border-color .35s ease, background-color .35s ease, color .35s ease;
+	display: block;
+	text-decoration: none;
+	cursor: pointer;
+}
+.contact-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 32px -12px rgba(0,0,0,0.28);
+	border-color: var(--color-border-strong);
+}
+.contact-card .hint {
+	position: absolute;
+	right: 12px;
+	bottom: 10px;
+	font-size: 12px;
+	opacity: .6;
+}
+
+/* Simple neutral icons */
+.icon { display: inline-block; width: 22px; height: 22px; border-radius: 6px; position: relative; background: linear-gradient(180deg, rgba(var(--color-accent-rgb)/0.18), rgba(var(--color-accent-rgb)/0.10)); border: 1px solid rgba(var(--color-accent-rgb)/0.35); }
+.icon-mail::before { content: '\2709'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 14px; color: var(--color-accent); }
+.icon-linkedin::before { content: 'in'; position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 12px; color: var(--color-accent); }
+.icon-github::before { content: '{}'; position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: var(--color-accent); }
+.icon-file::before { display: none; }
+
+/* Reveal-up animation for cards and sections */
+@keyframes revealUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.reveal-up { opacity: 0; animation: revealUp .5s ease forwards; }
+
+/* Toast */
+.toast {
+	position: fixed;
+	left: 50%;
+	bottom: 24px;
+	transform: translateX(-50%);
+	background: rgba(15, 23, 42, 0.92);
+	color: #fff;
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+	border: 1px solid rgba(var(--color-accent-rgb), 0.35);
+	padding: 10px 14px;
+	border-radius: 10px;
+	box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+	z-index: 1100;
+}
+
+/* Small pill on the right of the email card */
+.pill {
+	font-size: 12px;
+	padding: 4px 8px;
+	border-radius: 999px;
+	color: var(--color-accent);
+	border: 1px solid rgba(var(--color-accent-rgb), 0.35);
+	background: linear-gradient(180deg, rgba(var(--color-accent-rgb),0.10), rgba(var(--color-accent-rgb),0.06));
+	white-space: nowrap;
+}

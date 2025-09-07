@@ -14,10 +14,18 @@
   "ABOUT": {
     "LABEL": "O meni/>",
     "L1": "$echo \"Zdravo, ja sam Arsen Đurđev.\"",
-    "L2": "Zdravo, ja sam Arsen Đurđev.",
+  "L2": "Student softverskog inženjerstva sa osnovom u elektrotehnici i produkt-prvim pristupom.",
     "DOTS": "...",
     "WHOAMI": "$whoami",
-    "ROLE": "Ja sam full-stack programer.",
+    "ROLE": "Full‑stack inženjer i dizajner sistema.",
+  "H1": "$istaknuto",
+  "H1_L1": "Od freelance videa do frontenda; spajam kreativni rad i inženjering za pouzdanu isporuku.",
+  "H1_L2": "Razvio i vodio Arma 3 zajednicu od 150+; izgradio sisteme evidencije i rangiranja i koordinisao događaje.",
+  "H1_L3": "Reprojektovao učitavanje Arma modova — smanjio ukupno opterećenje modova za ~70% i poboljšao vremena učitavanja i performanse.",
+  "H2": "$sada",
+  "H2_L1": "Gradim pipeline‑ove za velikorazmernu proceduralnu izradu terena iz OpenStreetMap podataka i optimizujem tokove rada.",
+  "H2_L2": "Izgradio i vodim armasrbija.rs — backend, frontend i deploy za usluge prema zajednici i igri.",
+  "H2_L3": "Otvoren za uloge i ugovore sa jasnim vlasništvom, optimizacijom procesa i merljivim uticajem.",
     "SKILLS": "$veštine",
     "SKILL_ALGO": "Algoritmi",
     "SKILL_DS": "Strukture podataka",
@@ -26,7 +34,9 @@
     "SKILL_ML": "Mašinsko učenje",
     "SKILL_FRONTEND": "Frondend razvoj",
     "LANGS": "$jezici",
+  "LANGS_INLINE": "Jezici: C, C++, Python, Java, C#, TypeScript/JavaScript, SQL",
     "TOOLS": "$alati",
+  "TOOLS_INLINE": "Alati: Angular, Node.js, Tailwind, Git, Docker, SQLite, Cloudflare, Linux",
     "AI": "Veštačka inteligencija",
     "CONTACT": "$kontakt",
     "LINKEDIN": "LinkedIn <--klikni za prikaz",
@@ -52,11 +62,21 @@
   }
   },
   "CONTACT": {
-    "LABEL": "Kontakt/>",
-    "TERMINAL_USER": "root@terminal",
-    "HOME_LABEL": "Kontakt/>",
-    "COPIED": "Kopirano: {{email}}",
-    "COPY_FAILED": "Kopiranje nije uspelo."
+  "LABEL": "Kontakt/>",
+  "TERMINAL_USER": "root@terminal",
+  "HOME_LABEL": "Kontakt/>",
+  "INTRO_1": "$echo \"Hajde da napravimo nešto pouzdano i brzo.\"",
+  "INTRO_2": "$kontakt — preferirani kanali ispod",
+  "EMAIL": "E‑mail",
+  "LINKEDIN": "LinkedIn",
+  "GITHUB": "GitHub",
+  "RESPONSE": "$odgovor ~1–2 radna dana",
+  "AVAILABILITY": "$dostupnost — remote / hibrid · CET",
+  "COPY_HINT": "Klik za kopiranje",
+  "OPEN_HINT": "Otvori",
+  "OTHER_LINKS": "Takođe sam i na",
+  "COPIED": "Kopirano",
+  "COPY_FAILED": "Kopiranje nije uspelo."
   },
   "HOME": {
     "LABEL": "Početna/>",
@@ -156,5 +176,11 @@
     "INSTAGRAM": "Instagram",
     "RESUME": "Otvori CV",
     "SCROLL": "Skrol do sadržaja"
+  }
+  ,
+  "FOOTER": {
+    "BACK_TO_TOP": "Nazad na vrh",
+    "EMAIL": "E‑pošta",
+    "GITHUB": "GitHub"
   }
 }

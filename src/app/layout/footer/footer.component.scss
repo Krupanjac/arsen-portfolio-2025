@@ -1,0 +1,48 @@
+:host {
+  display: block;
+}
+
+footer {
+  backdrop-filter: blur(2px);
+}
+
+/* Optional subtle top shadow in light theme for separation */
+:root:not([data-theme='dark']) footer {
+  box-shadow: 0 -1px 0 var(--color-border) inset;
+}
+
+/* Brand hover swap: fade + slide for clear, pleasant change */
+.name-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.brand-swap {
+  position: relative;
+  display: inline-block;
+  height: 1.2em; /* consistent line box */
+  /* Reserve width to avoid siblings shifting when text swaps */
+  min-width: 12ch; /* wide enough for both labels */
+}
+
+.brand-a,
+.brand-b {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  white-space: nowrap;
+  transition: opacity .35s ease, transform .35s ease;
+}
+
+.brand-a { opacity: 1; transform: translateY(0); }
+.brand-b { opacity: 0; transform: translateY(8px); }
+
+.name-wrap:hover .brand-a { opacity: 0; transform: translateY(-8px); }
+.name-wrap:hover .brand-b { opacity: 1; transform: translateY(0); }
+
+/* Ensure line-height consistency so the © year doesn’t overlap */
+.name-wrap, .brand-swap, .brand-a, .brand-b {
+  line-height: 1.2;
+}

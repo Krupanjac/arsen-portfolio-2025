@@ -14,10 +14,18 @@
   "ABOUT": {
     "LABEL": "About/>",
     "L1": "$echo \"Hello, I'm Arsen Đurđev.\"",
-    "L2": "Hello, I'm Arsen Đurđev.",
+  "L2": "Software engineering student with electrical engineering roots and a product-first mindset.",
     "DOTS": "...",
     "WHOAMI": "$whoami",
-    "ROLE": "I'm a Full-stack Developer.",
+    "ROLE": "I'm a full-stack engineer and systems designer.",
+  "H1": "$highlights",
+  "H1_L1": "Moved from freelance video to frontend; combine creative work and engineering to deliver dependable results.",
+  "H1_L2": "Grew and led an Arma 3 community of 150+; built attendance and ranking systems and coordinated events.",
+  "H1_L3": "Reworked Arma mod loading—reduced total mod load by ~70% and improved client/server load times and runtime performance.",
+  "H2": "$now",
+  "H2_L1": "Build large-scale procedural terrain pipelines from OpenStreetMap data and optimize workflows for very large environments.",
+  "H2_L2": "Built and run armasrbija.rs—combining backend, frontend, and deployment for community and game services.",
+  "H2_L3": "Open to roles and contracts with clear ownership, pipeline optimization, and measurable impact.",
     "SKILLS": "$skills",
     "SKILL_ALGO": "Algorithms",
     "SKILL_DS": "Data Structures",
@@ -26,7 +34,9 @@
     "SKILL_ML": "Machine Learning",
     "SKILL_FRONTEND": "Front-end Development",
     "LANGS": "$languages",
+  "LANGS_INLINE": "Languages: C, C++, Python, Java, C#, TypeScript/JavaScript, SQL",
     "TOOLS": "$tools",
+  "TOOLS_INLINE": "Tools: Angular, Node.js, Tailwind, Git, Docker, SQLite, Cloudflare, Linux",
     "AI": "Artificial intelligence",
     "CONTACT": "$contact",
     "LINKEDIN": "LinkedIn <--click to view",
@@ -52,11 +62,21 @@
   }
   },
   "CONTACT": {
-    "LABEL": "Contact/>",
-    "TERMINAL_USER": "root@terminal",
-    "HOME_LABEL": "Home/>",
-    "COPIED": "Copied: {{email}}",
-    "COPY_FAILED": "Failed to copy text."
+  "LABEL": "Contact/>",
+  "TERMINAL_USER": "root@terminal",
+  "HOME_LABEL": "Home/>",
+  "INTRO_1": "$echo \"Let's build something reliable and fast.\"",
+  "INTRO_2": "$contact — preferred channels below",
+  "EMAIL": "E‑mail",
+  "LINKEDIN": "LinkedIn",
+  "GITHUB": "GitHub",
+  "RESPONSE": "$response ~1–2 business days",
+  "AVAILABILITY": "$availability — remote / hybrid · CET",
+  "COPY_HINT": "Click to copy",
+  "OPEN_HINT": "Open",
+  "OTHER_LINKS": "You can also find me on",
+  "COPIED": "Copied",
+  "COPY_FAILED": "Failed to copy text."
   },
   "HOME": {
     "LABEL": "Home/>",
@@ -156,5 +176,11 @@
     "INSTAGRAM": "Instagram",
     "RESUME": "Open Resume",
     "SCROLL": "Scroll to content"
+  }
+  ,
+  "FOOTER": {
+    "BACK_TO_TOP": "Back to top",
+    "EMAIL": "Email",
+    "GITHUB": "GitHub"
   }
 }

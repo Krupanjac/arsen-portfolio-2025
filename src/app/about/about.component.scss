@@ -1,3 +1,7 @@
 .terminal-output .copyable { position: relative; cursor: pointer; text-decoration: underline !important; color: #00ff00; }
 .terminal-output .copyable:hover::after { content: "Click to open / copy"; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); background: #002200; color: #00ff00; padding: 4px 8px; border-radius: 3px; font-size: 0.75rem; border: 1px solid #00ff0080; white-space: nowrap; z-index: 50; opacity: 1; visibility: visible; }
 .terminal-output .copyable::after { content: ""; opacity: 0; visibility: hidden; transition: all 0.2s ease; }
+
+/* Tiny breathing glow when hovering the terminal */
+.glow-accent { transition: box-shadow 300ms ease; }
+.glow-accent:hover { box-shadow: 0 0 28px rgba(0,255,128,0.16); }
