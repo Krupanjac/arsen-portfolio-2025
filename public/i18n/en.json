@@ -74,6 +74,7 @@
   "AVAILABILITY": "$availability — remote / hybrid · CET",
   "COPY_HINT": "Click to copy",
   "OPEN_HINT": "Open",
+  "COMPOSE": "Compose email",
   "OTHER_LINKS": "You can also find me on",
   "COPIED": "Copied",
   "COPY_FAILED": "Failed to copy text."

@@ -1,10 +1,10 @@
 <div class="grid min-h-screen grid-cols-[1fr] md:grid-cols-[20%_1fr]">
   <!-- Mobile label under nav -->
   <div class="md:hidden pt-14 px-4 pb-2 border-b border-divider">
-  <p class="text-base font-semibold text-secondary"><span appTerminalTyping data-i18n-key="PROJECTS.LABEL">{{ 'PROJECTS.LABEL' | translate }}</span></p>
+  <p class="text-base font-semibold uppercase tracking-widest text-secondary select-none"><span appTerminalTyping data-i18n-key="PROJECTS.LABEL">{{ 'PROJECTS.LABEL' | translate }}</span></p>
   </div>
   <!-- Left rail with vertical line -->
-  <app-rail>
+  <app-rail [textClass]="'text-xl whitespace-nowrap uppercase tracking-widest text-secondary select-none'">
   <span appTerminalTyping data-i18n-key="PROJECTS.LABEL">{{ 'PROJECTS.LABEL' | translate }}</span>
   </app-rail>
   <!-- Projects grid -->

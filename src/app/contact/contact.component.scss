@@ -9,15 +9,30 @@
 	background: var(--color-surface);
 	color: var(--color-text);
 	box-shadow: 0 6px 20px -10px rgba(0,0,0,0.2);
-	transition: transform 200ms ease, box-shadow 200ms ease, border-color .35s ease, background-color .35s ease, color .35s ease;
+	transition: transform 180ms ease, box-shadow 200ms ease, border-color .25s ease, background-color .25s ease, color .25s ease;
 	display: block;
 	text-decoration: none;
 	cursor: pointer;
+	outline: none;
 }
 .contact-card:hover {
 	transform: translateY(-2px);
 	box-shadow: 0 12px 32px -12px rgba(0,0,0,0.28);
 	border-color: var(--color-border-strong);
+}
+.contact-card:focus-visible {
+	box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.25), 0 6px 20px -10px rgba(0,0,0,0.2);
+	border-color: rgba(var(--color-accent-rgb), 0.6);
+}
+
+/* CTA variant */
+.contact-card--cta {
+	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.10), rgba(var(--color-accent-rgb), 0.06));
+	border-color: rgba(var(--color-accent-rgb), 0.45);
+}
+.contact-card--cta:hover {
+	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.14), rgba(var(--color-accent-rgb), 0.08));
+	border-color: rgba(var(--color-accent-rgb), 0.65);
 }
 .contact-card .hint {
 	position: absolute;
@@ -28,11 +43,49 @@
 }
 
 /* Simple neutral icons */
-.icon { display: inline-block; width: 22px; height: 22px; border-radius: 6px; position: relative; background: linear-gradient(180deg, rgba(var(--color-accent-rgb)/0.18), rgba(var(--color-accent-rgb)/0.10)); border: 1px solid rgba(var(--color-accent-rgb)/0.35); }
-.icon-mail::before { content: '\2709'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 14px; color: var(--color-accent); }
+.icon { display: inline-block; width: 24px; height: 24px; border-radius: 6px; position: relative; background: linear-gradient(180deg, rgba(var(--color-accent-rgb)/0.18), rgba(var(--color-accent-rgb)/0.10)); border: 1px solid rgba(var(--color-accent-rgb)/0.35); }
+.icon-mail::before { content: '\2709'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 15px; color: var(--color-accent); }
 .icon-linkedin::before { content: 'in'; position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 12px; color: var(--color-accent); }
 .icon-github::before { content: '{}'; position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: var(--color-accent); }
 .icon-file::before { display: none; }
+
+/* Small action chip next to the email card */
+.action-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 10px;
+	border-radius: 999px;
+	border: 1px solid rgba(var(--color-accent-rgb), 0.4);
+	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.12), rgba(var(--color-accent-rgb), 0.08));
+	color: var(--color-text);
+	text-decoration: none;
+	box-shadow: 0 6px 16px -12px rgba(0,0,0,0.35);
+	transition: transform 150ms ease, border-color .25s ease, background-color .25s ease, box-shadow .25s ease;
+}
+.action-chip:hover {
+	transform: translateY(-1px);
+	border-color: rgba(var(--color-accent-rgb), 0.6);
+	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.16), rgba(var(--color-accent-rgb), 0.10));
+	box-shadow: 0 10px 22px -12px rgba(0,0,0,0.45);
+}
+.action-chip:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.25), 0 8px 20px -12px rgba(0,0,0,0.4);
+}
+.action-chip .icon { width: 18px; height: 18px; border-radius: 50%; }
+.action-chip .icon::before { content: '\2709'; font-size: 12px; color: var(--color-accent); display: grid; place-items: center; position: absolute; inset: 0; }
+.action-chip .label { font-size: 13px; font-weight: 500; }
+
+/* Accent variant for higher contrast */
+.action-chip--accent {
+	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.16), rgba(var(--color-accent-rgb), 0.10));
+	border-color: rgba(var(--color-accent-rgb), 0.55);
+}
+.action-chip--accent:hover {
+	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.20), rgba(var(--color-accent-rgb), 0.12));
+	border-color: rgba(var(--color-accent-rgb), 0.7);
+}
 
 /* Reveal-up animation for cards and sections */
 @keyframes revealUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

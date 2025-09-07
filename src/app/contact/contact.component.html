@@ -2,7 +2,7 @@
 <div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr]">
   <!-- Mobile label under nav -->
   <div class="md:hidden pt-14 px-4 pb-2 border-b border-divider">
-    <p class="text-base font-semibold uppercase tracking-widest text-secondary select-none">
+  <p class="text-base font-semibold uppercase tracking-wide md:tracking-widest text-secondary select-none whitespace-nowrap overflow-hidden text-ellipsis">
       <span appTerminalTyping data-i18n-key="CONTACT.LABEL">{{ 'CONTACT.LABEL' | translate }}</span>
     </p>
   </div>
@@ -27,17 +27,41 @@
         </p>
       </div>
 
-      <!-- Primary email card -->
-      <div class="mt-4 grid grid-cols-1 gap-3 md:gap-4">
-        <div class="contact-card reveal-up max-w-[280px] mx-auto" style="animation-delay:140ms" role="button" tabindex="0" (click)="copyToClipboard(email)" (keydown.enter)="copyToClipboard(email)" appTooltip="{{ 'CONTACT.COPY_HINT' | translate }}" tooltipPlacement="top">
+      <!-- Primary email + small mailto chip -->
+      <div class="mt-4 flex items-center gap-2 md:gap-3 flex-wrap">
+        <!-- Copy email button (narrower, left-aligned) -->
+        <div
+          class="contact-card reveal-up max-w-[260px]"
+          style="animation-delay:140ms"
+          role="button"
+          tabindex="0"
+          (click)="copyToClipboard(email)"
+          (keydown.enter)="copyToClipboard(email)"
+          appTooltip="{{ 'CONTACT.COPY_HINT' | translate }}"
+          tooltipPlacement="top"
+          [attr.aria-label]="'Copy email address ' + email + ' to clipboard'"
+        >
           <div class="flex items-center gap-3">
             <span class="icon icon-mail" aria-hidden="true"></span>
             <div class="flex-1 min-w-0 text-left">
               <div class="text-primary font-medium truncate"><span appTerminalTyping data-i18n-key="CONTACT.EMAIL">{{ 'CONTACT.EMAIL' | translate }}</span></div>
               <div class="text-secondary select-text truncate">{{ email }}</div>
             </div>
-          </div>  
+          </div>
         </div>
+
+        <!-- Compact mailto chip (small addition) -->
+        <a
+          class="action-chip action-chip--accent reveal-up"
+          style="animation-delay:180ms"
+          [href]="'mailto:' + email"
+          appTooltip="{{ 'CONTACT.COMPOSE' | translate }}"
+          tooltipPlacement="top"
+          [attr.aria-label]="'Compose email to ' + email"
+        >
+          <span class="icon" aria-hidden="true"></span>
+          <span class="label"><span appTerminalTyping data-i18n-key="CONTACT.COMPOSE">{{ 'CONTACT.COMPOSE' | translate }}</span></span>
+        </a>
       </div>
 
       <!-- Secondary links -->
