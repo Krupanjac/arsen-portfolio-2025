@@ -1,80 +1,61 @@
 <!-- Blog Modal Overlay -->
 <div class="fixed inset-0 bg-transparent backdrop-blur-[2px] flex justify-center items-start sm:items-center z-50 p-4 sm:p-5 overflow-y-auto modal-overlay" *ngIf="visible" @modalAnimation (click)="onOverlayClick($event)">
-  <div class="mt-10 mb-10 sm:my-0 bg-gradient-to-br from-surface/95 via-surface/85 to-surface-alt/70 border border-divider/60 rounded-2xl p-4 sm:p-6 max-w-[95vw] sm:max-w-[85vw] lg:max-w-4xl w-full max-h-none sm:max-h-[92vh] overflow-y-auto relative shadow-2xl shadow-black/50 ring-1 ring-base/40" (click)="$event.stopPropagation()">
-    <!-- Close button -->
-    <button class="absolute top-3 right-3 bg-transparent border-none text-secondary cursor-pointer p-2 rounded hover:text-primary hover:bg-surface-alt transition-colors z-10" (click)="close()" aria-label="Close modal">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
+  <div class="mt-10 mb-10 sm:my-0 bg-gradient-to-br from-surface/95 via-surface/85 to-surface-alt/70 border border-divider/60 rounded-2xl p-4 sm:p-6 w-full max-w-[96vw] sm:max-w-[88vw] lg:max-w-5xl max-h-none sm:max-h-[92vh] overflow-y-auto relative shadow-2xl shadow-black/50 ring-1 ring-base/40" (click)="$event.stopPropagation()">
+    <!-- Header: title + meta + close -->
+    <div class="flex items-start gap-3 mb-4 pr-10">
+      <div class="shrink-0 w-1.5 h-7 rounded bg-accent mt-1"></div>
+      <div class="flex-1 min-w-0">
+        <h2 class="text-lg sm:text-2xl font-semibold text-primary m-0 tracking-tight line-clamp-2">{{ post?.title }}</h2>
+        <div class="mt-1 text-xs sm:text-sm text-faint flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span *ngIf="post?.created_at">{{ (post!.created_at! * 1000) | date:'mediumDate' }}</span>
+          <span *ngIf="post?.images?.length" class="inline-flex items-center gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 17l-5.5-5.5L11 16l-2-2-6 6"/></svg>
+            {{ post!.images!.length }} images
+          </span>
+        </div>
+      </div>
+      <button class="absolute top-3 right-3 bg-transparent border-none text-secondary cursor-pointer p-2 rounded hover:text-primary hover:bg-surface-alt transition-colors z-10" (click)="close()" aria-label="Close modal">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
 
-    <!-- Post title -->
-    <h2 class="text-lg sm:text-2xl font-semibold text-primary mb-5 pr-8 sm:pr-10 tracking-tight flex items-start gap-3">
-      <span class="inline-block w-1 h-6 rounded bg-accent mt-0.5"></span>
-      <span>{{ post?.title }}</span>
-    </h2>
-
-    <!-- Image display -->
-    <div class="relative mb-5" *ngIf="post?.images && post!.images!.length > 0">
-      <!-- Main image -->
-    <div class="text-center mb-2.5 rounded-xl overflow-hidden border border-base/40 bg-black/20">
+    <!-- Media area -->
+    <div *ngIf="post?.images?.length" class="relative mb-3 select-none" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+      <!-- Main image box sized to image -->
+      <div class="mx-auto rounded-xl overflow-hidden border border-base/40 bg-black/20 flex items-center justify-center" [style.width.px]="imageBox.width" [style.height.px]="imageBox.height">
         <img
           [src]="getModalImageUrls(post!.images![currentImageIndex]).src"
           [srcset]="getModalImageUrls(post!.images![currentImageIndex]).srcset"
           [sizes]="getModalImageUrls(post!.images![currentImageIndex]).sizes"
           [alt]="post!.title + ' - Image ' + (currentImageIndex + 1)"
-      class="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain"
-          loading="lazy" />
+          class="max-w-full max-h-full object-contain"
+          loading="lazy"
+          (load)="onImageLoad($event)"
+        />
       </div>
 
-      <!-- Navigation arrows (only show if more than 1 image) -->
-      <button
-        class="absolute top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 border-none text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full cursor-pointer flex items-center justify-center transition-all hover:bg-opacity-70 disabled:opacity-50 disabled:cursor-not-allowed z-5 left-2 sm:left-2.5"
-        (click)="prevImage()"
-        [disabled]="currentImageIndex === 0"
-        *ngIf="post!.images!.length > 1"
-        aria-label="Previous image">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="15,18 9,12 15,6"></polyline>
-        </svg>
+      <!-- Nav arrows -->
+      <button class="absolute top-1/2 -translate-y-1/2 left-2 sm:left-2.5 bg-black/55 text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full grid place-items-center hover:bg-black/70 transition disabled:opacity-50" (click)="prevImage()" [disabled]="currentImageIndex === 0" *ngIf="post!.images!.length > 1" aria-label="Previous image">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+      </button>
+      <button class="absolute top-1/2 -translate-y-1/2 right-2 sm:right-2.5 bg-black/55 text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full grid place-items-center hover:bg-black/70 transition disabled:opacity-50" (click)="nextImage()" [disabled]="currentImageIndex === post!.images!.length - 1" *ngIf="post!.images!.length > 1" aria-label="Next image">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
       </button>
 
-      <button
-        class="absolute top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 border-none text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full cursor-pointer flex items-center justify-center transition-all hover:bg-opacity-70 disabled:opacity-50 disabled:cursor-not-allowed z-5 right-2 sm:right-2.5"
-        (click)="nextImage()"
-        [disabled]="currentImageIndex === post!.images!.length - 1"
-        *ngIf="post!.images!.length > 1"
-        aria-label="Next image">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="9,18 15,12 9,6"></polyline>
-        </svg>
-      </button>
-
-      <!-- Image indicators -->
-      <div class="flex justify-center gap-2 mt-2.5" *ngIf="post!.images!.length > 1">
-        <button
-          *ngFor="let image of post!.images!; let i = index"
-          class="w-2 h-2 rounded-full border-none border-base cursor-pointer transition-colors hover:border-strong"
-          [class.bg-accent]="i === currentImageIndex"
-          (click)="goToImage(i)"
-          [attr.aria-label]="'Go to image ' + (i + 1)">
+      <!-- Thumbnails row -->
+      <div class="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 thumbnails" *ngIf="post!.images!.length > 1">
+        <button *ngFor="let img of post!.images!; let i = index" (click)="goToImage(i)" class="relative shrink-0 rounded-lg border transition-all focus:outline-none"
+                [ngClass]="i === currentImageIndex ? 'border-accent ring-1 ring-accent/60' : 'border-base/50'">
+          <img [src]="getThumbUrl(img)" [alt]="post!.title + ' thumbnail ' + (i+1)" class="h-16 w-24 object-cover rounded-md" />
+          <span *ngIf="i === currentImageIndex" class="absolute inset-0 ring-2 ring-accent rounded-md pointer-events-none"></span>
         </button>
       </div>
     </div>
 
-  <!-- Post description -->
-  <div class="mb-4 prose prose-invert max-w-none text-secondary text-sm sm:text-base" *ngIf="post?.description" [innerHTML]="post!.description | markdown"></div>
-
-    <!-- Post tags -->
-    <div class="flex flex-wrap gap-2 mb-4" *ngIf="post?.tags && post!.tags!.length > 0">
+  <!-- Description and tags -->
+  <div class="mb-4 prose prose-invert max-w-none text-secondary text-sm sm:text-base md:max-h-none md:overflow-visible mobile-desc" *ngIf="post?.description" [innerHTML]="post!.description | markdown"></div>
+    <div class="flex flex-wrap gap-2 mb-1" *ngIf="post?.tags?.length">
       <span *ngFor="let tag of post!.tags!" class="bg-accent/90 hover:bg-accent text-white px-2 py-1 rounded-full text-xs tracking-wide uppercase transition-colors">{{ tag }}</span>
-    </div>
-
-    <!-- Post date -->
-    <div class="text-right" *ngIf="post?.created_at">
-  <!-- created_at stored as seconds; convert to milliseconds for date pipe -->
-  <p class="text-faint text-xs sm:text-sm m-0">{{ (post!.created_at! * 1000) | date:'mediumDate' }}</p>
     </div>
   </div>
 </div>

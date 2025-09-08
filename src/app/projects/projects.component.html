@@ -14,14 +14,14 @@
         <div class="relative aspect-video overflow-hidden">
           <img *ngIf="post.images && post.images.length > 0" [src]="getPreviewImageUrl(post.images[0])" [alt]="post.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
-          <div class="absolute bottom-2 left-3 right-3 flex flex-wrap gap-1">
-            <span *ngFor="let tag of (post.tags || []).slice(0,3)" class="px-2 py-0.5 bg-accent/80 text-white text-[10px] rounded-full tracking-wide uppercase">{{ tag }}</span>
-            <span *ngIf="post.tags && post.tags.length>3" class="px-2 py-0.5 bg-accent/40 text-white text-[10px] rounded-full">+{{ post.tags.length-3 }}</span>
-          </div>
         </div>
         <div class="p-4">
           <h3 class="text-base font-semibold mb-1 line-clamp-1 text-primary group-hover:text-accent transition-colors">{{ post.title }}</h3>
-          <p class="text-secondary text-xs mb-2 line-clamp-2" *ngIf="post.description" [innerHTML]="post.description | markdownInline"></p>
+          <!-- Show tags instead of description -->
+          <div class="flex flex-wrap gap-1 mb-2">
+            <span *ngFor="let tag of (post.tags || []).slice(0,4)" class="px-2 py-0.5 bg-accent/80 text-white text-[10px] rounded-full tracking-wide uppercase">{{ tag }}</span>
+            <span *ngIf="post.tags && post.tags.length>4" class="px-2 py-0.5 bg-accent/40 text-white text-[10px] rounded-full">+{{ post.tags.length-4 }}</span>
+          </div>
           <div class="flex justify-between items-center text-[10px] text-faint">
             <!-- created_at is stored as epoch seconds; multiply by 1000 for Angular date pipe -->
             <span *ngIf="post.created_at">{{ (post.created_at * 1000) | date:'mediumDate' }}</span>

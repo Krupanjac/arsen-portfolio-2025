@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MarkdownPipe } from '../shared/markdown.pipe';
 import { BlogPost } from '../blog.service';
 import { ImagekitService } from '../imagekit.service';
-import { MarkdownPipe } from '../shared/markdown.pipe';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
@@ -30,6 +30,15 @@ export class BlogModalComponent implements OnChanges, OnDestroy {
 
   currentImageIndex: number = 0;
   private _savedScrollY: number = 0;
+  // Measured natural size of the current image
+  private naturalWidth: number | null = null;
+  private naturalHeight: number | null = null;
+  // Computed display box size to fit viewport
+  imageBox = { width: 0, height: 0 };
+  // Touch/swipe support
+  private touchStartX: number | null = null;
+  private touchStartY: number | null = null;
+  private readonly swipeThreshold = 50; // px
 
   constructor(private imagekitService: ImagekitService) {}
 
@@ -37,6 +46,8 @@ export class BlogModalComponent implements OnChanges, OnDestroy {
     if (changes['visible']) {
       if (this.visible) {
         this.lockScroll();
+  // compute an initial image box size
+  setTimeout(() => this.updateImageBox());
       } else {
         this.unlockScroll();
       }
@@ -64,6 +75,11 @@ export class BlogModalComponent implements OnChanges, OnDestroy {
     }
   }
 
+  @HostListener('window:resize')
+  onResize() {
+    this.updateImageBox();
+  }
+
   close(): void {
     this.closeModal.emit();
   }
@@ -71,17 +87,23 @@ export class BlogModalComponent implements OnChanges, OnDestroy {
   nextImage(): void {
     if (this.post?.images && this.currentImageIndex < this.post.images.length - 1) {
       this.currentImageIndex++;
+      // reset size; will recompute on load
+      this.naturalWidth = this.naturalHeight = null;
     }
   }
 
   prevImage(): void {
     if (this.currentImageIndex > 0) {
       this.currentImageIndex--;
+      this.naturalWidth = this.naturalHeight = null;
     }
   }
 
   goToImage(index: number): void {
+    if (!this.post?.images) return;
+    if (index < 0 || index >= this.post.images.length) return;
     this.currentImageIndex = index;
+    this.naturalWidth = this.naturalHeight = null;
   }
 
   // Get responsive image URLs for modal display
@@ -93,6 +115,56 @@ export class BlogModalComponent implements OnChanges, OnDestroy {
     }
     // Otherwise return the original URL
     return { src: imageUrl, srcset: '', sizes: '' };
+  }
+
+  // Thumbnail URL (smaller, optimized)
+  getThumbUrl(imageUrl: string): string {
+    if (!imageUrl) return '';
+    if (imageUrl.includes('ik.imagekit.io')) {
+      return this.imagekitService.getPreviewImageUrls(imageUrl, { width: 160, height: 100, quality: 60 });
+    }
+    return imageUrl;
+  }
+
+  // On image load, capture natural size and compute display size
+  onImageLoad(e: Event) {
+    const img = e.target as HTMLImageElement;
+    if (!img) return;
+    this.naturalWidth = img.naturalWidth || null;
+    this.naturalHeight = img.naturalHeight || null;
+    this.updateImageBox();
+  }
+
+  // Calculate the image box to match the image aspect while fitting viewport
+  private updateImageBox() {
+    // Fallbacks if we don't yet know natural dims
+    const nw = this.naturalWidth ?? 1280;
+    const nh = this.naturalHeight ?? 720;
+    const vw = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
+    // Modal padding/margins approximations
+    const maxW = Math.min(vw * 0.85, 1100);
+    const maxH = Math.min(vh * 0.7, 900);
+    const scale = Math.min(maxW / nw, maxH / nh, 1);
+    this.imageBox.width = Math.floor(nw * scale);
+    this.imageBox.height = Math.floor(nh * scale);
+  }
+
+  // Touch handlers for swipe navigation
+  onTouchStart(e: TouchEvent) {
+    if (e.touches.length !== 1) return;
+    this.touchStartX = e.touches[0].clientX;
+    this.touchStartY = e.touches[0].clientY;
+  }
+  onTouchEnd(e: TouchEvent) {
+    if (this.touchStartX == null || this.touchStartY == null) return;
+    const dx = (e.changedTouches[0]?.clientX || 0) - this.touchStartX;
+    const dy = (e.changedTouches[0]?.clientY || 0) - this.touchStartY;
+    // Only treat as swipe if mostly horizontal
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > this.swipeThreshold) {
+      if (dx < 0) this.nextImage(); else this.prevImage();
+    }
+    this.touchStartX = this.touchStartY = null;
   }
 
   onOverlayClick(event: Event): void {

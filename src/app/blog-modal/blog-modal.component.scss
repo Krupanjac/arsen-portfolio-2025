@@ -47,3 +47,30 @@
 .modal-overlay > div::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 20px; border: 2px solid transparent; background-clip: padding-box; }
 .modal-overlay > div::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
+/* Image area helpers */
+.image-meta {
+	font-size: 11px;
+	color: var(--color-faint);
+}
+
+/* Thumbnails row scrollbar tweak */
+.thumbnails::-webkit-scrollbar {
+	height: 8px;
+}
+.thumbnails::-webkit-scrollbar-thumb {
+	background: rgba(255,255,255,0.2);
+	border-radius: 999px;
+}
+
+@media (max-width: 640px) {
+	.modal-overlay > div {
+		padding: 14px;
+	}
+	.mobile-desc {
+		max-height: 36vh;
+		overflow-y: auto;
+		word-break: break-word;
+		overflow-wrap: anywhere;
+	}
+}
+
