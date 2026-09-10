@@ -1,0 +1,62 @@
+<div class="hud" [class.hud--expanded]="expanded">
+  <button
+    type="button"
+    class="hud__bar"
+    (click)="toggle()"
+    [attr.aria-expanded]="expanded"
+    aria-controls="hud-detail"
+  >
+    <span class="hud__dot" [class.hud__dot--warn]="(stats?.p95Ms ?? 0) > 20"></span>
+    <span class="hud__fps">{{ format(stats?.fps ?? 0, 0) }}</span>
+    <span class="hud__unit">fps</span>
+    <span class="hud__sep">/</span>
+    <span class="hud__ms">{{ format(stats?.frameMs ?? 0, 2) }}</span>
+    <span class="hud__unit">ms</span>
+    <span class="hud__chev" aria-hidden="true">{{ expanded ? '−' : '+' }}</span>
+  </button>
+
+  <canvas #graph class="hud__graph" aria-hidden="true"></canvas>
+
+  <div id="hud-detail" class="hud__detail" [hidden]="!expanded">
+    <dl class="hud__grid">
+      <div class="hud__row">
+        <dt>cpu</dt>
+        <dd>{{ format(stats?.cpuMs ?? 0, 2) }}<span>ms</span></dd>
+      </div>
+      <div class="hud__row">
+        <dt>gpu</dt>
+        <dd>{{ gpuMsLabel }}<span>ms</span></dd>
+      </div>
+      <div class="hud__row">
+        <dt>p95</dt>
+        <dd>{{ format(stats?.p95Ms ?? 0, 2) }}<span>ms</span></dd>
+      </div>
+      <div class="hud__row">
+        <dt>worst</dt>
+        <dd>{{ format(stats?.worstMs ?? 0, 2) }}<span>ms</span></dd>
+      </div>
+      <div class="hud__row">
+        <dt>scale</dt>
+        <dd>{{ scalePercent }}<span>%</span></dd>
+      </div>
+      <div class="hud__row">
+        <dt>raster</dt>
+        <dd>{{ stats?.width ?? 0 }}&#215;{{ stats?.height ?? 0 }}</dd>
+      </div>
+      <div class="hud__row hud__row--wide">
+        <dt>fill</dt>
+        <dd>{{ megaPixelsPerSecond }}<span>Mpx/s</span></dd>
+      </div>
+    </dl>
+
+    <div class="hud__meta">
+      <p class="hud__device" [title]="caps?.renderer || ''">{{ gpuName || 'detecting…' }}</p>
+      <ul class="hud__tags">
+        <li class="hud__tag hud__tag--on">WebGL2</li>
+        <li class="hud__tag" [class.hud__tag--on]="caps?.timerQuery">timer_query</li>
+        <li class="hud__tag" [class.hud__tag--on]="caps?.colorBufferFloat">float_rt</li>
+        <li class="hud__tag" [class.hud__tag--on]="caps?.webgpuAvailable">WebGPU</li>
+      </ul>
+    </div>
+  </div>
+</div>

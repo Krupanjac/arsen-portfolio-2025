@@ -1,0 +1,184 @@
+/* Instrument panel styling: monospace, tabular figures, no decoration that
+   competes with the numbers. Deliberately sits on its own dark surface in both
+   themes so the readout is legible over whatever the shader is rendering. */
+
+:host {
+  display: block;
+  font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, 'Cascadia Code', monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  pointer-events: auto;
+}
+
+.hud {
+  width: 224px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(8, 10, 14, 0.72);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  color: #e6e9ef;
+  overflow: hidden;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.hud:hover {
+  border-color: rgba(var(--color-accent-rgb) / 0.5);
+}
+
+.hud__bar {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  width: 100%;
+  padding: 8px 10px 6px;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.hud__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7fe6b0;
+  box-shadow: 0 0 8px #7fe6b0;
+  align-self: center;
+  margin-right: 2px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hud__dot--warn {
+  background: #f0cd78;
+  box-shadow: 0 0 8px #f0cd78;
+}
+
+.hud__fps {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.hud__ms {
+  font-size: 13px;
+  font-weight: 500;
+  color: #b9c0cc;
+}
+
+.hud__unit {
+  font-size: 10px;
+  color: #78808f;
+  letter-spacing: 0.04em;
+}
+
+.hud__sep {
+  font-size: 12px;
+  color: #4d5563;
+  margin: 0 1px;
+}
+
+.hud__chev {
+  margin-left: auto;
+  font-size: 14px;
+  color: #78808f;
+  align-self: center;
+  line-height: 1;
+}
+
+.hud__graph {
+  display: block;
+  width: 100%;
+  height: 34px;
+}
+
+.hud__detail {
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 9px 10px 10px;
+}
+
+.hud__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 12px;
+  margin: 0;
+}
+
+.hud__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.hud__row--wide {
+  grid-column: 1 / -1;
+}
+
+.hud__row dt {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #78808f;
+}
+
+.hud__row dd {
+  margin: 0;
+  font-size: 12px;
+  color: #e6e9ef;
+}
+
+.hud__row dd span {
+  font-size: 9px;
+  color: #78808f;
+  margin-left: 2px;
+}
+
+.hud__meta {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.hud__device {
+  margin: 0 0 6px;
+  font-size: 11px;
+  color: #b9c0cc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hud__tag {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #5b6270;
+}
+
+.hud__tag--on {
+  color: #a9f0cc;
+  border-color: rgba(140, 240, 190, 0.32);
+  background: rgba(140, 240, 190, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud,
+  .hud__dot {
+    transition: none;
+  }
+}
