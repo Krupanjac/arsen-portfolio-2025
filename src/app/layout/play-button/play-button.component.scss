@@ -1,3 +1,28 @@
+/* Fullscreen-renderer affordance. Outlined and mono: it is a tool, not a CTA. */
+.play-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 11px 18px 11px 15px;
+	border-radius: 10px;
+	border: 1px solid var(--color-border-strong);
+	background: none;
+	color: var(--color-text-muted);
+	font-family: var(--font-mono);
+	font-size: 13px;
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	cursor: pointer;
+	transition: color .2s ease, border-color .2s ease, background .2s ease, transform .18s ease;
+}
+.play-button svg { width: 17px; height: 17px; }
+.play-button:hover {
+	color: var(--color-accent);
+	border-color: rgba(var(--color-accent-rgb) / 0.6);
+	background: rgba(var(--color-accent-rgb) / 0.08);
+	transform: translateY(-1px);
+}
+
 /* Help menu shared styles */
 /* Unified help menu container (full state baseline) */
 .help-menu-container {
@@ -14,7 +39,7 @@
 	background: linear-gradient(160deg, rgba(var(--color-surface-rgb,20,20,25)/0.80), rgba(var(--color-surface-rgb,20,20,25)/0.58));
 	box-shadow: 0 10px 46px -10px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,0.04);
 	color: var(--color-text);
-	font-family: var(--font-sans, system-ui, "Segoe UI", Roboto, Ubuntu, Cantarell, sans-serif);
+	font-family: var(--font-body);
 	-webkit-font-smoothing: antialiased;
 	line-height: 1.25;
 	overflow: visible; /* allow shadow & glow to render fully */

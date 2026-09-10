@@ -5,14 +5,12 @@
       [attr.tabindex]="playStateService.isPlaying ? -1 : 0"
       appTooltip="PLAY.TOOLTIP"
       tooltipPlacement="bottom"
-      class="play-button relative isolate font-semibold tracking-[0.025em] text-lg px-6 py-3 rounded-full border border-[rgba(var(--color-accent-rgb)/0.55)]
-             bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-alt)]
-             text-[var(--color-text)] shadow-md shadow-[rgba(0,0,0,0.18)]
-             transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0
-             hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]
-             focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
+      class="play-button"
     >
-      ▶ <span appTerminalTyping data-i18n-key="PLAY.BUTTON">{{ 'PLAY.BUTTON' | translate }}</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 9V6a2 2 0 0 1 2-2h3M15 4h3a2 2 0 0 1 2 2v3M20 15v3a2 2 0 0 1-2 2h-3M9 20H6a2 2 0 0 1-2-2v-3" />
+      </svg>
+      <span appTerminalTyping data-i18n-key="PLAY.BUTTON">{{ 'PLAY.BUTTON' | translate }}</span>
     </button>
   </div>
 
@@ -29,7 +27,7 @@
         </div>
         <div class="grid sm:grid-cols-2 gap-3">
           <div *ngFor="let c of commandKeys" class="flex items-center gap-3 text-sm bg-white/5 rounded-lg px-3 py-2 border border-white/10">
-            <kbd class="inline-flex min-w-9 justify-center items-center px-2 py-1 rounded-md bg-gradient-to-b from-white/15 to-white/5 border border-white/20 text-[13px] font-medium tracking-wide shadow-inner">
+            <kbd class="inline-flex min-w-9 justify-center items-center px-2 py-1 rounded-md bg-white/10 border border-white/20 font-mono text-[12px] font-medium tracking-wide">
               {{ c.key }}
             </kbd>
             <span class="opacity-85 text-[13px]">{{ c.label | translate }}</span>

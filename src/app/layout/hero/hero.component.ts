@@ -3,13 +3,13 @@ import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
-import { BackgroundComponent } from '../background/background.component';
+import { HeroRenderComponent } from '../hero-render/hero-render.component';
 import { TooltipDirective } from '../../shared/tooltip.directive';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, TranslateModule, TerminalTypingDirective, BackgroundComponent, TooltipDirective],
+  imports: [CommonModule, TranslateModule, TerminalTypingDirective, HeroRenderComponent, TooltipDirective],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.scss'],
   encapsulation: ViewEncapsulation.None
@@ -18,8 +18,9 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() showOnlyBackground: boolean = false;
   @Output() openResumeModal = new EventEmitter<void>();
   private originalName = 'Đurđev';
-  private charTimeouts: Map<number, any[]> = new Map();
-  private randomSymbolsIntervalId: any = null;
+  private readonly pendingRestores = new Set<number>();
+  private lastScrambleIndex = -1;
+  private scrambleIntervalId: any = null;
   showIndicator = true;
   private scrollHandler = () => {};
 
@@ -29,8 +30,9 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    // Name Randomization Effect
-    this.randomSymbolsIntervalId = setInterval(() => this.randomSymbols(), 1000);
+    // Name scramble. 2.6s apart: often enough to notice, rare enough that it
+    // never competes with reading the name.
+    this.scrambleIntervalId = setInterval(() => this.scramble(), 2600);
   }
 
   ngAfterViewInit(): void {
@@ -43,155 +45,74 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    if (this.randomSymbolsIntervalId !== null) {
-      clearInterval(this.randomSymbolsIntervalId);
+    if (this.scrambleIntervalId !== null) {
+      clearInterval(this.scrambleIntervalId);
     }
-    this.charTimeouts.forEach((timeouts) => {
-      timeouts.forEach(t => clearTimeout(t));
-    });
-    this.charTimeouts.clear();
+    this.pendingRestores.forEach((t) => clearTimeout(t));
+    this.pendingRestores.clear();
   // remove scroll listener
   try { window.removeEventListener('scroll', this.scrollHandler, { passive: true } as any); } catch {}
   }
 
-  private async randomSymbols(): Promise<void> {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-    const symbols = "!@#$%^&*()-_=+[]{}|;:,.<>?";
-    const nameChars = Array.from(this.originalName);
-    if (nameChars.length === 0) return;
-    
-    const indices = new Set<number>();
-    const count = Math.min(2, nameChars.length);
-    while (indices.size < count) {
-      indices.add(Math.floor(Math.random() * nameChars.length));
-    }
-    
+  /**
+   * Name scramble.
+   *
+   * Rewritten from the original two-character version: at the old 2rem size a
+   * pair of substituted glyphs plus a text cursor read as a glitch, but the
+   * name is now set at up to 7.5rem and the same effect left the single most
+   * important string on the page spelling something else, with two 8px-wide
+   * white blocks sitting in the middle of it.
+   *
+   * One character, one substitution, ~110ms, no cursor. The name stays
+   * readable through the whole cycle.
+   */
+  private scramble(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     const container = document.getElementById('su_name');
     if (!container) return;
-    const firstSpan = container.querySelector('span[data-index="0"]') as HTMLElement | null;
-    if (!firstSpan) {
-      this.setupNameSpans();
+    if (!container.querySelector('span[data-index="0"]')) this.setupNameSpans();
+
+    // Never touch the same glyph twice in a row — repeatedly flickering one
+    // letter looks like a rendering fault rather than an intentional effect.
+    const chars = Array.from(this.originalName);
+    let index = Math.floor(Math.random() * chars.length);
+    if (index === this.lastScrambleIndex && chars.length > 1) {
+      index = (index + 1 + Math.floor(Math.random() * (chars.length - 1))) % chars.length;
     }
+    this.lastScrambleIndex = index;
 
-    let anyAnimated = false;
-    const selected = Array.from(indices.values()).sort((a, b) => a - b);
+    const span = container.querySelector(
+      `span[data-index="${index}"]`,
+    ) as HTMLElement | null;
+    if (!span) return;
 
-    // Restore non-selected spans immediately
-    const spans = container.querySelectorAll('span[data-index]');
-    spans.forEach(s => {
-      const idx = Number(s.getAttribute('data-index'));
-      if (!selected.includes(idx)) {
-        const orig = nameChars[idx];
-        if ((s.textContent || '') !== orig) {
-          const prev = this.charTimeouts.get(idx);
-          if (prev && Array.isArray(prev)) {
-            prev.forEach(t => clearTimeout(t));
-            this.charTimeouts.delete(idx);
-          }
-          (s as HTMLElement).textContent = orig;
-        }
-      }
-    });
+    const symbols = '#%&@$*+=/\\<>';
+    const original = chars[index];
+    span.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    span.classList.add('su-char--glitch');
 
-    // Animate selected indices
-    const holdDuration = 1600;
-    const staggerMs = 180;
-    for (const i of selected) {
-      const sym = symbols[Math.floor(Math.random() * symbols.length)];
-      const span = container.querySelector(`span[data-index="${i}"]`) as HTMLElement | null;
-      if (span) {
-        anyAnimated = true;
-        await this.animateCharChange(i, sym);
-        await new Promise(r => setTimeout(r, staggerMs));
-      }
-    }
-
-    // Restore animated characters
-    if (anyAnimated) {
-      await new Promise(resolve => setTimeout(resolve, holdDuration));
-      for (const i of selected) {
-        const span = container.querySelector(`span[data-index="${i}"]`) as HTMLElement | null;
-        if (span) {
-          await this.animateCharChange(i, nameChars[i]);
-          await new Promise(r => setTimeout(r, staggerMs));
-        }
-      }
-    } else {
-      const arr = nameChars.slice();
-      indices.forEach(i => arr[i] = symbols[Math.floor(Math.random() * symbols.length)]);
-      container.textContent = arr.join('');
-    }
+    const restore = window.setTimeout(() => {
+      span.textContent = original;
+      span.classList.remove('su-char--glitch');
+      this.pendingRestores.delete(restore);
+    }, 110);
+    this.pendingRestores.add(restore);
   }
 
+  /** Splits the surname into per-character spans so one can be swapped alone. */
   private setupNameSpans(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const container = document.getElementById('su_name');
     if (!container) return;
-    const chars = Array.from(this.originalName);
     container.innerHTML = '';
-    chars.forEach((ch, idx) => {
+    Array.from(this.originalName).forEach((ch, idx) => {
       const span = document.createElement('span');
-      span.className = 'su-char inline-block';
+      span.className = 'su-char';
       span.setAttribute('data-index', String(idx));
       span.textContent = ch;
       container.appendChild(span);
     });
-  }
-
-  private animateCharChange(index: number, targetChar: string, speedMs = 140): Promise<void> {
-    if (!isPlatformBrowser(this.platformId)) return Promise.resolve();
-    const container = document.getElementById('su_name');
-    if (!container) return Promise.resolve();
-    const span = container.querySelector(`span[data-index="${index}"]`) as HTMLElement | null;
-    if (!span) return Promise.resolve();
-
-    const prevArr = this.charTimeouts.get(index);
-    if (prevArr && Array.isArray(prevArr)) {
-      prevArr.forEach(t => clearTimeout(t));
-      this.charTimeouts.delete(index);
-    }
-
-    const removeTimer = (idx: number, id: number | any) => {
-      const arr = this.charTimeouts.get(idx) || [];
-      const pos = arr.indexOf(id);
-      if (pos >= 0) arr.splice(pos, 1);
-      if (arr.length) this.charTimeouts.set(idx, arr);
-      else this.charTimeouts.delete(idx);
-    };
-
-    const eraseSpeed = Math.max(120, Math.floor(speedMs));
-    const typePause = Math.max(500, Math.floor(speedMs * 4));
-
-    const cssVar = (typeof window !== 'undefined') ? 
-      getComputedStyle(document.documentElement).getPropertyValue('--color-terminal-directive').trim() : '';
-    const cursorBg = cssVar || '#ffffff';
-    const cursorHtml = `<span class="tt-cursor" style="background:${cursorBg}">&nbsp;</span>`;
-
-    span.innerHTML = cursorHtml;
-
-    return new Promise<void>((resolve) => {
-      const t1 = window.setTimeout(() => {
-        span.innerHTML = `${this.escapeHtml(targetChar)}${cursorHtml}`;
-        const t2 = window.setTimeout(() => {
-          span.textContent = targetChar;
-          removeTimer(index, t2);
-          removeTimer(index, t1);
-          resolve();
-        }, typePause);
-        const arr2 = this.charTimeouts.get(index) || [];
-        arr2.push(t2);
-        this.charTimeouts.set(index, arr2);
-      }, eraseSpeed);
-      const arr1 = this.charTimeouts.get(index) || [];
-      arr1.push(t1);
-      this.charTimeouts.set(index, arr1);
-    });
-  }
-
-  private escapeHtml(s: string): string {
-    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   private initIndicatorVisibility(): void {

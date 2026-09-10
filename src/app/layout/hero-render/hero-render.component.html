@@ -1,0 +1,42 @@
+<div class="stage" [class.stage--fallback]="failed">
+  <!-- Layer 1: the terrain. Runs only while the hero is in view. -->
+  <app-gpu-surface
+    #terrain
+    *ngIf="!failed"
+    class="stage__canvas"
+    [fragmentSource]="fragmentSource"
+    [uniformProvider]="uniformProvider"
+    [targetFps]="60"
+    [maxDpr]="2"
+    (stats)="onStats($event)"
+    (ready)="onReady($event)"
+    (failed)="onFailed($event)"
+  ></app-gpu-surface>
+
+  <!-- Scrim: guarantees the contrast floor under the hero copy, and carries
+       the veil that resolves the terrain into the page background on scroll. -->
+  <div class="stage__scrim" aria-hidden="true"></div>
+
+  <!-- Layer 2: the survey map behind the content sections. Transparent
+       except for its ink, so the page background stays a CSS concern. Fades
+       in as the veil rises; parked while the hero is on screen. -->
+  <app-gpu-surface
+    #field
+    *ngIf="!failed"
+    class="stage__field"
+    [fragmentSource]="fieldSource"
+    [uniformProvider]="fieldUniforms"
+    [targetFps]="60"
+    [maxDpr]="1"
+    (ready)="onFieldReady()"
+  ></app-gpu-surface>
+
+  <app-frame-hud
+    *ngIf="showHud && !failed"
+    class="stage__hud"
+    [stats]="stats"
+    [caps]="caps"
+    [gpuName]="gpuName"
+    [historyProvider]="historyProvider"
+  ></app-frame-hud>
+</div>

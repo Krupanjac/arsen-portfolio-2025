@@ -1,0 +1,117 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Driven from the scroll handler: 0 in the hero, 1 once the reader has left. */
+  --stage-veil: 0;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.stage__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* WebGL2 unavailable: a scene-matched gradient rather than a flat colour, so
+   the composition still reads the way the shader version does. */
+.stage--fallback {
+  background:
+    radial-gradient(120% 80% at 22% 96%, rgba(var(--color-accent-rgb) / 0.34), transparent 62%),
+    linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-alt) 58%, var(--color-bg) 100%);
+}
+
+/* Two stacked layers: a constant gradient that guarantees contrast for the
+   hero copy, and a veil that resolves to the page background once the reader
+   scrolls into the content sections. */
+.stage__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(4, 5, 8, 0.42) 0%,
+      rgba(4, 5, 8, 0.08) 36%,
+      rgba(4, 5, 8, 0.58) 100%
+    );
+}
+
+/* Text-column base. The copy is left-aligned, so the darkening is too. */
+.stage__scrim::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(4, 5, 8, 0.62) 0%,
+    rgba(4, 5, 8, 0.34) 34%,
+    rgba(4, 5, 8, 0) 62%
+  );
+}
+
+:root:not([data-theme='dark']) .stage__scrim::before {
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.74) 0%,
+    rgba(255, 255, 255, 0.42) 34%,
+    rgba(255, 255, 255, 0) 62%
+  );
+}
+
+.stage__scrim::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  opacity: var(--stage-veil);
+}
+
+:root:not([data-theme='dark']) .stage__scrim {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.52) 0%,
+      rgba(255, 255, 255, 0.26) 40%,
+      rgba(255, 255, 255, 0.66) 100%
+    );
+}
+
+/* Survey-map layer. Sits above the veil so its ink reads on the resolved page
+   ground; opacity tracks the veil so it appears exactly as the terrain goes. */
+.stage__field {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: var(--stage-veil);
+}
+
+.stage__hud {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2;
+  pointer-events: auto;
+  /* Track the veil: the instrument belongs to the hero, not to the page. */
+  opacity: calc(1 - var(--stage-veil));
+  transition: opacity 0.2s linear;
+}
+
+@media (max-width: 767px) {
+  .stage__hud {
+    right: 12px;
+    bottom: 12px;
+    transform: scale(0.86);
+    transform-origin: bottom right;
+  }
+}

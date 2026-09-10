@@ -52,42 +52,31 @@ For end-to-end (e2e) testing, run:
 ng e2e
 ```
 
-## Interactive Background Features
+## Renderer
 
-The background component now includes interactive gravity field creation that influences star movement:
+The hero is a WebGL2 raymarched terrain (`src/app/gfx/`), with a live frame-time HUD that reads from the same timer that drives its dynamic resolution scaling. Below the hero, a cheaper contour-field shader runs behind the content sections; the terrain is parked once it scrolls out of view.
 
-### Gravity Field Mode
-- **Toggle Gravity Mode**: Press `D` to enter/exit gravity field creation mode
-- **Create Gravity Points**: In gravity mode, Shift+Click to start creating gravity points, move mouse to add points, Shift+Click again to stop
-- **Clear Gravity Fields**: Press `C` to clear all gravity fields
+### Fullscreen mode
 
-### Text Gravity Fields
-- **Add Text Fields**: Press `T` to open a prompt and enter text that will be converted to gravity points
-- Text is rendered using canvas and converted to points that stars gravitate towards
+The **Fullscreen renderer** control under the tech stack hides the page and leaves the renderer and HUD.
 
-### How It Works
-- Stars naturally gravitate toward gravity points and text fields
-- The gravity effect creates dynamic formations as stars move toward your invisible gravity fields
-- Stars repel each other from longer distances to prevent clustering and maintain visual clarity
-- Gravity fields fade out visually over time but retain their attractive force
-- Long-range attraction ensures distant stars are drawn to your shapes
-- Gravity fields are shown as subtle glowing indicators that fade with age
-- All interactions experience alongside the existing mouse attraction and particle effects
+- Move the pointer to look around
+- `1` / `2` / `3` — pin internal resolution at 50 / 75 / 100%
+- `A` — hand resolution back to the dynamic scaler
+- Click the HUD readout to expand GPU time, p95 and fill rate
+- `Esc` — leave fullscreen
 
-### Controls Summary
-- `D` - Toggle gravity field mode
-- `C` - Clear all gravity fields
-- `T` - Add text gravity field
-- `S` - Add 20 random stars (in gravity mode only)
-- `Shift+Click` - Start/stop continuous gravity point creation
-- `Click` - Create particles (when not in gravity mode)
+### Structure
 
-### Visual Feedback
-- Gravity mode indicator in the top-left corner
-- Subtle glowing circles show active gravity points
-- Gravity field indicators fade out over time while maintaining attraction
-- Stars will cluster and form shapes around your gravity fields from any distance
-- Star repulsion prevents overcrowding and maintains line visibility
+- `gfx/gl-context.ts` — context acquisition and capability probe
+- `gfx/shader.ts` — compile/link with the failing source line annotated
+- `gfx/frame-timer.ts` — CPU time, GPU time via `EXT_disjoint_timer_query_webgl2`, p95 over a ring buffer
+- `gfx/resolution-scaler.ts` — asymmetric dynamic resolution with cooldown
+- `gfx/render-loop.ts` — rAF driver with visibility and occlusion gating
+- `gfx/shader-surface.ts` — a full-canvas fragment pass with the above wired in
+- `gfx/shaders/` — `common.glsl.ts` (noise, fBm, ACES), `hero-terrain.frag.ts`, `contour-field.frag.ts`
+
+Shaders can be compiled and rendered outside the app for review; see the `hero-terrain.frag.ts` header for the cost controls.
 
 ## Additional Resources
 

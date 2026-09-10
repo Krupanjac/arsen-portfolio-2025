@@ -19,12 +19,14 @@ export class PlayButtonComponent implements OnDestroy {
   private helpTimer: ReturnType<typeof setTimeout> | null = null;
 
   // Order determines display order in template
+  // The star-field controls (D/C/S, shift-click) went with the star field;
+  // fullscreen mode is the terrain renderer now, and these are its controls.
   readonly commandKeys: Array<{ key: string; label: string }> = [
-    { key: 'D', label: 'HELP.COMMANDS.D' },
-    { key: 'C', label: 'HELP.COMMANDS.C' },
-    { key: 'S', label: 'HELP.COMMANDS.S' },
-    { key: 'CLICK', label: 'HELP.COMMANDS.CLICK' },
-    { key: 'SHIFT_CLICK', label: 'HELP.COMMANDS.SHIFT_CLICK' }
+    { key: 'MOUSE', label: 'HELP.COMMANDS.MOUSE' },
+    { key: '1 / 2 / 3', label: 'HELP.COMMANDS.SCALE' },
+    { key: 'A', label: 'HELP.COMMANDS.AUTO' },
+    { key: 'HUD', label: 'HELP.COMMANDS.HUD' },
+    { key: 'ESC', label: 'HELP.COMMANDS.ESC' }
   ];
 
   constructor(public playStateService: PlayStateService) {}

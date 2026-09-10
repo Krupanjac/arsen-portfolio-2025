@@ -1,21 +1,219 @@
-/* Tailwind migration: minimal custom styles */
+/* Hero. ViewEncapsulation.None on this component, so every selector here is
+   global — all of them stay namespaced under .hero-. */
 
-.scroll-indicator {
-	animation: scrollPulse 3s ease-in-out infinite;
-	opacity: 1;
-	transform-origin: center;
-	transition: opacity .6s ease, transform .6s ease;
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: clamp(20px, 3vw, 34px);
 }
 
-@keyframes scrollPulse {
-	0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
-	30% { opacity: 0.85; transform: translateY(-4px); }
+.hero-eyebrow__pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 0 rgba(var(--color-accent-rgb) / 0.7);
+  animation: hero-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.indicator-hidden {
-	opacity: 0;
-	pointer-events: none;
-	transform: translateY(6px) scale(.9);
-	animation: none;
+@keyframes hero-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(var(--color-accent-rgb) / 0.55); }
+  70% { box-shadow: 0 0 0 9px rgba(var(--color-accent-rgb) / 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--color-accent-rgb) / 0); }
 }
-  
+
+.hero-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* clamp() rather than breakpoints: the name is the single largest thing on
+     the page and it should track the viewport continuously, not jump. */
+  font-size: clamp(2.6rem, 9.2vw, 7.5rem);
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.hero-name__value {
+  display: block;
+  color: var(--color-text);
+  /* Latin Extended: the đ has a descender-height crossbar that clips against a
+     0.94 line-height without a little breathing room. */
+  padding-bottom: 0.06em;
+}
+
+#su_name {
+  color: var(--color-accent);
+  font-style: italic;
+}
+
+/* Substituted glyph during a scramble. inline-block with a fixed advance would
+   be wrong — symbols are narrower than letters and the name would visibly
+   reflow — so only the colour changes. */
+.su-char--glitch {
+  color: var(--color-text);
+  opacity: 0.85;
+}
+
+.hero-lede {
+  max-width: 34ch;
+  margin: clamp(22px, 3vw, 34px) 0 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.4rem);
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  text-wrap: balance;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 26px;
+  margin-top: clamp(30px, 4vw, 46px);
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px 13px 18px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--color-accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 10px 26px rgba(var(--color-accent-rgb) / 0.3);
+}
+
+.hero-cta:hover {
+  transform: translateY(-2px);
+  background: var(--color-accent-alt);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 16px 34px rgba(var(--color-accent-rgb) / 0.4);
+}
+
+.hero-cta:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.hero-cta__icon {
+  width: 19px;
+  height: 19px;
+}
+
+.hero-socials {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hero-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.hero-social svg {
+  width: 20px;
+  height: 20px;
+}
+
+.hero-social:hover {
+  color: var(--color-accent);
+  background: rgba(var(--color-accent-rgb) / 0.1);
+}
+
+.hero-social:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Scroll cue: a drawn rail rather than a bouncing chevron. Quieter, and it
+   reads as a measurement mark, which suits the rest of the page. */
+.hero-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 8px;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.hero-scroll__rail {
+  width: 1px;
+  height: 38px;
+  background: linear-gradient(180deg, transparent, var(--color-text-faint));
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-scroll__rail::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  height: 12px;
+  background: var(--color-accent);
+  animation: hero-rail 2.2s cubic-bezier(0.6, 0, 0.4, 1) infinite;
+}
+
+@keyframes hero-rail {
+  0% { transform: translateY(-14px); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: translateY(38px); opacity: 0; }
+}
+
+.hero-scroll__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.hero-scroll--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(8px);
+}
+
+/* On a phone the scroll cue and the HUD both want the bottom of the frame, and
+   the cue is the one a touch user does not need. */
+@media (max-width: 640px) {
+  .hero-scroll {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-eyebrow__pulse,
+  .hero-scroll__rail::after {
+    animation: none;
+  }
+}
