@@ -1,10 +1,10 @@
-<div class="grid min-h-screen grid-cols-[1fr] md:grid-cols-[20%_1fr]">
+<div class="grid min-h-[70vh] grid-cols-[1fr] md:grid-cols-[20%_1fr]">
   <!-- Mobile label under nav -->
   <div class="md:hidden pt-14 px-4 pb-2 border-b border-divider">
-  <p class="text-base font-semibold uppercase tracking-widest text-secondary select-none"><span appTerminalTyping data-i18n-key="PROJECTS.LABEL">{{ 'PROJECTS.LABEL' | translate }}</span></p>
+  <p class="section-label"><span appTerminalTyping data-i18n-key="PROJECTS.LABEL">{{ 'PROJECTS.LABEL' | translate }}</span></p>
   </div>
   <!-- Left rail with vertical line -->
-  <app-rail [textClass]="'text-xl whitespace-nowrap uppercase tracking-widest text-secondary select-none'">
+  <app-rail [textClass]="'section-label whitespace-nowrap'">
   <span appTerminalTyping data-i18n-key="PROJECTS.LABEL">{{ 'PROJECTS.LABEL' | translate }}</span>
   </app-rail>
   <!-- Projects grid -->
@@ -31,9 +31,21 @@
         <div class="absolute inset-0 ring-1 ring-inset ring-accent/0 group-hover:ring-accent/30 rounded-xl pointer-events-none transition-colors"></div>
       </div>
       
-      <!-- Show message if no projects -->
-      <div *ngIf="blogPosts.length === 0" class="col-span-full text-center py-10">
-        <p class="text-secondary">No project posts available yet.</p>
+      <!-- Empty state. A section that renders as one grey sentence in the
+           middle of a full viewport reads as a broken page, not an empty one. -->
+      <div *ngIf="blogPosts.length === 0" class="col-span-full flex flex-col items-start gap-4 py-14 border-t border-[var(--color-border)]">
+        <svg class="w-9 h-9 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5Z" />
+          <path d="m3 12 9 4.5L21 12" />
+          <path d="m3 16.5 9 4.5 9-4.5" />
+        </svg>
+        <h3 class="font-display text-xl font-semibold tracking-tight text-primary">{{ 'PROJECTS.EMPTY.TITLE' | translate }}</h3>
+        <p class="max-w-[52ch] text-sm leading-relaxed text-secondary">{{ 'PROJECTS.EMPTY.BODY' | translate }}</p>
+        <a href="https://github.com/Krupanjac" target="_blank" rel="noopener noreferrer"
+           class="mt-1 inline-flex items-center gap-2 font-mono text-sm text-accent hover:underline underline-offset-4">
+          {{ 'PROJECTS.EMPTY.CTA' | translate }}
+          <span aria-hidden="true">&#8599;</span>
+        </a>
       </div>
     </div>
   </div>

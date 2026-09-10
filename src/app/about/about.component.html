@@ -1,88 +1,93 @@
-<!-- Repurposed design: terminal look & improved content with richer animations -->
-<div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr]">
+<!-- About: a copy column that says the thing plainly, and the terminal — his
+     voice — retypeset to sit in the same type system as the rest of the page. -->
+<div class="grid min-h-[70vh] grid-cols-1 md:grid-cols-[20%_1fr]">
   <!-- Mobile label under nav -->
   <div class="md:hidden pt-14 px-4 pb-2 border-b border-divider">
-    <p class="text-base font-semibold uppercase tracking-widest text-secondary select-none">
+    <p class="section-label">
       <span appTerminalTyping data-i18n-key="ABOUT.LABEL">{{ 'ABOUT.LABEL' | translate }}</span>
     </p>
   </div>
-  <!-- Left rail (reuse existing rail component style) -->
+  <!-- Left rail -->
   <div class="hidden md:flex border-r-2 rail-separator items-start justify-end pr-4 py-4">
-    <p class="text-xl whitespace-nowrap uppercase tracking-widest text-secondary select-none">
+    <p class="section-label whitespace-nowrap">
       <span appTerminalTyping data-i18n-key="ABOUT.LABEL">{{ 'ABOUT.LABEL' | translate }}</span>
     </p>
   </div>
 
-  <!-- Terminal styled content (render only when in view, hidden until start) -->
-  <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
-  <div #aboutTerminal class="text-base sm:text-lg bg-[var(--color-terminal-bg)] text-green-500 font-mono border-2 border-[var(--color-terminal-line)] glow-accent p-2.5 rounded-lg w-[92%] sm:w-[80%] md:w-[70%] lg:w-[60%] mx-auto my-10 shadow-[0_0_20px_rgba(0,255,128,0.08)]" [class.tt-wait]="!started">
-      <!-- Fake terminal header with traffic lights -->
-      <div class="flex items-center justify-between bg-[var(--color-terminal-line)]/90 px-2 py-1 text-green-500 font-bold">
-        <div class="flex items-center gap-1.5">
-          <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
-          <span class="inline-block w-2.5 h-2.5 rounded-full bg-yellow-400/80"></span>
-          <span class="inline-block w-2.5 h-2.5 rounded-full bg-green-400/80"></span>
-        </div>
-        <span class="opacity-90">{{ 'CONTACT.TERMINAL_USER' | translate }}</span>
+  <div class="flex justify-center items-start py-16 md:py-24 md:-ml-[20%] pl-4 pr-4">
+    <div class="grid w-[92%] sm:w-[86%] md:w-[78%] lg:w-[72%] mx-auto grid-cols-1 lg:grid-cols-[minmax(0,400px)_1fr] gap-10 lg:gap-16 items-start">
+
+      <!-- Copy column -->
+      <div class="flex flex-col">
+        <h2 class="section-title">{{ 'ABOUT.TITLE' | translate }}</h2>
+        <p class="mt-6 text-base md:text-[17px] leading-relaxed text-secondary">{{ 'ABOUT.P1' | translate }}</p>
+        <p class="mt-4 text-base md:text-[17px] leading-relaxed text-secondary">{{ 'ABOUT.P2' | translate }}</p>
       </div>
 
-      <div class="p-3 sm:p-4 terminal-output space-y-1.5">
-        <!-- Prompted lines with terminal typing directive -->
-        <div class="flex gap-2 items-start" @lineFade>
-          <span class="opacity-70 select-none">C:></span>
-          <span appTerminalTyping data-i18n-key="ABOUT.L1">{{ 'ABOUT.L1' | translate }}</span>
-        </div>
-        <div class="flex gap-2 items-start" @lineFade>
-          <span class="opacity-70 select-none">C:></span>
-          <span appTerminalTyping data-i18n-key="ABOUT.L2">{{ 'ABOUT.L2' | translate }}</span>
-        </div>
-        <div class="flex gap-2 items-start" @lineFade>
-          <span class="opacity-70 select-none">C:></span>
-          <span appTerminalTyping data-i18n-key="ABOUT.WHOAMI">{{ 'ABOUT.WHOAMI' | translate }}</span>
-        </div>
-        <div class="flex gap-2 items-start" @lineFade>
-          <span class="opacity-70 select-none">C:></span>
-          <span appTerminalTyping data-i18n-key="ABOUT.ROLE">{{ 'ABOUT.ROLE' | translate }}</span>
-        </div>
-
-        <!-- Highlights bullets -->
-        <div class="mt-3" @lineFade>
-          <div class="flex gap-2 items-start">
-            <span class="opacity-70 select-none">C:></span>
-            <span appTerminalTyping data-i18n-key="ABOUT.H1">{{ 'ABOUT.H1' | translate }}</span>
+      <!-- Terminal (render only when in view, hidden until start) -->
+      <div #aboutTerminal
+           class="w-full max-w-[640px] rounded-[10px] border border-[var(--color-terminal-line)] bg-[var(--color-terminal-bg)] overflow-hidden shadow-[0_0_28px_rgba(var(--color-accent-rgb)/0.10)]"
+           [class.tt-wait]="!started">
+        <div class="flex items-center justify-between px-3 py-2 border-b border-[var(--color-terminal-line)] bg-[rgba(0,40,0,0.35)]">
+          <div class="flex items-center gap-1.5" aria-hidden="true">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-yellow-400/80"></span>
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-green-400/80"></span>
           </div>
-          <ul class="pl-6 list-[square] marker:text-green-400/80 space-y-1 mt-1">
-            <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H1_L1">{{ 'ABOUT.H1_L1' | translate }}</span></li>
-            <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H1_L2">{{ 'ABOUT.H1_L2' | translate }}</span></li>
-            <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H1_L3">{{ 'ABOUT.H1_L3' | translate }}</span></li>
-          </ul>
+          <span class="font-mono text-xs text-[#5fd58a]">{{ 'CONTACT.TERMINAL_USER' | translate }}</span>
         </div>
 
-        <div class="mt-2" @lineFade>
-          <div class="flex gap-2 items-start">
-            <span class="opacity-70 select-none">C:></span>
-            <span appTerminalTyping data-i18n-key="ABOUT.H2">{{ 'ABOUT.H2' | translate }}</span>
+        <div class="p-4 sm:p-5 terminal-output font-mono text-[13px] sm:text-sm leading-relaxed text-[#7be495] space-y-1.5">
+          <div class="flex gap-2 items-start" @lineFade>
+            <span class="text-[#4c8a5f] select-none shrink-0">C:&gt;</span>
+            <span appTerminalTyping data-i18n-key="ABOUT.L1">{{ 'ABOUT.L1' | translate }}</span>
           </div>
-          <ul class="pl-6 list-[square] marker:text-green-400/80 space-y-1 mt-1">
-            <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H2_L1">{{ 'ABOUT.H2_L1' | translate }}</span></li>
-            <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H2_L2">{{ 'ABOUT.H2_L2' | translate }}</span></li>
-            <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H2_L3">{{ 'ABOUT.H2_L3' | translate }}</span></li>
-          </ul>
-        </div>
+          <div class="flex gap-2 items-start" @lineFade>
+            <span class="text-[#4c8a5f] select-none shrink-0">C:&gt;</span>
+            <span appTerminalTyping data-i18n-key="ABOUT.L2">{{ 'ABOUT.L2' | translate }}</span>
+          </div>
+          <div class="flex gap-2 items-start" @lineFade>
+            <span class="text-[#4c8a5f] select-none shrink-0">C:&gt;</span>
+            <span appTerminalTyping data-i18n-key="ABOUT.WHOAMI">{{ 'ABOUT.WHOAMI' | translate }}</span>
+          </div>
+          <div class="flex gap-2 items-start" @lineFade>
+            <span class="text-[#4c8a5f] select-none shrink-0">C:&gt;</span>
+            <span appTerminalTyping data-i18n-key="ABOUT.ROLE">{{ 'ABOUT.ROLE' | translate }}</span>
+          </div>
 
-        <!-- Languages & tools inline lists -->
-        <div class="flex gap-2 items-start mt-3" @lineFade>
-          <span class="opacity-70 select-none">C:></span>
-          <span appTerminalTyping data-i18n-key="ABOUT.LANGS_INLINE">{{ 'ABOUT.LANGS_INLINE' | translate }}</span>
-        </div>
-        <div class="flex gap-2 items-start" @lineFade>
-          <span class="opacity-70 select-none">C:></span>
-          <span appTerminalTyping data-i18n-key="ABOUT.TOOLS_INLINE">{{ 'ABOUT.TOOLS_INLINE' | translate }}</span>
-        </div>
+          <div class="pt-2" @lineFade>
+            <div class="flex gap-2 items-start">
+              <span class="text-[#4c8a5f] select-none shrink-0">C:&gt;</span>
+              <span appTerminalTyping data-i18n-key="ABOUT.H1">{{ 'ABOUT.H1' | translate }}</span>
+            </div>
+            <ul class="pl-7 list-[square] marker:text-[#4c8a5f] space-y-1 mt-1 text-[#a9f0cc]">
+              <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H1_L1">{{ 'ABOUT.H1_L1' | translate }}</span></li>
+              <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H1_L2">{{ 'ABOUT.H1_L2' | translate }}</span></li>
+              <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H1_L3">{{ 'ABOUT.H1_L3' | translate }}</span></li>
+            </ul>
+          </div>
 
-        <!-- white space -->
-        <div class="h-2"></div>
-        
+          <div class="pt-1" @lineFade>
+            <div class="flex gap-2 items-start">
+              <span class="text-[#4c8a5f] select-none shrink-0">C:&gt;</span>
+              <span appTerminalTyping data-i18n-key="ABOUT.H2">{{ 'ABOUT.H2' | translate }}</span>
+            </div>
+            <ul class="pl-7 list-[square] marker:text-[#4c8a5f] space-y-1 mt-1 text-[#a9f0cc]">
+              <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H2_L1">{{ 'ABOUT.H2_L1' | translate }}</span></li>
+              <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H2_L2">{{ 'ABOUT.H2_L2' | translate }}</span></li>
+              <li @lineFade><span appTerminalTyping data-i18n-key="ABOUT.H2_L3">{{ 'ABOUT.H2_L3' | translate }}</span></li>
+            </ul>
+          </div>
+
+          <div class="flex gap-2 items-start pt-2" @lineFade>
+            <span class="text-[#4c8a5f] select-none shrink-0">C:&gt;</span>
+            <span appTerminalTyping data-i18n-key="ABOUT.LANGS_INLINE">{{ 'ABOUT.LANGS_INLINE' | translate }}</span>
+          </div>
+          <div class="flex gap-2 items-start" @lineFade>
+            <span class="text-[#4c8a5f] select-none shrink-0">C:&gt;</span>
+            <span appTerminalTyping data-i18n-key="ABOUT.TOOLS_INLINE">{{ 'ABOUT.TOOLS_INLINE' | translate }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -94,4 +99,3 @@
     </div>
   </div>
 </div>
-  

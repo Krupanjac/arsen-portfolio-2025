@@ -4,14 +4,13 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
 import { LoginComponent } from '../../login/login.component';
 import { AdminEditorComponent } from '../../admin-editor/admin-editor.component';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterModule, CommonModule, TranslateModule, FormsModule, TerminalTypingDirective, LoginComponent, AdminEditorComponent],
+  imports: [RouterModule, CommonModule, TranslateModule, FormsModule, LoginComponent, AdminEditorComponent],
   // No custom providers
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
@@ -30,6 +29,22 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
   private scrollAnimationId: number | null = null;
   private isUserInteracting = false;
   theme: 'light' | 'dark' = 'dark';
+  /** Drives the nav's backdrop: transparent over the hero, solid once past it. */
+  scrolled = false;
+  private navScrollListener: (() => void) | null = null;
+
+  /**
+   * Single source of truth for the section links. The template previously
+   * repeated the same 40-utility anchor five times for desktop and five more
+   * for mobile, so a change to one link silently diverged from the other nine.
+   */
+  readonly sections: ReadonlyArray<{ id: string; key: string }> = [
+    { id: 'start', key: 'NAV.START' },
+    { id: 'experience', key: 'NAV.EXPERIENCE' },
+    { id: 'projects', key: 'NAV.PROJECTS' },
+    { id: 'about', key: 'NAV.ABOUT' },
+    { id: 'contact', key: 'NAV.CONTACT' },
+  ];
   private authListener: ((ev: Event) => void) | null = null;
   private keydownListener: ((ev: KeyboardEvent) => void) | null = null;
   private _savedScrollY = 0;
@@ -61,6 +76,14 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {
     // check current session on init
     try { this.checkSession(); } catch {}
+    if (typeof window !== 'undefined') {
+      this.navScrollListener = () => {
+        const next = (window.scrollY || 0) > 24;
+        if (next !== this.scrolled) this.scrolled = next;
+      };
+      window.addEventListener('scroll', this.navScrollListener, { passive: true });
+      this.navScrollListener();
+    }
   // listen for login events from embedded login component
   this.authListener = () => { try { this.checkSession(); } catch {} };
   try { window.addEventListener('auth:login', this.authListener); } catch {}
@@ -363,6 +386,10 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.navScrollListener) {
+      try { window.removeEventListener('scroll', this.navScrollListener); } catch {}
+      this.navScrollListener = null;
+    }
     if (this.observer) {
       this.observer.disconnect();
       this.observer = null;
