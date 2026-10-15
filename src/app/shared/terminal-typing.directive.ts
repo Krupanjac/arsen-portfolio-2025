@@ -1,4 +1,5 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, Renderer2 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
@@ -25,9 +26,23 @@ export class TerminalTypingDirective implements OnInit, OnDestroy {
   private typingTimeout: any = null;
   private transSub: Subscription | null = null;
 
-  constructor(private el: ElementRef<HTMLElement>, private renderer: Renderer2, private translate: TranslateService) {}
+  private readonly isBrowser: boolean;
+
+  constructor(
+    private el: ElementRef<HTMLElement>,
+    private renderer: Renderer2,
+    private translate: TranslateService,
+    @Inject(PLATFORM_ID) platformId: object,
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit(): void {
+    // Server renders have nothing to animate, and every retype is a chain of
+    // per-character setTimeouts. SSR waits for pending timers before it
+    // finishes, so on the server these chains held every render — each page
+    // load from the dev server and every prerendered route — open for seconds.
+    if (!this.isBrowser) return;
   // Coerce input speed to numeric; allow bare attribute usage ('' -> default)
   this.actualSpeed = this.coerceSpeed(this.speed);
 
@@ -89,7 +104,7 @@ export class TerminalTypingDirective implements OnInit, OnDestroy {
 
   // Exposed method to manually trigger typing (e.g., on hover)
   public triggerTyping(text?: string) {
-    if (this.hasTyped) return; // Only animate once for hover tooltips
+    if (!this.isBrowser || this.hasTyped) return; // Only animate once for hover tooltips
     const t = typeof text === 'string' ? text : (this.originalText || this.getTextContent());
     this.startTyping(t);
     this.hasTyped = true;
@@ -142,6 +157,8 @@ export class TerminalTypingDirective implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.sub) this.sub.unsubscribe();
+    // A translation that resolves after destroy would otherwise start a fresh chain.
+    if (this.transSub) this.transSub.unsubscribe();
     if (this.typingTimeout) clearTimeout(this.typingTimeout);
   }
 }
