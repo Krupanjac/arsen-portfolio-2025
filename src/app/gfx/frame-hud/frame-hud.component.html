@@ -50,7 +50,7 @@
     </dl>
 
     <div class="hud__meta">
-      <p class="hud__device" [title]="caps?.renderer || ''">{{ gpuName || 'detecting…' }}</p>
+      <p class="hud__device" [title]="caps?.renderer || ''">{{ gpuName || ('HUD.DETECTING' | translate) }}</p>
       <ul class="hud__tags">
         <li class="hud__tag hud__tag--on">WebGL2</li>
         <li class="hud__tag" [class.hud__tag--on]="caps?.timerQuery">timer_query</li>

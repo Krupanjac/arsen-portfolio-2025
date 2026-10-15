@@ -8,7 +8,15 @@
     "LANG": {
       "EN": "English",
       "SR": "Serbian"
-    }
+    },
+    "SECTIONS_LABEL": "Sections",
+    "MENU_TOGGLE": "Toggle navigation",
+    "DASHBOARD_OPEN": "Open dashboard",
+    "DASHBOARD_CLOSE": "Close",
+    "SWITCH_TO_EN": "Switch language to English",
+    "SWITCH_TO_SR": "Switch language to Serbian",
+    "THEME_TO_LIGHT": "Switch to light theme",
+    "THEME_TO_DARK": "Switch to dark theme"
   },
   "ABOUT": {
     "LABEL": "About/>",
@@ -76,6 +84,8 @@
     "COPY_HINT": "Click to copy",
     "OPEN_HINT": "Open",
     "COMPOSE": "Compose email",
+    "COMPOSE_LABEL": "Compose email to {{email}}",
+    "COPY_LABEL": "Copy email address {{email}} to clipboard",
     "OTHER_LINKS": "You can also find me on",
     "COPIED": "Copied",
     "COPY_FAILED": "Failed to copy text.",
@@ -204,12 +214,17 @@
     },
     "TIP": "Watch the frame graph while you change the scale."
   },
+  "HUD": {
+    "DETECTING": "detecting…"
+  },
   "HERO": {
     "MY_NAME_IS": "My name is",
     "TAGLINE": "Creative solutions for the digital world",
     "DISCIPLINE": "Real-time rendering / engine programming",
     "LEDE": "I build the systems that get pixels on screen — procedural terrain pipelines, GPU-side optimisation, and the tooling that keeps a frame inside 16.7 ms.",
-    "SCROLL_HINT": "Scroll"
+    "SCROLL_HINT": "Scroll",
+    "SCROLL_LABEL": "Scroll to content",
+    "SOCIAL_LABEL": "Social links"
   },
   "LOGIN": {
     "TITLE": "Login",

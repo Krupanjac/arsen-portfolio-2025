@@ -8,7 +8,15 @@
     "LANG": {
       "EN": "Engleski",
       "SR": "Srpski"
-    }
+    },
+    "SECTIONS_LABEL": "Odeljci",
+    "MENU_TOGGLE": "Otvori ili zatvori navigaciju",
+    "DASHBOARD_OPEN": "Otvori kontrolnu tablu",
+    "DASHBOARD_CLOSE": "Zatvori",
+    "SWITCH_TO_EN": "Prebaci jezik na engleski",
+    "SWITCH_TO_SR": "Prebaci jezik na srpski",
+    "THEME_TO_LIGHT": "Prebaci na svetlu temu",
+    "THEME_TO_DARK": "Prebaci na tamnu temu"
   },
   "ABOUT": {
     "LABEL": "O meni/>",
@@ -76,6 +84,8 @@
     "COPY_HINT": "Klik za kopiranje",
     "OPEN_HINT": "Otvori",
     "COMPOSE": "Napiši poruku",
+    "COMPOSE_LABEL": "Napiši poruku na adresu {{email}}",
+    "COPY_LABEL": "Kopiraj adresu {{email}}",
     "OTHER_LINKS": "Takođe sam i na",
     "COPIED": "Kopirano",
     "COPY_FAILED": "Kopiranje nije uspelo.",
@@ -204,12 +214,17 @@
     },
     "TIP": "Gledaj graf frejmova dok menjaš skalu."
   },
+  "HUD": {
+    "DETECTING": "otkrivanje…"
+  },
   "HERO": {
     "MY_NAME_IS": "Moje ime je",
     "TAGLINE": "Kreativna rešenja za digitalni svet",
     "DISCIPLINE": "Rendering u realnom vremenu / programiranje endžina",
     "LEDE": "Gradim sisteme koji izbacuju piksele na ekran — proceduralne terrain pipeline-ove, optimizaciju na GPU strani i alate koji drže frejm ispod 16.7 ms.",
-    "SCROLL_HINT": "Skroluj"
+    "SCROLL_HINT": "Skroluj",
+    "SCROLL_LABEL": "Skroluj do sadržaja",
+    "SOCIAL_LABEL": "Društvene mreže"
   },
   "LOGIN": {
     "TITLE": "Prijava",

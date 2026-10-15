@@ -1,10 +1,15 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ViewEncapsulation, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ViewEncapsulation, Input, Output, EventEmitter, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
 import { HeroRenderComponent } from '../hero-render/hero-render.component';
 import { TooltipDirective } from '../../shared/tooltip.directive';
+
+/** Browser only: callers check the platform first. */
+function prefersReducedMotion(): boolean {
+  return !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+}
 
 @Component({
   selector: 'app-hero',
@@ -24,21 +29,27 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   showIndicator = true;
   private scrollHandler = () => {};
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private zone: NgZone) {}
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
+    // Before the first check of the view, so the initial value lands in it.
+    this.initIndicatorVisibility();
     // Name scramble. 2.6s apart: often enough to notice, rare enough that it
-    // never competes with reading the name.
-    this.scrambleIntervalId = setInterval(() => this.scramble(), 2600);
+    // never competes with reading the name. Not at all under reduced motion.
+    // Outside the zone: it only rewrites its own spans, so there is nothing
+    // for change detection to find.
+    if (prefersReducedMotion()) return;
+    this.zone.runOutsideAngular(() => {
+      this.scrambleIntervalId = setInterval(() => this.scramble(), 2600);
+    });
   }
 
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     this.setupNameSpans();
-  this.initIndicatorVisibility();
   }
 
   ngOnDestroy(): void {
@@ -119,14 +130,18 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
     // threshold: hide once user scrolls more than 60px from top of hero
   const threshold = 150; // px before fade-out
+    // Registered outside the zone: a zone listener would run change detection
+    // for the whole app on every scroll event. Re-enter only on a flip.
     this.scrollHandler = () => {
       const y = window.scrollY || 0;
       const shouldShow = y < threshold;
       if (shouldShow !== this.showIndicator) {
-        this.showIndicator = shouldShow;
+        this.zone.run(() => { this.showIndicator = shouldShow; });
       }
     };
-    try { window.addEventListener('scroll', this.scrollHandler, { passive: true }); } catch {}
+    this.zone.runOutsideAngular(() => {
+      try { window.addEventListener('scroll', this.scrollHandler, { passive: true }); } catch {}
+    });
     // initial compute
     this.scrollHandler();
   }
@@ -139,7 +154,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     const targetY = Math.max(target.getBoundingClientRect().top + window.scrollY, 0);
     const startY = window.scrollY;
     const distance = targetY - startY;
-    if (Math.abs(distance) < 2) {
+    // Reduced motion: go straight there instead of animating the page.
+    if (Math.abs(distance) < 2 || prefersReducedMotion()) {
       window.scrollTo(0, targetY);
       try { history.replaceState(null, '', '#home'); } catch {}
       return;
@@ -164,6 +180,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
         try { history.replaceState(null, '', '#home'); } catch {}
       }
     };
-    requestAnimationFrame(step);
+    // Every frame is a scrollTo and nothing Angular renders, so the animation
+    // stays out of the zone instead of running change detection per frame.
+    this.zone.runOutsideAngular(() => requestAnimationFrame(step));
   }
 }
