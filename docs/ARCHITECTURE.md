@@ -104,8 +104,8 @@ A help overlay lists these for 3 s after the control is pressed.
 | `NavComponent` (`layout/nav`) | Fixed header. Scroll-spy uses an `IntersectionObserver` over every `section[id]`. Smooth scrolling is its own rAF ease that stops on wheel/touch/key input. Language toggle (en/sr) has a 1 s cooldown and is saved in `localStorage.lang`. Theme toggle sets `data-theme` on `<html>` (dark by default) and saves it in `localStorage.theme`. Hosts the Dashboard modal and checks the session with a direct `fetch('/api/session')`. Also has an unused `onLogin()` |
 | `HeroComponent` | Name scramble: every 2.6 s one glyph of "Đurđev" flips briefly. Also the discipline line, social links, the resume button (emits `openResumeModal`) and a scroll hint. Mounts the render stage |
 | `HeroRenderComponent` (`layout/hero-render`) | The stage: terrain surface, contour-field surface and frame HUD. Smooths pointer and scroll input, re-reads the palette when `data-theme` changes, parks the terrain past 1.35 viewport heights, fades into the page through the `--stage-veil` CSS variable, and owns the fullscreen keys |
-| `GpuSurfaceComponent` (`gfx/gpu-surface`) | Wraps one `ShaderSurface` on a canvas, outside Angular's zone. Emits `ready` (capabilities), `stats` (about 6 times a second) and `failed` |
-| `FrameHudComponent` (`gfx/frame-hud`) | Live frame time, FPS and a frame-history graph from the terrain surface; click to expand |
+| `GpuSurfaceComponent` (`gfx/gpu-surface`) | Wraps one `ShaderSurface` on a canvas, outside Angular's zone. Inputs `active` (start parked or running), `qualityLock` and `powerPreference` (default `'default'`). Emits `ready` (capabilities), `stats` (about 6 times a second, and after each still frame) and `failed` |
+| `FrameHudComponent` (`gfx/frame-hud`) | Live frame time, FPS and a frame-history graph from the terrain surface; click to expand. Goes `inert` and stops drawing while faded out |
 | `TechStackWheelComponent` | Six groups on a ring (languages, frameworks, platform, tooling, AI, creative). Choosing one spawns its items as bodies in a small physics simulation driven by rAF. Labels come from `HOME.STACK.GROUPS.*.TITLE` and `HOME.STACK.ITEMS.<KEY>` |
 | `BlogModalComponent` | Project viewer: image carousel with ImageKit `srcset`, `Esc` and arrow keys, swipe, and the markdown description |
 | `AboutComponent` | Uses an `IntersectionObserver` to start a staggered `triggerTyping()` across every typing directive in the section, 120 ms apart |
@@ -153,7 +153,7 @@ A help overlay lists these for 3 s after the control is pressed.
 ### Internationalisation
 
 - ngx-translate v17 with `TranslateHttpLoader` (`/i18n/{lang}.json`). Default `en`; the choice is saved in `localStorage.lang`. `<html lang>` stays `en`.
-- `public/i18n/en.json` and `sr.json` hold 153 keys each, grouped `NAV`, `HERO`, `HOME`, `ABOUT`, `CONTACT`, `PROJECTS`, `EXPERIENCE`, `PLAY`, `HELP`, `LOGIN`, `RESUME`, `TOOLTIP`, `FOOTER`. Serbian is Latin script. Section labels use a terminal motif (`Kontakt/>`, `Projekti/`).
+- `public/i18n/en.json` and `sr.json` hold 188 keys each, grouped `NAV`, `HERO`, `HOME`, `ABOUT`, `CONTACT`, `PROJECTS`, `EXPERIENCE`, `PLAY`, `HELP`, `LOGIN`, `RESUME`, `TOOLTIP`, `FOOTER`. Serbian is Latin script. Section labels use a terminal motif (`Kontakt/>`, `Projekti/`).
 - `npm run check:i18n` enforces parity, non-empty values, matching `{{params}}`, and that every key used in `src/` exists. It warns about unused keys (50 today). Keys built at runtime (`HOME.STACK.ITEMS.` + key) are allowed for in `DYNAMIC_PREFIXES`.
 
 ### Renderer
@@ -166,8 +166,8 @@ A help overlay lists these for 3 s after the control is pressed.
 | `shader.ts` | Compiles and links, quoting the failing source line in errors. `setAll()` ignores uniforms a shader doesn't declare |
 | `fullscreen-pass.ts` | The full-screen vertex stage every surface draws with |
 | `frame-timer.ts` | CPU and GPU frame time (`EXT_disjoint_timer_query_webgl2`), with p95 and worst over a 120-frame ring |
-| `resolution-scaler.ts` | Dynamic resolution between 45 % and 100 % in 5 % steps |
-| `render-loop.ts` | The rAF driver. It runs only while the page is visible, the canvas is in view, and the caller hasn't parked it |
+| `resolution-scaler.ts` | Dynamic resolution between 45 % and 100 % in 5 % steps, starting at 75 % after a 30-frame warm-up. With a GPU timer it keeps GPU time under 75 % of the frame interval; without one it counts dropped frames against the measured refresh rate, probes upward, and backs off (8 s, doubling to 64 s) when a probe brings drops back |
+| `render-loop.ts` | The rAF driver. It keeps three separate conditions (the owner hasn't parked it, the canvas is in view, the page is visible) and runs only when all three allow it; it can also freeze its clock for reduced motion |
 | `shader-surface.ts` | One full-screen fragment pass with all of the above, plus resize handling and context-loss recovery |
 | `color.ts`, `palette.ts` | CSS colour parsing; `readPalette()` turns the `--gfx-*` tokens into linear-space uniforms |
 | `shaders/` | `common.glsl.ts` (hashes, value noise with derivatives, eroded and ridged fBm, ACES, dithering), `hero-terrain.frag.ts`, `contour-field.frag.ts` |
@@ -199,6 +199,8 @@ How the frame divides the colour: warm toward the sun, cool away from it and in 
 
 - march steps scale from 56 to 150, shadow steps from 6 to 20, and terrain detail octaves from 5 to 7 (plus the broad warp/crest tap, so a full-quality height query is 8 noise taps, as in the original field);
 - shadows switch off below 0.3, mist below 0.25, and clouds below 0.35.
+
+**Reduced motion.** Under `prefers-reduced-motion` the surfaces stop animating. A frame is drawn on start, resize, context restore, a quality-lock change, or when the uniform values change, such as a theme switch; nothing is drawn otherwise. The camera ignores pointer and scroll, the name scramble doesn't run, and the HUD redraws only when stats arrive. A change of the setting at runtime is followed.
 
 **Parking.** The terrain parks once the reader is past 1.35 viewport heights. The field runs only while the veil is visible. Parking (the caller's intent), the canvas being in view and tab visibility are separate conditions; all three must allow a frame.
 
@@ -278,7 +280,7 @@ The frontend type is `BlogPost` in `blog.service.ts`.
 - `npm run build` (`ng build`, production) writes:
   - `dist/arsen-portfolio-2025/browser/`: static files plus prerendered HTML. Nine routes are prerendered (`prerendered-routes.json`); the seven page routes `/`, `/about`, `/admin`, `/blog`, `/contact`, `/experience` and `/projects` each get an `index.html`, all byte-identical because there's no router outlet. `/cv` and `/resume` are redirects and produce no file.
   - `dist/arsen-portfolio-2025/server/`: the SSR bundle, unused in production.
-- **Budgets:** the initial bundle warns at 500 kB and fails at 1 MB. Today it's 733 kB raw, about 181 kB over the wire. Component styles warn at 4 kB.
+- **Budgets:** the initial bundle warns at 500 kB and fails at 1 MB. Today it's 788 kB raw, about 199 kB over the wire. Component styles warn at 4 kB.
 - **No hydration.** `provideClientHydration` isn't configured, so the browser discards the prerendered DOM and renders again. The prerendered `<html>` has no `data-theme`, so the first paint uses the light tokens before the nav switches to dark.
 - **Cloudflare Pages:** project `krupanjac`, built by the Pages Git integration. The output directory is `pages_build_output_dir` in `wrangler.toml`. Every branch gets a preview at `<branch>.krupanjac.pages.dev`. There is no deploy workflow in this repo.
 - `public/_redirects` has pass-through rules for static types, 301s for `/resume` and `/cv` to the PDF, and a SPA fallback `/* / 200`.
@@ -293,7 +295,7 @@ The frontend type is `BlogPost` in `blog.service.ts`.
 |---|---|
 | `npm run check:i18n` | Locale parity, empty values, `{{param}}` mismatches, keys used but not defined |
 | `npm run check:shaders` | GLSL compile and link errors, in real WebGL2 (headless Chrome, SwiftShader) |
-| `npm run test:ci` | 15 Jasmine tests across 12 spec files, in headless Chrome: smoke "creates" tests plus the play-button timing test. Specs use `provideTestDeps()` |
+| `npm run test:ci` | 119 Jasmine tests across 21 spec files, in headless Chrome: component smoke tests, the renderer engine (scaler, frame timer, render loop, colour parsing, uniform snapshots, and real-WebGL2 surfaces that go pending where WebGL2 is missing), the HUD, hero, nav and contact behaviour, and the palette. Specs use `provideTestDeps()` |
 | `npm run build` | Template type checks (`strictTemplates`), budgets, and SSR-unsafe code (prerender runs in Node) |
 | `npm run verify` | All four, in that order. CI (`.github/workflows/ci.yml`) runs it on every PR and on pushes to `master` |
 | Claude Code hook | `.claude/hooks/post-edit.mjs` runs the i18n check after each edit |

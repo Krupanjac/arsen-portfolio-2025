@@ -38,31 +38,26 @@ The improvement plan for krupanjac.dev: where the project stands, what to do nex
 
 ### Phase 1: Land PR #8 safely
 
-PR #8 replaces the 2D star field with a WebGL2 terrain renderer, a frame-time HUD, new fonts and a darker palette. It fast-forwards onto `master` today. Proposed order:
+PR #8 replaces the 2D star field with a WebGL2 terrain renderer, a frame-time HUD, new fonts and a darker palette. Status of the plan:
 
-1. **Merge the harness first.** It's mostly new files, and it gives PR #8 a CI gate.
-2. **Rebase `wonder/Sottsass` onto `master`.** Expect three small conflicts:
-   - `README.md`: keep the new README, and put PR #8's "Renderer" section in place of "Interactive mode".
-   - `package.json` scripts: keep both sets.
-   - `background.component.spec.ts`: accept the deletion.
-3. **Let CI run `npm run verify` on the PR.**
-   - The rewritten components may need extra providers in their specs.
-   - Add specs for the pure classes the PR introduces (resolution scaler, frame timer, colour parser), which are cheap to test.
-4. **Fix the review findings below before merging.** They come from reading the code, not from running it on a GPU, so confirm each one first.
+1. **Merge the harness first.** PR #9, CI green; waiting on the merge.
+2. **Bring the harness into PR #8.** ✅ Done as a merge of the harness branch into `wonder/Sottsass`, so there was no force-push. `README.md` got the new structure with PR #8's Renderer section, and `background.component.spec.ts` was deleted with its component. `package.json` merged cleanly.
+3. **Let CI run `npm run verify` on the PR.** ✅ 119 tests: 89 for the engine (scaler, frame timer, loop, colour, uniforms, real-WebGL2 surfaces) and 14 for the HUD, hero, nav and contact. Plus the new shader compile check (DX-11).
+4. **Fix the review findings.** ✅ R8-1 to R8-8 below. R8-9 stays open until someone tests on real hardware.
 
-| ID | Finding | Where |
+| ID | Finding | Status |
 |---|---|---|
-| R8-1 | The resolution scaler can't scale up on 60 Hz displays. It measures the rAF interval (~16.7 ms) against an 11.7 ms "raise" threshold, so one slow startup frame pins the render at 45 % with quality 0. Drive it from GPU time, or CPU work time, instead | `gfx/resolution-scaler.ts` |
-| R8-2 | Parking doesn't always hold. `setActive()` and the IntersectionObserver both write `RenderLoop.inView`; a fixed canvas always intersects, so the observer undoes the park. `fieldActive` starts `false` while the field loop is running, so the field renders invisibly until the first scroll | `layout/hero-render/` |
-| R8-3 | `@ViewChild` on surfaces inside `*ngIf` is read before the query resolves, so `gpuName` stays "detecting…" and `setQualityLock(0.7)` does nothing | `hero-render.component.ts` |
-| R8-4 | Reduced motion does the opposite of its comment: it renders every frame at full resolution, still moves the camera, and leaves the HUD loop and the name scramble running. It should render one still frame and stop the loops | renderer, HUD, hero |
-| R8-5 | Two WebGL2 contexts both ask for `powerPreference: 'high-performance'`, which forces the discrete GPU on dual-GPU laptops. The HUD redraws while hidden, and observers are registered again after a context restore | `gfx/` |
-| R8-6 | Accessibility: the HUD can take focus at opacity 0, several aria-labels are hardcoded English, and the `<h1>` text changes every 2.6 s | HUD, hero, contact, nav |
-| R8-7 | The nav scroll listener runs inside Angular's zone, so every scroll event triggers change detection | `layout/nav` |
-| R8-8 | The shader comment says octave count scales with quality, but `terrainDetail` always uses 8 | `hero-terrain.frag.ts` |
-| R8-9 | All measurements so far come from SwiftShader. Test on real hardware: a 60 Hz and a 120 Hz display, an integrated-GPU laptop, a mid-range phone | — |
+| R8-1 | The resolution scaler could only scale down on 60 Hz displays: it compared the rAF interval (~16.7 ms) to an 11.7 ms raise threshold | ✅ GPU-time budget when the timer exists, dropped frames against the measured refresh rate otherwise, with warm-up, hysteresis and backoff; starts at 75 % |
+| R8-2 | Parking didn't hold: `setActive()` and the IntersectionObserver wrote the same flag, and the field started running while invisible | ✅ Three separate loop conditions; the field starts parked (`[active]="false"`) |
+| R8-3 | `@ViewChild` was read before it resolved, so the GPU name stayed "detecting…" and the field's quality lock did nothing | ✅ Read from the emitting surface; the lock is a `[qualityLock]` input |
+| R8-4 | Reduced motion rendered every frame at full resolution and kept the camera, HUD loop and name scramble moving | ✅ Still frames drawn only on change; camera inputs held; HUD redraws on stats; scramble off |
+| R8-5 | Both contexts forced the discrete GPU; the HUD redrew while hidden; observers doubled after a context restore | ✅ `powerPreference: 'default'` (opt-in per surface); the HUD stops while hidden; listeners attach once |
+| R8-6 | The HUD took focus at opacity 0, some aria-labels were hardcoded English, and the `<h1>` text changed every 2.6 s | ✅ HUD `inert` while hidden; 13 new en/sr keys; stable `sr-only` heading name |
+| R8-7 | Scroll listeners inside Angular's zone ran change detection on every scroll | ✅ Nav, hero and tooltip listeners run outside the zone |
+| R8-8 | Octaves didn't scale with quality, despite the shader comment | ✅ 5 to 7, plus the warp/crest tap |
+| R8-9 | All measurements so far come from SwiftShader | Open: test on a 60 Hz and a 120 Hz display, an integrated-GPU laptop and a mid-range phone, and tune the scaler thresholds |
 
-5. **Merge, then update the docs:** move "Pending changes" in ARCHITECTURE.md into the main text, and refresh the README controls.
+5. **Merge.** The docs already describe the renderer: the ARCHITECTURE Renderer section and the README Renderer section.
 6. **Delete the stale branches** (DX-10).
 
 ### Phase 2: Fix what's visibly broken (about 2 days)
@@ -208,7 +203,7 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
   2. Add `provideClientHydration(withEventReplay())`. Directives that write `innerHTML` (typing, hero glitch) need `ngSkipHydration` or a refactor.
   3. Retire the full-page loader once hydration works.
 
-**BUG-9: Mobile menu order.** Low · S
+**BUG-9: Mobile menu order.** Low · S · ✅ fixed by PR #8, pinned by a nav spec
 - **Evidence:** the mobile menu lists Projects before Experience; the page and the desktop nav list Experience first (`nav.component.html`).
 - **Note:** PR #8 builds both menus from one `sections` list, which probably fixes this. Verify after merging.
 
@@ -315,7 +310,7 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
 - **Note:** PR #8 replaces the canvas with a renderer that parks itself (see R8-2, R8-5).
 - **Fix:** pause whatever is off-screen, cap DPR and particle counts on small or low-power devices, and honour A11Y-1.
 
-**PERF-3: Change-detection storms.** Med · S
+**PERF-3: Change-detection storms.** Med · S · mostly ✅ in PR #8 (the star field is gone; nav, hero and tooltip listeners run outside the zone). Still open: the one-line event coalescing
 - **Evidence:**
   - The star field's rAF loop runs inside Angular's zone (no `runOutsideAngular`; only the tech wheel uses it), so app-wide change detection runs on every frame.
   - `appTooltip` listens to `window:scroll` and `window:resize` on every instance (`tooltip.directive.ts:89-90`), 16–25 of them at runtime.
@@ -336,7 +331,7 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
 
 ### Accessibility
 
-**A11Y-1: Reduced motion.** High · M
+**A11Y-1: Reduced motion.** High · M · renderer, HUD, hero and nav ✅ in PR #8; the typing effect, footer scroll and `@angular/animations` still ignore it
 - **Evidence:** on `master`, only `experience.component.scss` checks `prefers-reduced-motion`. The canvas, glitch, typing, wheel physics and scroll animations all ignore it. PR #8 adds a global CSS rule, but its renderer logic is inverted (R8-4).
 - **Fix:** one `MotionService` (a signal over `matchMedia`) consumed by every animated piece.
 
@@ -408,6 +403,16 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
   - `BlogPost`/`BlogService` → `Post`/`PostsService`;
   - the `#resume` section (it holds the Play button) → `#play`.
 - Keep a single copy of the posts schema (see BUG-6).
+
+**DX-11: Shader check, render and bench.** ✅ PR #8
+- `npm run check:shaders` (part of `verify`) compiles every shader in headless WebGL2 and reports errors at the `.frag.ts` line.
+- `render:shaders` writes PNG frames using the site's palette.
+- `bench:shaders` compares shader versions.
+- **Open:** once a CI log shows "shader check passed", set `SHADER_CHECK_REQUIRE_WEBGL: '1'` on the CI verify step so a missing WebGL2 can't skip silently.
+
+**DX-12: Clean stops for Wonder's run profile.** ✅ PR #8
+- **Problem:** `npm start` on Windows runs npm, then `cmd.exe` with the `ng.cmd` batch shim, then node. A stop left `cmd.exe` waiting on "Terminate batch job (Y/N)?".
+- **Fix:** the profile runs `node node_modules/@angular/cli/bin/ng.js serve`.
 
 **DX-10: Stale branches.** Low · S
 - **Fix:** delete `origin/animations/router` (fully merged) and `origin/beta` (one abandoned commit, superseded). This is an owner task.

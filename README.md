@@ -58,8 +58,8 @@ The **Fullscreen renderer** control under the tech stack hides the page and leav
 - `gfx/gl-context.ts`: context acquisition and capability probe
 - `gfx/shader.ts`: compile and link, with the failing source line annotated
 - `gfx/frame-timer.ts`: CPU time, GPU time via `EXT_disjoint_timer_query_webgl2`, p95 over a ring buffer
-- `gfx/resolution-scaler.ts`: asymmetric dynamic resolution with a cooldown
-- `gfx/render-loop.ts`: rAF driver with visibility and occlusion gating
+- `gfx/resolution-scaler.ts`: dynamic resolution, driven by GPU time when the timer query exists and by dropped frames against the measured refresh rate otherwise
+- `gfx/render-loop.ts`: rAF driver that runs only while the owner, the IntersectionObserver and page visibility all allow it
 - `gfx/shader-surface.ts`: a full-canvas fragment pass with all of the above wired in
 - `gfx/shaders/`: `common.glsl.ts` (noise, fBm, ACES), `hero-terrain.frag.ts`, `contour-field.frag.ts`
 
