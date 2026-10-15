@@ -58,7 +58,7 @@
   );
 }
 
-:root:not([data-theme='dark']) .stage__scrim::before {
+:host-context(html:not([data-theme='dark'])) .stage__scrim::before {
   background: linear-gradient(
     100deg,
     rgba(255, 255, 255, 0.74) 0%,
@@ -75,7 +75,7 @@
   opacity: var(--stage-veil);
 }
 
-:root:not([data-theme='dark']) .stage__scrim {
+:host-context(html:not([data-theme='dark'])) .stage__scrim {
   background:
     linear-gradient(
       180deg,
