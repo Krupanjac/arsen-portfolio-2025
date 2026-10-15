@@ -12,6 +12,7 @@ import { FULLSCREEN_VERTEX_SHADER, FullscreenPass } from '../src/app/gfx/fullscr
 import { createGlBundle } from '../src/app/gfx/gl-context';
 import { ShaderCompileError, ShaderProgram } from '../src/app/gfx/shader';
 import { HEADER } from '../src/app/gfx/shader-surface';
+import { readPalette } from '../src/app/gfx/palette';
 
 // check-shaders.mjs looks for this id in Chrome's --dump-dom output.
 const RESULT_ID = 'shader-check-result';
@@ -302,11 +303,16 @@ function declaredUniforms(source) {
 }
 
 function applyUniforms(gl, program, declared, config, theme) {
-  // Theme-dependent values, converted the way hero-render.component.ts converts them.
+  // Theme-dependent values, converted the way hero-render.component.ts converts them: the
+  // --gfx-* tokens go onto <html> and the app's own readPalette() turns them into uniforms.
+  for (const [name, value] of Object.entries(theme.palette ?? {})) {
+    document.documentElement.style.setProperty(name, value);
+  }
   const values = {
     accent: srgbToLinear(parseCssColor(config.accent || theme.accent)),
     sky: srgbToLinear(theme.sky),
     theme: theme.name === 'dark' ? 1 : 0,
+    palette: readPalette(theme.name === 'dark'),
   };
   const run = { theme: theme.name, uniforms: [], errors: [], warnings: [] };
   const clocks = []; // locations that carry the time, advanced per frame by --bench
@@ -363,6 +369,7 @@ function assign(u, config, values) {
   }
 
   const known = {
+    ...values.palette,
     uResolution: [config.width, config.height],
     uTime: [config.time],
     uMouse: [0, 0], // pointer at the centre

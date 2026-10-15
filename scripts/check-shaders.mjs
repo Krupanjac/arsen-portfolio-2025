@@ -300,36 +300,48 @@ function usageError(message) {
 }
 
 /**
- * Theme inputs, read from where the app keeps them: the accent and page background from the
- * theme tokens in src/styles.scss, the sky from the constants in hero-render.component.ts.
+ * Theme inputs, read from where the app keeps them: the accent, page background and the
+ * renderer palette (--gfx-*) from the theme tokens in src/styles.scss. The page hands the
+ * palette to the app's own readPalette(), so renders use exactly the site's colours.
  */
 function readThemes() {
   const warnings = [];
   const scss = readFileSync(join(ROOT, 'src', 'styles.scss'), 'utf8');
-  const heroFile = join(ROOT, 'src', 'app', 'layout', 'hero-render', 'hero-render.component.ts');
-  const hero = readFileSync(heroFile, 'utf8');
   const block = (selector) => {
     const m = selector.exec(scss);
     return m ? scss.slice(m.index + m[0].length, scss.indexOf('}', m.index)) : '';
   };
   const blocks = { light: block(/:root\s*\{/), dark: block(/:root\[data-theme=['"]?dark['"]?\]\s*\{/) };
+  const isHex = (v) => /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(v ?? '');
+  // The dark block only overrides; anything it doesn't set falls back to :root.
+  const raw = (theme, name) =>
+    new RegExp(`${name}\\s*:\\s*([^;]+);`).exec(blocks[theme])?.[1].trim() ??
+    (theme === 'dark' ? raw('light', name) : undefined);
+  const resolve = (theme, value, depth = 0) => {
+    const ref = /^var\(\s*(--[\w-]+)\s*\)$/.exec(value ?? '');
+    return ref && depth < 4 ? resolve(theme, raw(theme, ref[1]), depth + 1) : value;
+  };
   const token = (theme, name, fallback) => {
-    const value = new RegExp(`${name}\\s*:\\s*([^;]+);`).exec(blocks[theme])?.[1].trim();
-    if (value && /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(value)) return value;
+    const value = resolve(theme, raw(theme, name));
+    if (isHex(value)) return value;
     warnings.push(`no hex ${name} for the ${theme} theme in src/styles.scss; using ${fallback}`);
     return fallback;
   };
-  const sky = (name, fallback) => {
-    const raw = new RegExp(`const\\s+${name}\\b[^=]*=\\s*\\[([^\\]]+)\\]`).exec(hero)?.[1];
-    const value = raw?.split(',').map(Number);
-    if (value?.length === 3 && value.every(Number.isFinite)) return value;
-    warnings.push(`no ${name} in ${display(heroFile)}; using [${fallback}]`);
-    return fallback;
+  const palette = (theme) => {
+    const out = {};
+    const names = new Set([...(blocks.light + blocks.dark).matchAll(/(--gfx-[\w-]+)\s*:/g)].map((m) => m[1]));
+    for (const name of names) {
+      const value = resolve(theme, raw(theme, name));
+      if (isHex(value)) out[name] = value;
+      else warnings.push(`${name} for the ${theme} theme is not a hex colour in src/styles.scss; palette.ts falls back`);
+    }
+    return out;
   };
+  // uSky predates the palette; kept so older shader copies can still be benched side by side.
   return {
     warnings,
-    dark: { name: 'dark', accent: token('dark', '--color-accent', '#8b5cf6'), background: token('dark', '--color-bg', '#07080c'), sky: sky('SKY_DARK', [0.031, 0.039, 0.063]) },
-    light: { name: 'light', accent: token('light', '--color-accent', '#482268'), background: token('light', '--color-bg', '#ffffff'), sky: sky('SKY_LIGHT', [0.62, 0.68, 0.8]) },
+    dark: { name: 'dark', accent: token('dark', '--color-accent', '#8b5cf6'), background: token('dark', '--color-bg', '#07080c'), palette: palette('dark'), sky: [0.031, 0.039, 0.063] },
+    light: { name: 'light', accent: token('light', '--color-accent', '#482268'), background: token('light', '--color-bg', '#ffffff'), palette: palette('light'), sky: [0.62, 0.68, 0.8] },
   };
 }
 
