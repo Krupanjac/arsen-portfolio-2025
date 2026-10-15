@@ -17,7 +17,9 @@ npm run verify     # ~1.5 min: i18n check, unit tests, production build + preren
 npm start          # http://localhost:4200. In Wonder, open the Preview instead
 ```
 
-The Wonder run profile for this repo is: setup `npm ci`, run `npm start`, port `4200`.
+The Wonder run profile for this repo is: setup `npm ci`, run `node node_modules/@angular/cli/bin/ng.js serve`, port `4200`.
+
+It calls the Angular CLI directly, not `npm start`. On Windows, npm runs scripts through `cmd.exe` and the `ng.cmd` batch shim. When Wonder stops the app, that batch job asks "Terminate batch job (Y/N)?" and waits, so Wonder can't confirm the server exited.
 
 ### What works without the API
 

@@ -83,6 +83,7 @@ All small, independent and low-risk. Check each item against PR #8 first; some w
 | SEC-2 | JWT signature check isn't constant-time | Med | S |
 | SEC-3 | Debug logs and leaked DB errors | Med | S |
 | PERF-3 | Change detection runs on every animation frame and scroll event | Med | S |
+| PERF-5 | ✅ (PR #8) The typing animation ran during server rendering | Med | S |
 | A11Y-2 | Text can't be selected; links have no pointer; scrollbars are hidden | Med | S |
 | SEO-3 | Broken link-preview metadata and a static `lang` | Med | S |
 | DX-3 | Full stack locally in one command | Med | S |
@@ -328,6 +329,10 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
 **PERF-4: Fonts.** Low · S
 - **Evidence:** on master, `'Open Sans'` was declared but never loaded. PR #8 loads three families (Space Grotesk, IBM Plex Sans, JetBrains Mono) through a Google Fonts stylesheet: a third-party request on the critical path, and an origin the CSP (SEC-4) has to allow.
 - **Fix:** self-host them with `font-display: swap`, preload the display face, and subset to Latin plus Latin Extended (Serbian needs đ č ć š ž).
+
+**PERF-5: The typing animation ran during server rendering.** Med · S · ✅ PR #8
+- **Evidence:** `TerminalTypingDirective` had no platform guard. Server renders wait for pending timers, and each of the page's ~30 typed labels started a per-character `setTimeout` chain once the catalog loaded. Every dev-server page load and every prerendered route was held open for seconds; the first dev-server response took 4.2 s.
+- **Fix:** the directive does nothing outside the browser and drops a late translation on destroy. With the same warm cache, the production build (which prerenders) went from 27.3 s to 19.6 s, and the prerendered copy is unchanged.
 
 ### Accessibility
 

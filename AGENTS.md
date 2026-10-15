@@ -84,5 +84,5 @@ Recipes for recurring jobs live in `.claude/skills/<name>/SKILL.md`. Claude Code
 ## Environment notes
 
 - **Line endings:** the repo stores LF and Windows checkouts get CRLF (`core.autocrlf`). Keep a file's existing line endings when you edit it.
-- **Running the app in Wonder:** use the Preview (run profile: setup `npm ci`, run `npm start`, port 4200). Don't start `ng serve` from a shell.
+- **Running the app in Wonder:** use the Preview (run profile: setup `npm ci`, run `node node_modules/@angular/cli/bin/ng.js serve`, port 4200). Calling the CLI directly avoids npm's `cmd.exe` and `ng.cmd` layers on Windows, which kept stops from completing. Don't start `ng serve` from a shell.
 - **Branch previews:** Cloudflare Pages builds every pushed branch at `https://<branch>.krupanjac.pages.dev` (PR #8's is `wonder-sottsass.krupanjac.pages.dev`). It's the quickest way to see a change with a working `/api`.
