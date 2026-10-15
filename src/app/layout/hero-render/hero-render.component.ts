@@ -203,16 +203,6 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
     };
   };
 
-  onFieldReady(surface: GpuSurfaceComponent): void {
-    // Eleven noise taps a pixel does not need dynamic resolution; pin it at a
-    // scale where the ink is soft enough to sit behind text.
-    surface.setQualityLock(0.7);
-    // The scroll handler has already decided whether the field should run, but
-    // the surface did not exist yet to hear it. Without this the field ran
-    // invisibly (veil at 0) from page load until the first scroll.
-    surface.setActive(this.fieldActive);
-  }
-
   readonly uniformProvider = (elapsed: number, delta: number): Record<string, UniformValue> => {
     this.advance(delta);
 

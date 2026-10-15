@@ -19,7 +19,9 @@
 
   <!-- Layer 2: the survey map behind the content sections. Transparent
        except for its ink, so the page background stays a CSS concern. Fades
-       in as the veil rises; parked while the hero is on screen. -->
+       in as the veil rises; starts parked and stays parked while the hero is
+       on screen. Pinned at 70 % scale: eleven noise taps a pixel need no
+       dynamic resolution, and the softer ink sits better behind text. -->
   <app-gpu-surface
     #field
     *ngIf="!failed"
@@ -28,7 +30,8 @@
     [uniformProvider]="fieldUniforms"
     [targetFps]="60"
     [maxDpr]="1"
-    (ready)="onFieldReady(field)"
+    [active]="false"
+    [qualityLock]="0.7"
   ></app-gpu-surface>
 
   <app-frame-hud
