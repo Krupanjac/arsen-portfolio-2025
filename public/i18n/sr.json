@@ -204,6 +204,9 @@
     },
     "TIP": "Gledaj graf frejmova dok menjaš skalu."
   },
+  "HUD": {
+    "DETECTING": "otkrivanje…"
+  },
   "HERO": {
     "MY_NAME_IS": "Moje ime je",
     "TAGLINE": "Kreativna rešenja za digitalni svet",

@@ -204,6 +204,9 @@
     },
     "TIP": "Watch the frame graph while you change the scale."
   },
+  "HUD": {
+    "DETECTING": "detecting…"
+  },
   "HERO": {
     "MY_NAME_IS": "My name is",
     "TAGLINE": "Creative solutions for the digital world",
