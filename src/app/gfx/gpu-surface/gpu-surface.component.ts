@@ -58,12 +58,41 @@ export class GpuSurfaceComponent implements AfterViewInit, OnDestroy {
   @Input({ required: true }) uniformProvider!: UniformProvider;
   @Input() targetFps = 60;
   @Input() maxDpr = 2;
+  /**
+   * GPU selection hint, read once at creation. 'high-performance' forces the
+   * discrete GPU on a dual-GPU laptop (and its battery cost); opt in only
+   * where a surface cannot hold its frame rate without it.
+   */
+  @Input() powerPreference: WebGLPowerPreference = 'default';
+
+  /**
+   * Same as setActive(). As an input it also sets the state the loop starts
+   * in, so a surface that should begin parked never renders a frame first.
+   */
+  @Input()
+  get active(): boolean {
+    return this.activeState;
+  }
+  set active(value: boolean) {
+    this.setActive(value);
+  }
+
+  /** Same as setQualityLock(), declaratively; safe to bind before the surface exists. */
+  @Input()
+  get qualityLock(): number | null {
+    return this.lockState;
+  }
+  set qualityLock(value: number | null) {
+    this.setQualityLock(value);
+  }
 
   @Output() stats = new EventEmitter<FrameStats>();
   @Output() ready = new EventEmitter<GpuCapabilities>();
   @Output() failed = new EventEmitter<Error>();
 
   private surface: ShaderSurface | null = null;
+  private activeState = true;
+  private lockState: number | null = null;
   private readonly isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: Object, private zone: NgZone) {
@@ -73,16 +102,26 @@ export class GpuSurfaceComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     if (!this.isBrowser) return;
     this.zone.runOutsideAngular(() => {
-      this.surface = new ShaderSurface(this.canvasRef.nativeElement, {
+      const surface = new ShaderSurface(this.canvasRef.nativeElement, {
         fragmentSource: this.fragmentSource,
         uniforms: (elapsed, delta) => this.uniformProvider(elapsed, delta),
         targetFps: this.targetFps,
         maxDpr: this.maxDpr,
-        onStats: (s) => this.zone.run(() => this.stats.emit(s)),
+        powerPreference: this.powerPreference,
+        // Re-entering the zone runs change detection for the whole app; a
+        // surface nobody reads stats from should not pay for that 6x a second.
+        onStats: (s) => {
+          if (this.stats.observed) this.zone.run(() => this.stats.emit(s));
+        },
         onReady: (caps) => this.zone.run(() => this.ready.emit(caps)),
         onError: (err) => this.zone.run(() => this.failed.emit(err)),
       });
-      this.surface.init();
+      // Whatever the owner asked for before the view existed holds from the
+      // first frame.
+      surface.setActive(this.activeState);
+      if (this.lockState !== null) surface.setQualityLock(this.lockState);
+      this.surface = surface;
+      surface.init();
     });
   }
 
@@ -91,13 +130,18 @@ export class GpuSurfaceComponent implements AfterViewInit, OnDestroy {
     return this.surface?.frameHistory(out) ?? 0;
   }
 
-  /** Park or resume the loop. See ShaderSurface.setActive. */
+  /** Park or resume the loop. See ShaderSurface.setActive. Remembered if called early. */
   setActive(active: boolean): void {
+    this.activeState = active;
     this.surface?.setActive(active);
   }
 
-  /** Pass a scale in [0.45, 1] to pin resolution, or null to hand it back to DRS. */
+  /**
+   * Pass a scale in [0.45, 1] to pin resolution, or null to hand it back to
+   * DRS. Remembered if called before the surface exists.
+   */
   setQualityLock(scale: number | null): void {
+    this.lockState = scale;
     this.surface?.setQualityLock(scale);
   }
 

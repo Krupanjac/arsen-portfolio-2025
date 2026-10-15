@@ -36,22 +36,39 @@ export interface GlBundle {
   };
 }
 
+export interface GlContextOptions {
+  /**
+   * GPU selection hint. 'default' lets the browser choose, which on a dual-GPU
+   * laptop normally means the integrated one; 'high-performance' wakes the
+   * discrete GPU and keeps it awake for as long as the context lives. Opt in
+   * per surface, only where the cost is worth it.
+   */
+  powerPreference?: WebGLPowerPreference;
+}
+
 const CONTEXT_ATTRIBUTES: WebGLContextAttributes = {
   alpha: true,
   antialias: false, // we render to an offscreen target and resolve ourselves
   depth: false,
   stencil: false,
   desynchronized: true,
-  powerPreference: 'high-performance',
+  powerPreference: 'default',
   premultipliedAlpha: true,
   preserveDrawingBuffer: false,
   failIfMajorPerformanceCaveat: false,
 };
 
-export function createGlBundle(canvas: HTMLCanvasElement): GlBundle | null {
+export function createGlBundle(
+  canvas: HTMLCanvasElement,
+  options: GlContextOptions = {},
+): GlBundle | null {
+  const attributes: WebGLContextAttributes = {
+    ...CONTEXT_ATTRIBUTES,
+    powerPreference: options.powerPreference ?? CONTEXT_ATTRIBUTES.powerPreference,
+  };
   let gl: WebGL2RenderingContext | null = null;
   try {
-    gl = canvas.getContext('webgl2', CONTEXT_ATTRIBUTES) as WebGL2RenderingContext | null;
+    gl = canvas.getContext('webgl2', attributes) as WebGL2RenderingContext | null;
   } catch {
     gl = null;
   }
@@ -63,7 +80,7 @@ export function createGlBundle(canvas: HTMLCanvasElement): GlBundle | null {
     gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic');
   const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
 
-  gl.getExtension('EXT_color_buffer_half_float');
+  const halfFloatBuffer = gl.getExtension('EXT_color_buffer_half_float');
   const floatBuffer = gl.getExtension('EXT_color_buffer_float');
 
   const caps: GpuCapabilities = {
@@ -78,7 +95,8 @@ export function createGlBundle(canvas: HTMLCanvasElement): GlBundle | null {
     maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE) as number,
     maxRenderbufferSize: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE) as number,
     maxSamples: gl.getParameter(gl.MAX_SAMPLES) as number,
-    colorBufferHalfFloat: true,
+    // EXT_color_buffer_float makes the half-float formats renderable as well.
+    colorBufferHalfFloat: !!halfFloatBuffer || !!floatBuffer,
     colorBufferFloat: !!floatBuffer,
     timerQuery: !!timer,
     anisotropy: aniso ? (gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT) as number) : 1,
@@ -91,15 +109,27 @@ export function createGlBundle(canvas: HTMLCanvasElement): GlBundle | null {
 /**
  * Condenses a raw unmasked renderer string into something a person can read.
  * "ANGLE (Apple, Apple M2 Pro, OpenGL 4.1)" -> "Apple M2 Pro"
+ * "ANGLE (Intel, Intel(R) UHD Graphics 620 (0x00005917) Direct3D11 …)" -> "Intel UHD Graphics 620"
  */
 export function prettyRenderer(raw: string): string {
   if (!raw) return 'unknown GPU';
+  // ANGLE's software fallback names a Vulkan version as its device; say what it is.
+  if (/swiftshader/i.test(raw)) return 'SwiftShader (software)';
   const angle = raw.match(/^ANGLE \((.+)\)$/);
   if (angle) {
     const parts = angle[1].split(',').map((p) => p.trim());
     // ANGLE reports "vendor, device, driver" — the device is the interesting one.
     const device = parts.length >= 2 ? parts[1] : parts[0];
-    return device.replace(/\s*\(.*?\)\s*/g, '').replace(/Direct3D.*$/i, '').trim() || raw;
+    const name = device
+      .replace(/^ANGLE Metal Renderer:\s*/i, '')
+      // Parenthesised asides ("(R)", PCI ids) become spaces, not nothing, so
+      // "Intel(R) UHD" does not collapse into "IntelUHD".
+      .replace(/\s*\([^)]*\)\s*/g, ' ')
+      .replace(/[()]/g, '')
+      .replace(/Direct3D.*$/i, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return name || raw;
   }
   return raw.replace(/\s+/g, ' ').trim();
 }
