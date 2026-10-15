@@ -84,6 +84,8 @@
     "COPY_HINT": "Click to copy",
     "OPEN_HINT": "Open",
     "COMPOSE": "Compose email",
+    "COMPOSE_LABEL": "Compose email to {{email}}",
+    "COPY_LABEL": "Copy email address {{email}} to clipboard",
     "OTHER_LINKS": "You can also find me on",
     "COPIED": "Copied",
     "COPY_FAILED": "Failed to copy text.",

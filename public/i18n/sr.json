@@ -84,6 +84,8 @@
     "COPY_HINT": "Klik za kopiranje",
     "OPEN_HINT": "Otvori",
     "COMPOSE": "Napiši poruku",
+    "COMPOSE_LABEL": "Napiši poruku na adresu {{email}}",
+    "COPY_LABEL": "Kopiraj adresu {{email}}",
     "OTHER_LINKS": "Takođe sam i na",
     "COPIED": "Kopirano",
     "COPY_FAILED": "Kopiranje nije uspelo.",
