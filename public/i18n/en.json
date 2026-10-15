@@ -8,7 +8,15 @@
     "LANG": {
       "EN": "English",
       "SR": "Serbian"
-    }
+    },
+    "SECTIONS_LABEL": "Sections",
+    "MENU_TOGGLE": "Toggle navigation",
+    "DASHBOARD_OPEN": "Open dashboard",
+    "DASHBOARD_CLOSE": "Close",
+    "SWITCH_TO_EN": "Switch language to English",
+    "SWITCH_TO_SR": "Switch language to Serbian",
+    "THEME_TO_LIGHT": "Switch to light theme",
+    "THEME_TO_DARK": "Switch to dark theme"
   },
   "ABOUT": {
     "LABEL": "About/>",

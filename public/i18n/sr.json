@@ -8,7 +8,15 @@
     "LANG": {
       "EN": "Engleski",
       "SR": "Srpski"
-    }
+    },
+    "SECTIONS_LABEL": "Odeljci",
+    "MENU_TOGGLE": "Otvori ili zatvori navigaciju",
+    "DASHBOARD_OPEN": "Otvori kontrolnu tablu",
+    "DASHBOARD_CLOSE": "Zatvori",
+    "SWITCH_TO_EN": "Prebaci jezik na engleski",
+    "SWITCH_TO_SR": "Prebaci jezik na srpski",
+    "THEME_TO_LIGHT": "Prebaci na svetlu temu",
+    "THEME_TO_DARK": "Prebaci na tamnu temu"
   },
   "ABOUT": {
     "LABEL": "O meni/>",
