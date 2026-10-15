@@ -45,3 +45,9 @@ Thumbs.db
 #env
 .env
 .env.example
+
+# Cloudflare local secrets (see .dev.vars.example)
+.dev.vars
+
+# Claude Code personal settings
+.claude/settings.local.json

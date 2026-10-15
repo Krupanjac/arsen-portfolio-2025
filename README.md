@@ -1,83 +1,68 @@
-# ArsenPortfolio2025
+# krupanjac.dev
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.5.
+Portfolio of **Arsen Đurđev**, software engineer. Live at **https://krupanjac.dev**.
 
-## Development server
+An Angular 19 single-page site, prerendered and served by Cloudflare Pages. The hero is a WebGL2 raymarched terrain with a live frame-time HUD. A small Pages Functions API (D1 + KV) sits behind a private Dashboard used to edit the Projects and Experience entries. It comes in English and Serbian, with dark and light themes.
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Quick start
 
 ```bash
-ng generate component component-name
+npm ci
+npm start          # http://localhost:4200
+npm run verify     # i18n check, unit tests, production build: what CI runs
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Projects and Experience come from the API, which `ng serve` doesn't run. [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) explains the full-stack setup.
 
-```bash
-ng generate --help
-```
+## Scripts
 
-## Building
+| Script | What it does |
+|---|---|
+| `npm start` / `npm run dev` | Dev server on port 4200 |
+| `npm run build` | Production build and prerender into `dist/arsen-portfolio-2025/browser` |
+| `npm run watch` | Development build in watch mode |
+| `npm test` | Karma in watch mode (opens Chrome) |
+| `npm run test:ci` | One headless test run |
+| `npm run check:i18n` | Checks the `en`/`sr` translation catalogs against each other and against the code |
+| `npm run verify` | Everything CI runs |
+| `npm run d1:migrate` | `wrangler d1 migrations apply portfolio`; pass `-- --local` or `-- --remote` |
+| `npm run serve:ssr:arsen-portfolio-2025` | Serves the SSR build with Node/Express (local only) |
 
-To build the project run:
+## Documentation
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
+- [AGENTS.md](AGENTS.md): commands, rules and the definition of done, for anyone changing the code, human or AI
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): how the frontend, the renderer, the API, the data and the hosting fit together
+- [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md): setup, the verify loop, the local full stack, secrets, deploys and content
+- [docs/ROADMAP.md](docs/ROADMAP.md): known issues and the phased improvement plan
 
 ## Renderer
 
-The hero is a WebGL2 raymarched terrain (`src/app/gfx/`), with a live frame-time HUD that reads from the same timer that drives its dynamic resolution scaling. Below the hero, a cheaper contour-field shader runs behind the content sections; the terrain is parked once it scrolls out of view.
+The hero is a WebGL2 raymarched terrain (`src/app/gfx/`). Its live frame-time HUD reads from the same timer that drives the dynamic resolution scaling. Below the hero, a cheaper contour-field shader runs behind the content sections, and the terrain is parked once it scrolls out of view.
 
 ### Fullscreen mode
 
-The **Fullscreen renderer** control under the tech stack hides the page and leaves the renderer and HUD.
+The **Fullscreen renderer** control under the tech stack hides the page and leaves only the renderer and HUD.
 
-- Move the pointer to look around
-- `1` / `2` / `3` — pin internal resolution at 50 / 75 / 100%
-- `A` — hand resolution back to the dynamic scaler
-- Click the HUD readout to expand GPU time, p95 and fill rate
-- `Esc` — leave fullscreen
+| Input | Effect |
+|---|---|
+| Pointer | Look around |
+| `1` / `2` / `3` | Pin the internal resolution at 50 / 75 / 100 % |
+| `A` | Hand resolution back to the dynamic scaler |
+| Click the HUD readout | Expand GPU time, p95 and fill rate |
+| `Esc` | Leave fullscreen |
 
 ### Structure
 
-- `gfx/gl-context.ts` — context acquisition and capability probe
-- `gfx/shader.ts` — compile/link with the failing source line annotated
-- `gfx/frame-timer.ts` — CPU time, GPU time via `EXT_disjoint_timer_query_webgl2`, p95 over a ring buffer
-- `gfx/resolution-scaler.ts` — asymmetric dynamic resolution with cooldown
-- `gfx/render-loop.ts` — rAF driver with visibility and occlusion gating
-- `gfx/shader-surface.ts` — a full-canvas fragment pass with the above wired in
-- `gfx/shaders/` — `common.glsl.ts` (noise, fBm, ACES), `hero-terrain.frag.ts`, `contour-field.frag.ts`
+- `gfx/gl-context.ts`: context acquisition and capability probe
+- `gfx/shader.ts`: compile and link, with the failing source line annotated
+- `gfx/frame-timer.ts`: CPU time, GPU time via `EXT_disjoint_timer_query_webgl2`, p95 over a ring buffer
+- `gfx/resolution-scaler.ts`: asymmetric dynamic resolution with a cooldown
+- `gfx/render-loop.ts`: rAF driver with visibility and occlusion gating
+- `gfx/shader-surface.ts`: a full-canvas fragment pass with all of the above wired in
+- `gfx/shaders/`: `common.glsl.ts` (noise, fBm, ACES), `hero-terrain.frag.ts`, `contour-field.frag.ts`
 
-Shaders can be compiled and rendered outside the app for review; see the `hero-terrain.frag.ts` header for the cost controls.
+The `hero-terrain.frag.ts` header documents the cost controls.
 
-## Additional Resources
+## Stack
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Angular 19 · TypeScript 5.7 · WebGL2 · Tailwind CSS 4 · ngx-translate · marked + DOMPurify · Cloudflare Pages + Functions · D1 · KV · ImageKit · Turnstile
