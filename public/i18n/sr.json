@@ -212,7 +212,9 @@
     "TAGLINE": "Kreativna rešenja za digitalni svet",
     "DISCIPLINE": "Rendering u realnom vremenu / programiranje endžina",
     "LEDE": "Gradim sisteme koji izbacuju piksele na ekran — proceduralne terrain pipeline-ove, optimizaciju na GPU strani i alate koji drže frejm ispod 16.7 ms.",
-    "SCROLL_HINT": "Skroluj"
+    "SCROLL_HINT": "Skroluj",
+    "SCROLL_LABEL": "Skroluj do sadržaja",
+    "SOCIAL_LABEL": "Društvene mreže"
   },
   "LOGIN": {
     "TITLE": "Prijava",

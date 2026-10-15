@@ -212,7 +212,9 @@
     "TAGLINE": "Creative solutions for the digital world",
     "DISCIPLINE": "Real-time rendering / engine programming",
     "LEDE": "I build the systems that get pixels on screen — procedural terrain pipelines, GPU-side optimisation, and the tooling that keeps a frame inside 16.7 ms.",
-    "SCROLL_HINT": "Scroll"
+    "SCROLL_HINT": "Scroll",
+    "SCROLL_LABEL": "Scroll to content",
+    "SOCIAL_LABEL": "Social links"
   },
   "LOGIN": {
     "TITLE": "Login",

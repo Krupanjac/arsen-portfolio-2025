@@ -12,8 +12,11 @@
       <span appTerminalTyping data-i18n-key="HERO.DISCIPLINE">{{ 'HERO.DISCIPLINE' | translate }}</span>
     </p>
 
+    <!-- The visible name is split into glyph spans that the scramble rewrites,
+         so assistive tech reads a stable copy and skips the animated one. -->
     <h1 class="hero-name">
-      <span id="su_full" class="hero-name__value">
+      <span class="sr-only">Arsen Đurđev</span>
+      <span id="su_full" class="hero-name__value" aria-hidden="true">
         <span id="su">Arsen&nbsp;</span><span id="su_name">Đurđev</span>
       </span>
     </h1>
@@ -30,7 +33,7 @@
         <span>{{ 'RESUME.BUTTON' | translate }}</span>
       </button>
 
-      <div class="hero-socials" aria-label="Social links">
+      <div class="hero-socials" role="group" [attr.aria-label]="'HERO.SOCIAL_LABEL' | translate">
         <a href="https://github.com/Krupanjac" target="_blank" rel="noopener noreferrer" class="hero-social" appTooltip="TOOLTIP.GITHUB" tooltipPlacement="top">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path fill-rule="evenodd" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.38 7.86 10.9.58.1.79-.25.79-.55 0-.27-.01-1.15-.02-2.09-3.2.7-3.88-1.36-3.88-1.36-.53-1.33-1.3-1.69-1.3-1.69-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.21 1.78 1.21 1.04 1.78 2.72 1.27 3.38.97.1-.75.41-1.27.75-1.56-2.56-.29-5.26-1.28-5.26-5.72 0-1.26.45-2.3 1.2-3.11-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.19a11.1 11.1 0 0 1 2.9-.39c.98 0 1.96.13 2.88.39 2.2-1.5 3.17-1.19 3.17-1.19.63 1.58.23 2.75.11 3.04.75.81 1.19 1.85 1.19 3.11 0 4.45-2.71 5.42-5.29 5.7.42.36.8 1.08.8 2.18 0 1.58-.01 2.85-.01 3.24 0 .3.21.66.8.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" clip-rule="evenodd"/>
@@ -56,7 +59,7 @@
   <button
     type="button"
     (click)="scrollToHome()"
-    aria-label="Jump to home section"
+    [attr.aria-label]="'HERO.SCROLL_LABEL' | translate"
     class="hero-scroll"
     [class.hero-scroll--hidden]="!showIndicator"
     appTooltip="TOOLTIP.SCROLL"
