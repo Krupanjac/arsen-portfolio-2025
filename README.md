@@ -24,6 +24,8 @@ Projects and Experience come from the API, which `ng serve` doesn't run. [docs/D
 | `npm test` | Karma in watch mode (opens Chrome) |
 | `npm run test:ci` | One headless test run |
 | `npm run check:i18n` | Checks the `en`/`sr` translation catalogs against each other and against the code |
+| `npm run check:shaders` | Compiles every shader in headless WebGL2 |
+| `npm run render:shaders` / `bench:shaders` | Renders a frame of each shader to `tmp/shader-renders/`, or compares shader versions' cost |
 | `npm run verify` | Everything CI runs |
 | `npm run d1:migrate` | `wrangler d1 migrations apply portfolio`; pass `-- --local` or `-- --remote` |
 | `npm run serve:ssr:arsen-portfolio-2025` | Serves the SSR build with Node/Express (local only) |

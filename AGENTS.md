@@ -17,8 +17,11 @@ Arsen Đurđev's portfolio, **krupanjac.dev**. It's an Angular 19 single-page si
 |---|---|---|---|
 | Install | `npm ci` | ~30 s | Node 22 LTS (what CI uses); Node 24 works locally |
 | Run the site | Wonder Preview, or `npm start` | | http://localhost:4200. `ng serve` doesn't serve `/api/*`, so Projects/Experience are empty and login fails; see DEVELOPMENT.md |
-| **Verify everything** | `npm run verify` | ~1.5 min | i18n check, then unit tests, then a production build with prerender. Must pass before every PR; CI runs the same command |
+| **Verify everything** | `npm run verify` | ~1.5 min | i18n check, shader compile check, unit tests, then a production build with prerender. Must pass before every PR; CI runs the same command |
 | i18n check | `npm run check:i18n` | <1 s | Claude Code also runs it after every edit (`.claude/hooks/post-edit.mjs`) |
+| Shader check | `npm run check:shaders` | ~2 s | Compiles and links every `*.frag.ts` in real WebGL2 (headless Chrome, SwiftShader); errors point at the `.ts` line |
+| Shader renders | `npm run render:shaders` | ~3 s | One frame per shader into `tmp/shader-renders/*.png`, using the site's palette; `-- --theme both --quality 1 --time 40` |
+| Shader bench | `npm run bench:shaders` | ~15 s | Relative cost; compare versions with `-- --shaders <old dir> --shaders src/app/gfx/shaders`. SwiftShader times only compare versions with each other |
 | Unit tests | `npm run test:ci` | ~15 s | Karma, headless Chrome, single run |
 | Build | `npm run build` | ~40 s | Also prerenders every route in Node, which makes it the SSR-safety check |
 
@@ -39,7 +42,7 @@ public/i18n/{en,sr}.json     all copy; the Serbian is in Latin script
 public/                      robots.txt, sitemap.xml, _redirects, resume PDF (all served from the site root)
 functions/api/               Pages Functions: login/logout/session, posts CRUD, imagekit-auth, _middleware
 migrations/                  D1 schema, applied with wrangler d1 migrations
-scripts/                     check-i18n.mjs, gen.js (makes the bcrypt hash for an admin user)
+scripts/                     check-i18n.mjs, check-shaders.mjs (+ .page.mjs), gen.js (makes the bcrypt hash for an admin user)
 ```
 
 ## Rules the code won't tell you

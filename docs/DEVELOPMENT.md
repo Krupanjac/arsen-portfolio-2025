@@ -35,9 +35,10 @@ To see those, use a [branch preview](#deploying), or run the [full stack locally
 | Command | Runs | Catches |
 |---|---|---|
 | `npm run check:i18n` | `scripts/check-i18n.mjs` | Locale keys missing from one side, empty values, `{{param}}` mismatches, keys used in `src/` but not defined. Warns about unused keys |
+| `npm run check:shaders` | `scripts/check-shaders.mjs` in headless Chrome (SwiftShader WebGL2) | GLSL compile and link errors, reported at the `.frag.ts` line. Skips with a warning if WebGL2 is unavailable |
 | `npm run test:ci` | Karma + Jasmine, headless Chrome, single run | Broken components and services |
 | `npm run build` | Production build + prerender of every route in Node | Template type errors (`strictTemplates`), budget errors (>1 MB initial), browser APIs used on the server |
-| `npm run verify` | All three, cheapest first | Everything above. CI runs this on every PR |
+| `npm run verify` | All four, cheapest first | Everything above. CI runs this on every PR |
 
 Common failures:
 
@@ -50,6 +51,14 @@ Common failures:
 | "bundle initial exceeded maximum budget" **warning** | Expected until ROADMAP PERF-1: 733 kB against 500 kB. Only an **error** (over 1 MB) fails the build |
 
 Claude Code also runs the i18n check after every file edit (`.claude/hooks/post-edit.mjs`) and reports failures back to the agent right away.
+
+### Shader tools
+
+The shader check, renderer and bench need no running app. They compile the app's own shader strings the way `ShaderSurface` does, in headless Chrome.
+
+- `npm run render:shaders -- --theme both --quality 1 --time 40` writes one frame per shader to `tmp/shader-renders/`. Colours come from the `--gfx-*` tokens through `readPalette()`, the same path the site uses. Other flags: `--size 1280x720`, `--uniform uMouse=0.4,-0.2`, `--only hero-terrain`.
+- `npm run bench:shaders -- --shaders <copy of an older shaders/> --shaders src/app/gfx/shaders` alternates frames between versions and reports median/p90 and the % change. SwiftShader runs on the CPU, so only compare versions with each other. Bench a few `--time` values: the cost depends on what the camera sees.
+- Limits: SwiftShader won't show driver-specific bugs, and it only exercises the low cost path you ask for. Check real-GPU behaviour in the Preview.
 
 ## Full stack locally
 

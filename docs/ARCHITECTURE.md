@@ -124,8 +124,8 @@ A help overlay lists these for 3 s after the control is pressed.
 
 | Piece | Behaviour |
 |---|---|
-| `appTerminalTyping` | When the language changes, erases and retypes the element's text with a cursor. If the element has `data-i18n-key`, it reads the new translation from `TranslateService` directly, so it doesn't race the pipe. `triggerTyping(text)` is a one-shot reveal (used by About). It works through `innerHTML` |
-| `appTooltip` | Appends a fixed-position bubble to `<body>` on hover or focus and toggles it on touch. Translates its text if it looks like a key. Injects its CSS once. Sets `tabindex="0"` on its host and listens to window scroll/resize events on every instance |
+| `appTerminalTyping` | When the language changes, erases and retypes the element's text with a cursor. If the element has `data-i18n-key`, it reads the new translation from `TranslateService` directly, so it doesn't race the pipe. `triggerTyping(text)` is a one-shot reveal (used by About). It works through `innerHTML`, in the browser only: on the server its per-character timers held every render open (PERF-5) |
+| `appTooltip` | Appends a fixed-position bubble to `<body>` on hover or focus and toggles it on touch. Translates its text if it looks like a key. Injects its CSS once. Sets `tabindex="0"` on its host. Follows window scroll/resize outside Angular's zone, and only while a bubble is showing |
 | `markdown` / `markdownInline` pipes | `marked` (GFM, `breaks: true`), then DOMPurify in the browser. On the server only a regex strip runs, which is weaker, so it doesn't matter today only because posts never render on the server |
 | `safeUrl` pipe | `bypassSecurityTrustResourceUrl`. Only used for the static resume path |
 
@@ -197,7 +197,7 @@ How the frame divides the colour: warm toward the sun, cool away from it and in 
 
 **Cost and quality.** `uQuality = (renderScale − 0.45) / 0.55` sets the cost knobs:
 
-- march steps scale from 56 to 150, shadow steps from 6 to 20, and terrain detail octaves from 5 to 8;
+- march steps scale from 56 to 150, shadow steps from 6 to 20, and terrain detail octaves from 5 to 7 (plus the broad warp/crest tap, so a full-quality height query is 8 noise taps, as in the original field);
 - shadows switch off below 0.3, mist below 0.25, and clouds below 0.35.
 
 **Parking.** The terrain parks once the reader is past 1.35 viewport heights. The field runs only while the veil is visible. Parking (the caller's intent), the canvas being in view and tab visibility are separate conditions; all three must allow a frame.
@@ -292,9 +292,10 @@ The frontend type is `BlogPost` in `blog.service.ts`.
 | Gate | What it catches |
 |---|---|
 | `npm run check:i18n` | Locale parity, empty values, `{{param}}` mismatches, keys used but not defined |
+| `npm run check:shaders` | GLSL compile and link errors, in real WebGL2 (headless Chrome, SwiftShader) |
 | `npm run test:ci` | 15 Jasmine tests across 12 spec files, in headless Chrome: smoke "creates" tests plus the play-button timing test. Specs use `provideTestDeps()` |
 | `npm run build` | Template type checks (`strictTemplates`), budgets, and SSR-unsafe code (prerender runs in Node) |
-| `npm run verify` | All three, in that order. CI (`.github/workflows/ci.yml`) runs it on every PR and on pushes to `master` |
+| `npm run verify` | All four, in that order. CI (`.github/workflows/ci.yml`) runs it on every PR and on pushes to `master` |
 | Claude Code hook | `.claude/hooks/post-edit.mjs` runs the i18n check after each edit |
 
 There is no linter, formatter, e2e or visual test yet (ROADMAP DX-2, DX-7).
