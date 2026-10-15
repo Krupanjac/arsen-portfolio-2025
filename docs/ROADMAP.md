@@ -78,6 +78,7 @@ All small, independent and low-risk. Check each item against PR #8 first; some w
 | BUG-6 | Dead `/api/posts/init` path and DDL on every request | Low | S |
 | BUG-7 | Markup and dead-code cleanup | Low | S |
 | BUG-9 | The mobile menu lists sections in a different order than the page | Low | S |
+| BUG-10 | Theme selectors in component stylesheets never match | High | S |
 | SEC-1 | CORS reflects any origin, with credentials | Med | S |
 | SEC-2 | JWT signature check isn't constant-time | Med | S |
 | SEC-3 | Debug logs and leaked DB errors | Med | S |
@@ -210,6 +211,11 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
 - **Evidence:** the mobile menu lists Projects before Experience; the page and the desktop nav list Experience first (`nav.component.html`).
 - **Note:** PR #8 builds both menus from one `sections` list, which probably fixes this. Verify after merging.
 
+**BUG-10: Theme selectors in component stylesheets never match.** High · S · ✅ for the hero and the footer in PR #8
+- **Evidence:** `:root:not([data-theme='dark']) .stage__scrim` in `hero-render.component.scss` computed to the **dark** gradient in light mode. Emulated encapsulation rewrites the selector and tags the `:root` compound with the component attribute, so it never matches. The hero copy in light mode sat on a darkened column. The footer's light-mode separator had the same problem.
+- **Fix:** `:host-context(html:not([data-theme='dark'])) .x` (done for `hero-render` and `footer`). `AGENTS.md` rule 11 now says so.
+- **Remaining:** `home.component.scss` still has `:root[data-theme='dark']` rules, but they style classes no template uses any more (`.stack-group`, `.tech-item`, left over from the old tech-stack section). Delete them with BUG-7.
+
 ### Security
 
 **SEC-1: CORS reflects any origin with credentials.** Med · S
@@ -320,7 +326,7 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
   - Later, go zoneless (PLAT-1).
 
 **PERF-4: Fonts.** Low · S
-- **Evidence:** `'Open Sans'` is declared (`styles.scss:65`) but never loaded. PR #8 switches to three Google Fonts families.
+- **Evidence:** on master, `'Open Sans'` was declared but never loaded. PR #8 loads three families (Space Grotesk, IBM Plex Sans, JetBrains Mono) through a Google Fonts stylesheet: a third-party request on the critical path, and an origin the CSP (SEC-4) has to allow.
 - **Fix:** self-host them with `font-display: swap`, preload the display face, and subset to Latin plus Latin Extended (Serbian needs đ č ć š ž).
 
 ### Accessibility

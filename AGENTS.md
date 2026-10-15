@@ -26,12 +26,14 @@ Arsen Đurđev's portfolio, **krupanjac.dev**. It's an Angular 19 single-page si
 
 ```
 src/app/app.component.html   the whole page: #start #home #resume #experience #projects #about #contact, then the footer
-src/app/layout/              page chrome: nav (scroll-spy, theme, language, Dashboard modal), hero, background canvas,
-                             play button, rail, loader, footer
+src/app/layout/              page chrome: nav (scroll-spy, theme, language, Dashboard modal), hero, hero-render (the
+                             WebGL2 stage), play button (fullscreen renderer), rail, loader, footer
+src/app/gfx/                 WebGL2 engine (context, shaders, frame timer, resolution scaler, render loop), palette.ts,
+                             gpu-surface + frame-hud wrappers, shaders/*.frag.ts
 src/app/{home,experience,projects,about,contact}/   one folder per section
 src/app/shared/              appTerminalTyping, appTooltip, markdown pipes
 src/app/*.service.ts         BlogService (/api/posts), ImagekitService, PlayStateService, AuthService (unused)
-src/styles.scss              theme tokens (CSS variables), helper classes, global rules
+src/styles.scss              theme tokens (CSS variables, incl. the --gfx-* renderer palette), helper classes, global rules
 src/testing/                 provideTestDeps() for component specs
 public/i18n/{en,sr}.json     all copy; the Serbian is in Latin script
 public/                      robots.txt, sitemap.xml, _redirects, resume PDF (all served from the site root)
@@ -52,8 +54,10 @@ scripts/                     check-i18n.mjs, gen.js (makes the bcrypt hash for a
 6. **Functions run on Workers, not Node.** They're plain ES modules using Web APIs only (`crypto.subtle`, `fetch`). Protect any write with `verifyJWT` (from `functions/api/login.js`) and the helpers in `_auth.js`. Never log request bodies, tokens or secrets.
 7. **Hands off production.** Don't run `wrangler … --remote` or `wrangler pages deploy`, and don't write to production KV or D1; ask the user. `.claude/settings.json` makes Claude Code ask before any wrangler command. Preview deployments most likely share the production D1 and KV, since `wrangler.toml` has no `[env.preview]`.
 8. **Mind the bundle budget.** The initial bundle is 733 kB against a 500 kB warning (ROADMAP PERF-1). Don't add dependencies without a reason, and use `@defer` or lazy imports for anything below the fold.
-9. **Keep diffs focused.** No formatter is configured yet and PR #8 is open, so don't reformat files you aren't changing.
-10. **Respect reduced motion** in anything new that animates (`prefers-reduced-motion: reduce`).
+9. **Keep diffs focused.** No formatter is configured yet, so don't reformat files you aren't changing.
+10. **Respect reduced motion** in anything new that animates (`prefers-reduced-motion: reduce`). The renderer draws a single still frame under it.
+11. **Theme selectors in component stylesheets use `:host-context()`.** Write `:host-context(html[data-theme='dark']) .x` or `:host-context(html:not([data-theme='dark'])) .x`. A `:root[...] .x` selector inside a component's SCSS never matches, because Angular's emulated encapsulation tags the `:root` compound. That's how the hero's light-theme scrim was silently dead.
+12. **Shader colours come from the palette.** Scene colours are the `--gfx-*` tokens in `src/styles.scss`, fed in by `gfx/palette.ts`. Don't hardcode hues in GLSL. Add a token (plus its fallback in `palette.ts`), or reuse one. Uniforms a shader doesn't declare are ignored, so passing the whole palette is fine.
 
 ## Definition of done
 

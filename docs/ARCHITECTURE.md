@@ -1,6 +1,6 @@
 # Architecture
 
-How krupanjac.dev is put together, as of `master` @ `3c1e559` (October 2026). Open work that changes this picture is listed under [Pending changes](#pending-changes). Known problems are in [ROADMAP.md](ROADMAP.md); this file describes what *is*.
+How krupanjac.dev is put together (October 2026, including PR #8's WebGL2 renderer). Known problems are in [ROADMAP.md](ROADMAP.md); this file describes what *is*.
 
 - [System overview](#system-overview)
 - [Repository layout](#repository-layout)
@@ -9,7 +9,7 @@ How krupanjac.dev is put together, as of `master` @ `3c1e559` (October 2026). Op
 - [Data model](#data-model)
 - [Build, prerender and hosting](#build-prerender-and-hosting)
 - [Quality gates](#quality-gates)
-- [Pending changes](#pending-changes)
+- [History](#history)
 
 ## System overview
 
@@ -45,7 +45,8 @@ flowchart LR
 | `src/main.ts`, `src/app/app.config.ts` | Browser bootstrap: router, animations, `HttpClient` (fetch backend), ngx-translate with an HTTP loader for `/i18n/*.json` |
 | `src/main.server.ts`, `src/app/app.config.server.ts`, `src/app/app.routes.server.ts`, `src/server.ts` | Server bootstrap, used only for prerendering and local SSR. Every route is `RenderMode.Prerender` |
 | `src/app/app.component.*` | The page itself: an ordered list of `<section id>` blocks, plus overlays |
-| `src/app/layout/` | Page chrome shared across sections (nav, hero, background, rail, play button, loader, footer) |
+| `src/app/layout/` | Page chrome shared across sections (nav, hero, hero render stage, rail, play button, loader, footer) |
+| `src/app/gfx/` | The WebGL2 renderer: engine classes, two Angular wrappers, shaders and the palette (see [Renderer](#renderer)) |
 | `src/app/{home,experience,projects,about,contact}/` | One folder per page section |
 | `src/app/{admin-editor,login,blog-modal,resume-modal}/` | Dialog content: CMS editor, login form, project viewer, resume viewer |
 | `src/app/{admin,blog-list}/`, `auth.guard.ts`, `auth.service.ts` | Routed pages that never render, because there is no router outlet (see below) |
@@ -68,9 +69,9 @@ The router has no outlet: `AppComponent` renders every section directly, in this
 
 | # | Anchor | Component | Content comes from |
 |---|---|---|---|
-| 1 | `#start` | `HeroComponent`, which hosts `BackgroundComponent` (a fixed full-screen canvas behind the whole page) | i18n `HERO.*`, social links in the template |
+| 1 | `#start` | `HeroComponent`, which mounts `HeroRenderComponent`: a fixed full-viewport WebGL2 stage behind the whole page | i18n `HERO.*`, social links in the template |
 | 2 | `#home` | `HomeComponent` + `TechStackWheelComponent` | i18n `HOME.*`; tech groups are hardcoded in `tech-stack-wheel.component.ts` |
-| 3 | `#resume` | `PlayButtonComponent`. Despite the anchor name, the resume button is in the hero | — |
+| 3 | `#resume` | `PlayButtonComponent`, the **Fullscreen renderer** control. Despite the anchor name, the resume button is in the hero | — |
 | 4 | `#experience` | `WorkComponent` (selector `app-experience`, a legacy class name) | D1 posts with `category = 'experience'`, newest first |
 | 5 | `#projects` | `ProjectsComponent`, which opens `BlogModalComponent` | D1 posts with `category = 'project'` |
 | 6 | `#about` | `AboutComponent`, a terminal-style "whoami" | i18n `ABOUT.*` |
@@ -82,27 +83,29 @@ Overlays:
 - **Loader:** stays up until `window` `load`, with a 10 s fallback.
 - **Resume modal:** the PDF in an `<iframe>`, plus a download link.
 - **Dashboard modal:** lives inside `NavComponent`; shows login or the CMS editor.
-- **Play mode:** a close button shown only while playing.
+- **Fullscreen renderer:** a close button shown only in that mode.
 
-**Play mode.** `PlayStateService.isPlaying` hides the nav, every section and the footer, leaving only the hero's background canvas to play with. Controls, from `background.component.ts`:
+**Fullscreen renderer.** `PlayStateService.isPlaying` hides the nav, every section and the footer, leaving the renderer and its HUD. Controls, handled in `hero-render.component.ts`:
 
 | Input | Effect |
 |---|---|
-| `D` | Toggle gravity-drawing mode |
-| `Shift`+click (drawing mode) | Start or stop laying gravity points |
-| `S` (drawing mode) | Add 20 stars |
-| `C` | Clear gravity fields |
-| Click | Particle burst |
+| Pointer | Look around |
+| `1` / `2` / `3` | Pin the internal resolution at 50 / 75 / 100 % |
+| `A` (or `0`) | Hand resolution back to the dynamic scaler |
+| Click the HUD readout | Expand GPU time, p95 and fill rate |
+| `Esc` | Leave fullscreen |
 
-A help overlay lists these for 3 s after Play is pressed.
+A help overlay lists these for 3 s after the control is pressed.
 
 ### Components worth knowing
 
 | Component | Notes |
 |---|---|
 | `NavComponent` (`layout/nav`) | Fixed header. Scroll-spy uses an `IntersectionObserver` over every `section[id]`. Smooth scrolling is its own rAF ease that stops on wheel/touch/key input. Language toggle (en/sr) has a 1 s cooldown and is saved in `localStorage.lang`. Theme toggle sets `data-theme` on `<html>` (dark by default) and saves it in `localStorage.theme`. Hosts the Dashboard modal and checks the session with a direct `fetch('/api/session')`. Also has an unused `onLogin()` |
-| `HeroComponent` | Name "glitch": every 1 s, two letters of "Đurđev" are retyped as symbols and restored. Also social links, the resume button (emits `openResumeModal`) and a scroll indicator |
-| `BackgroundComponent` | 837-line 2D canvas: star field with O(n²) connection lines, mouse attraction, click particles, and play-mode gravity drawing. Re-reads the accent colour from CSS periodically so it follows the theme |
+| `HeroComponent` | Name scramble: every 2.6 s one glyph of "Đurđev" flips briefly. Also the discipline line, social links, the resume button (emits `openResumeModal`) and a scroll hint. Mounts the render stage |
+| `HeroRenderComponent` (`layout/hero-render`) | The stage: terrain surface, contour-field surface and frame HUD. Smooths pointer and scroll input, re-reads the palette when `data-theme` changes, parks the terrain past 1.35 viewport heights, fades into the page through the `--stage-veil` CSS variable, and owns the fullscreen keys |
+| `GpuSurfaceComponent` (`gfx/gpu-surface`) | Wraps one `ShaderSurface` on a canvas, outside Angular's zone. Emits `ready` (capabilities), `stats` (about 6 times a second) and `failed` |
+| `FrameHudComponent` (`gfx/frame-hud`) | Live frame time, FPS and a frame-history graph from the terrain surface; click to expand |
 | `TechStackWheelComponent` | Six groups on a ring (languages, frameworks, platform, tooling, AI, creative). Choosing one spawns its items as bodies in a small physics simulation driven by rAF. Labels come from `HOME.STACK.GROUPS.*.TITLE` and `HOME.STACK.ITEMS.<KEY>` |
 | `BlogModalComponent` | Project viewer: image carousel with ImageKit `srcset`, `Esc` and arrow keys, swipe, and the markdown description |
 | `AboutComponent` | Uses an `IntersectionObserver` to start a staggered `triggerTyping()` across every typing directive in the section, 120 ms apart |
@@ -141,7 +144,10 @@ A help overlay lists these for 3 s after Play is pressed.
 - **Tailwind v4** comes in through PostCSS (`.postcssrc.json`) and `@use "tailwindcss"` in `src/styles.scss`. There's no `tailwind.config`, and no `@theme` block.
 - **Theme tokens** are CSS custom properties: light values on `:root`, dark values on `:root[data-theme='dark']`. They are `--color-bg`, `--color-surface`, `--color-text`, `--color-accent`, `--color-accent-rgb` and friends.
 - **Hand-written helpers** turn tokens into classes, all with `!important`: `.text-accent`, `.text-primary`, `.text-secondary`, `.text-muted`, `.text-faint`, `.bg-surface`, `.bg-surface-alt`, `.border-base`, `.border-divider`, `.rail-separator`. Because Tailwind never sees the tokens, utilities such as `bg-accent/80`, `ring-accent` or `from-surface/70` silently produce nothing (ROADMAP BUG-1).
-- **Global rules:** `user-select: none` on `html, body`, `a { cursor: default }`, and hidden scrollbars. The `Open Sans` font family is declared but never loaded.
+- **Type:** Space Grotesk (display), IBM Plex Sans (body) and JetBrains Mono (measurements, paths) from Google Fonts, exposed as `--font-display`, `--font-body` and `--font-mono`.
+- **Renderer palette:** the `--gfx-*` tokens, also in `src/styles.scss` (see [Renderer](#renderer)).
+- **Theme rules inside component stylesheets** must use `:host-context(html[data-theme='dark'])` / `:host-context(html:not([data-theme='dark']))`. A `:root[...] .x` selector never matches there, because emulated encapsulation tags the `:root` compound with the component attribute; that's how the hero's light-theme scrim was silently dead.
+- **Global rules:** `user-select: none` on `html, body`, `a { cursor: default }`, and hidden scrollbars.
 - **Section layout:** a two-column grid, a 20 % `RailComponent` label column plus content, which collapses to a single column with a mobile label below `md`.
 
 ### Internationalisation
@@ -149,6 +155,54 @@ A help overlay lists these for 3 s after Play is pressed.
 - ngx-translate v17 with `TranslateHttpLoader` (`/i18n/{lang}.json`). Default `en`; the choice is saved in `localStorage.lang`. `<html lang>` stays `en`.
 - `public/i18n/en.json` and `sr.json` hold 153 keys each, grouped `NAV`, `HERO`, `HOME`, `ABOUT`, `CONTACT`, `PROJECTS`, `EXPERIENCE`, `PLAY`, `HELP`, `LOGIN`, `RESUME`, `TOOLTIP`, `FOOTER`. Serbian is Latin script. Section labels use a terminal motif (`Kontakt/>`, `Projekti/`).
 - `npm run check:i18n` enforces parity, non-empty values, matching `{{params}}`, and that every key used in `src/` exists. It warns about unused keys (50 today). Keys built at runtime (`HOME.STACK.ITEMS.` + key) are allowed for in `DYNAMIC_PREFIXES`.
+
+### Renderer
+
+`src/app/gfx/` is a small WebGL2 engine with no dependencies. The core classes know nothing about Angular; two thin components wrap them.
+
+| Piece | Role |
+|---|---|
+| `gl-context.ts` | Creates the WebGL2 context and probes the GPU: name, timer queries, float render targets |
+| `shader.ts` | Compiles and links, quoting the failing source line in errors. `setAll()` ignores uniforms a shader doesn't declare |
+| `fullscreen-pass.ts` | The full-screen vertex stage every surface draws with |
+| `frame-timer.ts` | CPU and GPU frame time (`EXT_disjoint_timer_query_webgl2`), with p95 and worst over a 120-frame ring |
+| `resolution-scaler.ts` | Dynamic resolution between 45 % and 100 % in 5 % steps |
+| `render-loop.ts` | The rAF driver. It runs only while the page is visible, the canvas is in view, and the caller hasn't parked it |
+| `shader-surface.ts` | One full-screen fragment pass with all of the above, plus resize handling and context-loss recovery |
+| `color.ts`, `palette.ts` | CSS colour parsing; `readPalette()` turns the `--gfx-*` tokens into linear-space uniforms |
+| `shaders/` | `common.glsl.ts` (hashes, value noise with derivatives, eroded and ridged fBm, ACES, dithering), `hero-terrain.frag.ts`, `contour-field.frag.ts` |
+
+**Two surfaces.**
+
+- **The terrain** is a raymarched, eroded heightfield. Every height query goes through one function: a broad noise tap bends the ranges and adds crest lines, then eroded fBm adds the detail. Valleys below `WATER_LEVEL` flood with a plane that mirrors the sky.
+  - Dark theme: a violet-hour dusk.
+  - Light theme: a pastel dawn.
+  - The two themes are separate lighting setups blended by `uTheme`, not one image filtered.
+- **The contour field** runs behind the content sections once the reader leaves the hero. It's a drifting survey map, eleven noise taps a pixel at a fixed 70 % scale, drawn as premultiplied ink over the CSS page background.
+
+**Palette.** All scene colour comes from these tokens in `src/styles.scss`. The shaders never hardcode a hue.
+
+| Token | Dark | Light | Drives |
+|---|---|---|---|
+| `--gfx-sky-zenith` | `#0b1233` | `#a9b6f2` | Sky overhead; cool fill on up-facing rock |
+| `--gfx-sky-horizon` | `#3b2a78` | `#ece6fb` | Horizon haze, the distance fog, the fill on vertical faces |
+| `--gfx-sky-glow` | `#f472b6` | `#f7b8d2` | Glow around the sun, cloud rims, rock rim light, relief tint in the field |
+| `--gfx-sun` | `#ffc89a` | `#fff1dc` | Sun disk and key light |
+| `--gfx-rock-low` / `-high` | `#1a2147` / `#8b7c85` | `#ada1d4` / `#f1ebe5` | Rock albedo from valley floor to ridge |
+| `--gfx-rock-strata` | `#b56f7e` | `#e9b9c9` | Sediment bands on steep faces |
+| `--gfx-mist` | `#4b3fb0` | `#f1ecfb` | Valley mist |
+| `--gfx-ink` / `-alt` | accent-alt / `#f9a8d4` | accent / `#a23b72` | Contour ink from low to high ground, in the hero and the field |
+
+How the frame divides the colour: warm toward the sun, cool away from it and in the distance. The key light is warm and the sky fill cool, so lit ridges and shadowed faces separate by hue as well as by value. `palette.ts` keeps its fallbacks in step with the tokens; change both together.
+
+**Cost and quality.** `uQuality = (renderScale − 0.45) / 0.55` sets the cost knobs:
+
+- march steps scale from 56 to 150, shadow steps from 6 to 20, and terrain detail octaves from 5 to 8;
+- shadows switch off below 0.3, mist below 0.25, and clouds below 0.35.
+
+**Parking.** The terrain parks once the reader is past 1.35 viewport heights. The field runs only while the veil is visible. Parking (the caller's intent), the canvas being in view and tab visibility are separate conditions; all three must allow a frame.
+
+**Fallback.** When WebGL2 is missing or a shader fails to compile, `.stage--fallback` paints a CSS gradient that matches the scene. The hero copy stays legible either way.
 
 ### Platform guards
 
@@ -245,20 +299,10 @@ The frontend type is `BlogPost` in `blog.service.ts`.
 
 There is no linter, formatter, e2e or visual test yet (ROADMAP DX-2, DX-7).
 
-## Pending changes
+## History
 
-**PR #8, "rendering-first rebuild"** (`wonder/Sottsass`, open since 2026-09-10, fast-forwards onto `master`). If merged, this document needs these updates:
-
-- **Removed:** `BackgroundComponent` and the star-field play mode with its D/C/S/click controls.
-- **Added:**
-  - `src/app/gfx/`: a framework-agnostic WebGL2 renderer covering context and capability probe, shader compile, frame timer with GPU timer queries, dynamic resolution scaler, render loop, and shader surface with context-loss recovery.
-  - `layout/hero-render/`: a raymarched terrain hero plus a contour-field shader behind the sections, crossfaded on scroll, with a frame-time HUD.
-  - Fullscreen renderer mode: `1`/`2`/`3` pin the resolution, `A` returns to auto, `Esc` exits.
-- **Restyled:**
-  - Fonts: Space Grotesk, IBM Plex Sans and JetBrains Mono from Google Fonts, exposed as `--font-*` tokens.
-  - A darker dark palette, a global `:focus-visible` ring and a global reduced-motion rule.
-  - Redesigned nav, home, about and contact, and designed empty states for Projects and Experience.
-- **Unchanged:** routing, `functions/`, `wrangler.toml`, the data model, and the missing `@theme` (BUG-1).
-- **i18n:** grows from 153 to 175 keys with full parity.
-
-Review notes and the merge plan are in [ROADMAP.md, Phase 1](ROADMAP.md#phase-1-land-pr-8-safely).
+- **2026-09/10, PR #8 ("rendering-first rebuild"):**
+  - Replaced the 2D star-field background and its D/C/S/click play mode with the WebGL2 renderer and the fullscreen renderer mode.
+  - Added the type system (Space Grotesk, IBM Plex Sans, JetBrains Mono), an inkier dark palette, and redesigned nav, home, about and contact, with designed empty states.
+  - Before merging, its review findings (ROADMAP Phase 1, R8-1 to R8-8) were fixed, and the scene was moved onto the `--gfx-*` palette.
+- **2026-10, PR #9:** added the agent harness (`AGENTS.md`, these docs, `npm run verify`, CI).
