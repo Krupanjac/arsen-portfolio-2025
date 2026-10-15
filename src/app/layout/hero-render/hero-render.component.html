@@ -9,7 +9,7 @@
     [targetFps]="60"
     [maxDpr]="2"
     (stats)="onStats($event)"
-    (ready)="onReady($event)"
+    (ready)="onReady($event, terrain)"
     (failed)="onFailed($event)"
   ></app-gpu-surface>
 
@@ -28,7 +28,7 @@
     [uniformProvider]="fieldUniforms"
     [targetFps]="60"
     [maxDpr]="1"
-    (ready)="onFieldReady()"
+    (ready)="onFieldReady(field)"
   ></app-gpu-surface>
 
   <app-frame-hud

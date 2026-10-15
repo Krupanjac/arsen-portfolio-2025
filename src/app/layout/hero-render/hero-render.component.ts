@@ -19,12 +19,13 @@ import { CONTOUR_FIELD_FRAGMENT } from '../../gfx/shaders/contour-field.frag';
 import { prefersReducedMotion } from '../../gfx/render-loop';
 import { PlayStateService } from '../../play-state.service';
 import { readThemeColor, srgbToLinear, type Rgb } from '../../gfx/color';
+import { readPalette, type PaletteUniforms } from '../../gfx/palette';
 import type { FrameStats, GpuCapabilities } from '../../gfx/shader-surface';
 import type { UniformValue } from '../../gfx/shader';
 
 const ACCENT_FALLBACK: Rgb = [0.55, 0.36, 0.96];
-const SKY_DARK: Rgb = [0.031, 0.039, 0.063];
-const SKY_LIGHT: Rgb = [0.62, 0.68, 0.80];
+/** Camera input under reduced motion: centred and still. */
+const STILL: [number, number] = [0, 0];
 
 /**
  * The hero background: a raymarched terrain driven by pointer and scroll,
@@ -59,7 +60,8 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
   failed = false;
 
   private accent = srgbToLinear(ACCENT_FALLBACK);
-  private sky = SKY_DARK;
+  /** --gfx-* tokens as linear uniforms; re-read on every theme switch. */
+  private palette: PaletteUniforms = readPalette(true);
   private theme = 1;
 
   // Pointer is stored as a target and chased by an exponential smoother in the
@@ -110,7 +112,7 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     this.theme = isDark ? 1 : 0;
     this.accent = srgbToLinear(readThemeColor('--color-accent', ACCENT_FALLBACK));
-    this.sky = srgbToLinear(isDark ? SKY_DARK : SKY_LIGHT);
+    this.palette = readPalette(isDark);
   }
 
   private readonly onPointerMove = (event: PointerEvent) => {
@@ -186,32 +188,40 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
     this.scroll += (this.scrollTarget - this.scroll) * k;
   }
 
+  // Under reduced motion every input that moves the camera or the map is held
+  // still, so the uniforms stop changing and the surface stops redrawing; a
+  // theme switch still changes the palette and gets one fresh frame.
   readonly fieldUniforms = (elapsed: number, delta: number): Record<string, UniformValue> => {
     this.advance(delta);
     return {
+      ...this.palette,
       uTime: this.reducedMotion ? 0 : elapsed,
-      uMouse: this.pointer,
-      uScroll: this.scrollVh,
+      uMouse: this.reducedMotion ? STILL : this.pointer,
+      uScroll: this.reducedMotion ? 0 : this.scrollVh,
       uAccent: this.accent,
       uTheme: this.theme,
     };
   };
 
-  onFieldReady(): void {
+  onFieldReady(surface: GpuSurfaceComponent): void {
     // Eleven noise taps a pixel does not need dynamic resolution; pin it at a
     // scale where the ink is soft enough to sit behind text.
-    this.field?.setQualityLock(0.7);
+    surface.setQualityLock(0.7);
+    // The scroll handler has already decided whether the field should run, but
+    // the surface did not exist yet to hear it. Without this the field ran
+    // invisibly (veil at 0) from page load until the first scroll.
+    surface.setActive(this.fieldActive);
   }
 
   readonly uniformProvider = (elapsed: number, delta: number): Record<string, UniformValue> => {
     this.advance(delta);
 
     return {
+      ...this.palette,
       uTime: this.reducedMotion ? 0 : elapsed,
-      uMouse: this.pointer,
-      uScroll: this.scroll,
+      uMouse: this.reducedMotion ? STILL : this.pointer,
+      uScroll: this.reducedMotion ? 0 : this.scroll,
       uAccent: this.accent,
-      uSky: this.sky,
       uTheme: this.theme,
       // Quality tracks the resolution scaler: when the scaler has already
       // dropped resolution the GPU is struggling, so shedding march steps too
@@ -227,9 +237,16 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  onReady(caps: GpuCapabilities): void {
+  onReady(caps: GpuCapabilities, surface: GpuSurfaceComponent): void {
     this.caps = caps;
-    this.gpuName = this.terrain?.gpuName ?? '';
+    // Read from the surface that emitted, not the @ViewChild: the surface sits
+    // inside *ngIf and emits from its own ngAfterViewInit, before this
+    // component's view query is populated — reading the query left the HUD
+    // stuck on "detecting…".
+    this.gpuName = surface.gpuName;
+    // Same reason: a page loaded below the hero has already parked the
+    // terrain in the scroll handler, before the surface existed.
+    surface.setActive(this.active);
     this.cdr.markForCheck();
   }
 

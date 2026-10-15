@@ -18,8 +18,10 @@ uniform vec2  uResolution;
 uniform float uTime;
 uniform vec2  uMouse;      // -1..1, smoothed
 uniform float uScroll;     // page scroll in viewport heights, unbounded
-uniform vec3  uAccent;     // brand accent, linear
 uniform float uTheme;      // 0 = light, 1 = dark
+uniform vec3  uInk;        // contour ink on low ground, linear (--gfx-ink)
+uniform vec3  uInkAlt;     // contour ink on high ground, linear (--gfx-ink-alt)
+uniform vec3  uGlow;       // relief tint, linear (--gfx-sky-glow)
 
 void main() {
   vec2 frag = vUv * uResolution;
@@ -60,11 +62,13 @@ void main() {
   // ink. Dark theme only — on white it just looks like a stain.
   float relief = smoothstep(0.38, 0.78, h) * 0.075 * uTheme;
 
-  vec3 accent = linearToSRGB(uAccent);
-  vec3 inkDark  = mix(vec3(0.62, 0.65, 0.76), accent, 0.62);
-  vec3 inkLight = mix(vec3(0.22, 0.24, 0.32), accent, 0.45);
-  vec3 ink = mix(inkLight, inkDark, uTheme);
-  vec3 reliefCol = mix(vec3(1.0), accent, 0.35);
+  // Hypsometric ink: the level sets shift from the accent on low ground to the
+  // rose on high ground, the way a relief map tints by elevation. Pulled a
+  // fifth of the way to a neutral so the map stays behind the copy.
+  vec3 ink = mix(linearToSRGB(uInk), linearToSRGB(uInkAlt), smoothstep(0.32, 0.72, h));
+  vec3 neutral = mix(vec3(0.22, 0.24, 0.32), vec3(0.62, 0.65, 0.76), uTheme);
+  ink = mix(neutral, ink, 0.8);
+  vec3 reliefCol = mix(vec3(1.0), linearToSRGB(uGlow), 0.45);
 
   float aLine   = line * mask * mix(0.19, 0.21, uTheme);
   float aRelief = relief * mask;

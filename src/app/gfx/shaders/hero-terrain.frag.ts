@@ -6,19 +6,26 @@
  * (LOD, silhouette cost, fog as a horizon budget) rather than an abstract
  * gradient that happens to run on the GPU.
  *
- * Two lighting conditions, selected by uTheme and blended with mix() rather
- * than branched: dusk for the dark theme, overcast noon for the light one.
+ * Every colour comes from the --gfx-* tokens in src/styles.scss (via
+ * gfx/palette.ts), so the scene and the page share one palette. Two lighting
+ * conditions, selected by uTheme and blended with mix() rather than branched:
+ * a violet-hour dusk for the dark theme, a pastel dawn for the light one.
  * They are separate scenes, not one scene with a filter over it — the first
  * attempt post-processed the dusk render toward white for light mode and the
  * result was a flat grey field with no terrain left in it.
  *
+ * Where the colour comes from, most to least: the sky's azimuth gradient
+ * (warm toward the sun, cool away), the water that mirrors it, the warm key
+ * against the cool sky fill, then the strata and the contour ink.
+ *
  * Cost control, in order of how much it matters:
  *   - Step count and octave count both scale off uQuality, which the dynamic
  *     resolution scaler drives.
- *   - The height function used by the shadow and fog marches is a 3-octave
- *     stand-in, not the full field. Shadows do not need the detail and the
- *     silhouette they cast is identical at this scale.
- *   - Sky is evaluated analytically, never marched.
+ *   - The height function used by the shadow, mist and shoreline queries is a
+ *     3-octave stand-in, not the full field. Shadows do not need the detail
+ *     and the silhouette they cast is identical at this scale.
+ *   - Sky is evaluated analytically, never marched; reflections and fog reuse
+ *     it without the cloud deck.
  *   - uTheme is a uniform, so every mix() against it is scalar-uniform and the
  *     wave never diverges.
  */
@@ -30,29 +37,59 @@ uniform vec2  uResolution;
 uniform float uTime;
 uniform vec2  uMouse;      // -1..1, already smoothed on the CPU
 uniform float uScroll;     // 0..1 through the hero
-uniform vec3  uAccent;     // brand accent, linear space
-uniform vec3  uSky;        // zenith base, linear space
 uniform float uQuality;    // 0..1
-uniform float uTheme;      // 0 = light/overcast, 1 = dark/dusk
+uniform float uTheme;      // 0 = light/dawn, 1 = dark/dusk
+
+// Palette, linear space, from the --gfx-* tokens (gfx/palette.ts).
+uniform vec3 uZenith;      // sky overhead
+uniform vec3 uHorizon;     // horizon haze away from the sun
+uniform vec3 uGlow;        // horizon glow toward the sun; rim and bounce light
+uniform vec3 uSun;         // sun disk and key light
+uniform vec3 uRockLow;     // valley rock
+uniform vec3 uRockHigh;    // ridge rock
+uniform vec3 uStrata;      // sediment bands on the steep faces
+uniform vec3 uMist;        // valley mist
+uniform vec3 uInk;         // contour lines, low ground
+uniform vec3 uInkAlt;      // contour lines, high ground
 
 // ------------------------------------------------------------- the field ---
 
 const float TERRAIN_SCALE  = 0.055;
 const float TERRAIN_HEIGHT = 13.0;
+// Floods the lowest valleys. High enough to catch a lake in most frames, low
+// enough that the ridges the scene is about stay dry.
+const float WATER_LEVEL    = 3.0;
 
+// Every height query goes through here so the camera, the march and the
+// shadows agree on one silhouette; only the octave count differs.
+float terrainHeight(vec2 p, int octaves) {
+  vec2 q = p * TERRAIN_SCALE;
+  // One broad tap does two jobs. Its gradient bends the ranges — a cheap domain
+  // warp, so ridgelines curve like geology instead of following the noise
+  // lattice — and the level set through its midpoint becomes a crest line,
+  // which gives the far silhouettes the sharp ridges eroded fBm alone lacks.
+  vec3 w = noised(q * 0.31 + vec2(4.7, -1.9));
+  q += w.yz * 0.22;
+  float crest = 1.0 - abs(w.x * 2.0 - 1.0);
+  return (fbmEroded(q, octaves) + crest * crest * 0.24) * TERRAIN_HEIGHT;
+}
+
+// Octaves follow the quality the resolution scaler drives: 5 when it is
+// struggling, 8 when there is headroom. The march evaluates this up to 150
+// times a pixel, so octaves are the biggest lever after the step count.
 float terrainDetail(vec2 p) {
-  return fbmEroded(p * TERRAIN_SCALE, 8) * TERRAIN_HEIGHT;
+  return terrainHeight(p, int(mix(5.0, 8.0, uQuality) + 0.5));
 }
 
-// Used for camera placement only, where the extra octaves buy nothing.
+// Camera placement only, where the extra octaves buy nothing.
 float terrainMedium(vec2 p) {
-  return fbmEroded(p * TERRAIN_SCALE, 6) * TERRAIN_HEIGHT;
+  return terrainHeight(p, 6);
 }
 
-// Coarse stand-in for shadow and fog marches — same silhouette, a third of
-// the taps. Anything finer is invisible once it is a shadow.
+// Coarse stand-in for shadow, mist and shoreline queries — same silhouette, a
+// third of the taps. Anything finer is invisible once it is a shadow.
 float terrainCoarse(vec2 p) {
-  return fbmEroded(p * TERRAIN_SCALE, 3) * TERRAIN_HEIGHT;
+  return terrainHeight(p, 3);
 }
 
 // -------------------------------------------------------------- marching ---
@@ -109,29 +146,48 @@ float terrainShadow(vec3 ro, vec3 rd, int steps) {
 
 // ------------------------------------------------------------------- sky ---
 
+// Dusk stars: one jittered point per cell of a grid projected onto the dome.
+// Only a few percent of cells hold one, so it reads as a sky, not a texture.
+float stars(vec3 rd) {
+  if (rd.y < 0.06) return 0.0;
+  vec2 g = rd.xz / (rd.y + 0.6) * 70.0;
+  vec2 id = floor(g);
+  float h = hash21(id);
+  if (h < 0.965) return 0.0;
+  vec2 c = hash22(id) * 0.7 + 0.15;
+  float d = length(fract(g) - c);
+  float twinkle = 0.7 + 0.3 * sin(uTime * (1.3 + h * 2.7) + h * 40.0);
+  return smoothstep(0.13, 0.0, d) * twinkle * smoothstep(0.06, 0.45, rd.y)
+       * (h - 0.965) / 0.035;
+}
+
 vec3 skyColor(vec3 rd, vec3 sunDir, float quality, float night) {
   float h = rd.y;
-
-  vec3 zenith = uSky + mix(vec3(0.020, 0.030, 0.052), vec3(0.010, 0.017, 0.040), night);
-
-  // The horizon band is where the accent belongs — it is the one place a
-  // saturated colour is doing a job (scattering near the sun) rather than
-  // tinting the whole dome.
-  vec3 horizonDusk     = mix(vec3(0.042, 0.050, 0.078), uAccent * 0.62, 0.30);
-  vec3 horizonOvercast = mix(vec3(0.72, 0.745, 0.80), uAccent * 3.2, 0.20);
-  vec3 horizon = mix(horizonOvercast, horizonDusk, night);
-
-  // 0.85 keeps the band low. At 0.42 the accent reached halfway up the frame
-  // and stopped reading as atmosphere.
-  vec3 col = mix(horizon, zenith, pow(saturate(h * 1.05 + 0.02), 0.85));
-
-  // Dusk gets a hard accent-coloured sun; overcast gets a soft warm one behind
-  // cloud, which is why its disk term is a third of the intensity.
-  vec3 sunTint = mix(vec3(1.0, 0.965, 0.90), uAccent, night);
   float sd = saturate(dot(rd, sunDir));
-  col += sunTint * pow(sd, 1400.0) * mix(8.0, 26.0, night);   // disk
-  col += sunTint * pow(sd, 48.0)   * mix(0.30, 0.55, night);  // inner bloom
-  col += sunTint * pow(sd, 6.0)    * mix(0.030, 0.040, night); // wide scatter
+
+  // Base dome: violet haze at the horizon to indigo overhead. 0.55 keeps the
+  // haze low; closer to 1 it climbed halfway up the frame.
+  vec3 col = mix(uHorizon, uZenith, pow(saturate(h * 1.05 + 0.02), 0.55));
+
+  // The glow is its own term, confined to the sun's corner of the sky. Blended
+  // into the horizon colour instead, it covered the whole view — the camera
+  // faces the sun — and the frame went one magenta. Fading it with altitude
+  // keeps it a band, not a spotlight.
+  float near = pow(sd, 10.0) * (1.0 - smoothstep(-0.05, 0.4, h));
+  col = mix(col, uGlow, saturate(near * mix(0.7, 0.95, night)));
+
+  // The horizon line itself warms toward the sun's azimuth — the last light.
+  vec2 dirH = rd.xz / max(length(rd.xz), 1e-4);
+  vec2 sunH = sunDir.xz / max(length(sunDir.xz), 1e-4);
+  float toward = pow(dot(dirH, sunH) * 0.5 + 0.5, 12.0);
+  col += uGlow * exp(-abs(h) * 24.0) * toward * mix(0.10, 0.30, night);
+  vec3 horizon = mix(uHorizon, uGlow, toward * 0.35);
+
+  col += vec3(0.95, 0.92, 1.0) * stars(rd) * night * step(0.01, quality);
+
+  col += uSun * pow(sd, 1400.0) * mix(5.0, 12.0, night);                  // disk
+  col += mix(uSun, uGlow, 0.45) * pow(sd, 64.0) * mix(0.25, 0.45, night); // inner bloom
+  col += uGlow * pow(sd, 6.0) * mix(0.04, 0.08, night);                   // wide scatter
 
   // Cloud deck, projected onto a plane rather than marched. Only worth the
   // taps when the ray is actually heading upward.
@@ -140,9 +196,12 @@ vec3 skyColor(vec3 rd, vec3 sunDir, float quality, float night) {
     cp += uTime * 0.012;
     float d = fbm(cp, 5);
     float cover = smoothstep(0.44, 0.78, d) * smoothstep(0.0, 0.22, h);
-    vec3 litDusk     = mix(vec3(0.05, 0.062, 0.092), uAccent * 1.05, saturate(sd * 0.7 + 0.1));
-    vec3 litOvercast = mix(vec3(0.66, 0.68, 0.73), vec3(0.95, 0.94, 0.92), saturate(sd * 0.7 + 0.1));
-    col = mix(col, mix(litOvercast, litDusk, night), cover * mix(0.5, 0.34, night));
+    // Lit edges take the glow and the sun, shaded bellies the zenith: rose
+    // rims on indigo cloud at dusk, blush on periwinkle at dawn.
+    float lit = saturate(sd * 0.75 + 0.12 + (d - 0.6) * 0.9);
+    vec3 shade = mix(uZenith, uHorizon, 0.35) * mix(0.95, 1.5, night);
+    vec3 rim   = mix(uGlow, uSun, 0.35) * mix(1.0, 1.15, night);
+    col = mix(col, mix(shade, rim, lit), cover * mix(0.55, 0.45, night));
   }
 
   // Below the horizon the sky is only ever seen through fog, so flatten it.
@@ -152,24 +211,23 @@ vec3 skyColor(vec3 rd, vec3 sunDir, float quality, float night) {
 
 // ------------------------------------------------------------- materials ---
 
-vec3 terrainAlbedo(vec3 p, vec3 n, float night) {
+vec3 terrainAlbedo(vec3 p, vec3 n, float alt, float night) {
   float slope = 1.0 - n.y;
-  float alt = saturate((p.y + 1.0) / TERRAIN_HEIGHT);
 
-  // Wet slate at dusk; dry chalk and limestone under overcast. The light
-  // scene needs genuinely high-albedo rock — dark rock under a bright sky
-  // reads as a silhouette and swallows any text placed over it.
-  vec3 slate = mix(vec3(0.600, 0.600, 0.585), vec3(0.074, 0.081, 0.098), night);
-  vec3 scree = mix(vec3(0.700, 0.685, 0.660), vec3(0.115, 0.110, 0.106), night);
-  vec3 dust  = mix(vec3(0.800, 0.785, 0.755), vec3(0.185, 0.174, 0.163), night);
+  // Cool in the valleys, warm on the ridges — the same split as the lighting,
+  // so the material and the light agree about where the colour goes.
+  vec3 col = mix(uRockLow, uRockHigh, smoothstep(0.05, 0.9, alt));
 
-  // Rock where it is steep, sediment where it is flat.
-  vec3 col = mix(slate, scree, smoothstep(0.15, 0.55, slope));
+  // Sediment strata on the steep faces, warped so the bands meander along the
+  // relief instead of slicing it at constant height like the contours do.
+  float band = p.y * 0.85 + noise(p.xz * 0.19) * 1.7;
+  float strata = smoothstep(0.25, 0.75, abs(fract(band) * 2.0 - 1.0));
+  // Half strength at dawn: pastel bands on pale rock read as stripes, not rock.
+  col = mix(col, uStrata, strata * smoothstep(0.18, 0.55, slope) * mix(0.3, 0.6, night));
 
-  // Sediment settles on shallow slopes at low altitude — inverted from a snow
-  // line, because the interesting silhouettes here are the ridges, not the caps.
-  float settle = smoothstep(0.55, 0.9, n.y) * (1.0 - smoothstep(0.25, 0.7, alt));
-  col = mix(col, dust, settle * 0.65);
+  // Flats collect sediment, paler than the rock around them.
+  float settle = smoothstep(0.6, 0.92, n.y) * (1.0 - smoothstep(0.3, 0.8, alt));
+  col = mix(col, mix(uRockLow, uRockHigh, 0.6), settle * 0.5);
 
   // Fine grain so the flats are not a flat fill under a moving camera.
   col *= 0.85 + 0.3 * noise(p.xz * 2.3);
@@ -206,6 +264,18 @@ float contourLines(vec3 p, vec3 n, float t) {
   return line * (1.0 - smoothstep(26.0, 62.0, t));
 }
 
+// Height fog with in-scattering toward the sun. exp2 in the height term so
+// valleys fill and ridges stay clear. The haze is the cool half of the palette
+// and the glow only scatters into it along the sun's line: cool distance, warm
+// sun, which is what gives the frame depth in colour as well as in value.
+vec3 applyFog(vec3 col, vec3 rd, vec3 sunDir, float t, float y, float night) {
+  float density = mix(0.010, 0.011, night);
+  float amount = 1.0 - exp(-t * density * exp2(-(y + 2.0) * 0.16));
+  vec3 haze = mix(uHorizon, uZenith, 0.3) * mix(0.95, 1.3, night);
+  vec3 fogCol = haze + uGlow * pow(saturate(dot(rd, sunDir)), 10.0) * mix(0.3, 0.6, night);
+  return mix(col, fogCol, saturate(amount));
+}
+
 // ------------------------------------------------------------------ main ---
 
 void main() {
@@ -238,90 +308,110 @@ void main() {
 
   vec3 sunDir = normalize(vec3(-0.42, 0.085 + uScroll * 0.05, 0.9));
 
-  // Key light. At dusk it is warm and near-white with the accent as a tint —
-  // an accent-coloured key made every lit surface the same hue as the sky and
-  // erased the material. Under overcast it is neutral and much softer.
-  vec3 sunColDusk     = mix(vec3(1.0, 0.74, 0.52), uAccent, 0.42) * 3.1;
-  vec3 sunColOvercast = vec3(1.0, 0.975, 0.935) * 1.9;
-  vec3 sunCol = mix(sunColOvercast, sunColDusk, night);
+  // Key light: the warm note in a cool palette. At dusk it is strong and low;
+  // at dawn it is softer and the sky does more of the work.
+  // Dawn stays well under the tonemapper's shoulder: brighter, and ACES bleaches
+  // the pastels to white.
+  vec3 sunCol = uSun * mix(1.35, 3.2, night);
 
   float tmax = 165.0;
   float t = marchTerrain(ro, rd, tmax, marchSteps);
 
+  // The water plane wins wherever the ray reaches it before the rock.
+  float tw = rd.y < -1e-4 ? (WATER_LEVEL - ro.y) / rd.y : -1.0;
+  bool water = tw > 0.0 && tw < tmax && (t < 0.0 || tw < t);
+
   vec3 col;
-  if (t < 0.0) {
+  if (water) {
+    vec3 wp = ro + rd * tw;
+    // Ripples from the derivative of one noise tap: a normal for free.
+    vec3 rn = noised(wp.xz * 1.3 + vec2(uTime * 0.21, uTime * 0.13));
+    vec3 wn = normalize(vec3(-rn.y * 0.035, 1.0, -rn.z * 0.035));
+    vec3 refl = reflect(rd, wn);
+    refl.y = abs(refl.y);
+
+    // It mirrors the sky, glow and all, which puts the palette into the lower
+    // half of the frame where the rock is darkest.
+    float fr = fresnel(saturate(dot(wn, -rd)), 0.02);
+    vec3 mirrored = skyColor(refl, sunDir, 0.0, night);
+    float depth = saturate((WATER_LEVEL - terrainCoarse(wp.xz)) * 0.6);
+    vec3 body = mix(mix(uRockLow, uMist, 0.25), uRockLow * 0.3, depth);
+    col = mix(body, mirrored, fr * 0.85 + 0.15);
+    col += uSun * pow(saturate(dot(refl, sunDir)), 220.0) * mix(1.5, 5.0, night);
+
+    // A pale shoreline where the bed comes up to meet the surface.
+    float shore = 1.0 - smoothstep(0.0, 0.1, depth);
+    col = mix(col, mix(uRockHigh, uGlow, 0.35) * mix(0.9, 0.6, night), shore * 0.4);
+
+    col = applyFog(col, rd, sunDir, tw, WATER_LEVEL, night);
+  } else if (t < 0.0) {
     col = skyColor(rd, sunDir, uQuality, night);
   } else {
     vec3 p = ro + rd * t;
     vec3 n = terrainNormal(p, t);
-    vec3 albedo = terrainAlbedo(p, n, night);
+    float alt = saturate((p.y - WATER_LEVEL) / (TERRAIN_HEIGHT * 0.75));
+    vec3 albedo = terrainAlbedo(p, n, alt, night);
 
     float shadow = doShadows ? terrainShadow(p + n * 0.06, sunDir, shadowSteps) : 1.0;
-    // Overcast means diffuse: the sun is behind cloud, so shadows are present
-    // but shallow rather than absent.
+    // Dawn means diffuse: low cloud, so shadows are present but shallow
+    // rather than absent.
     shadow = mix(mix(shadow, 1.0, 0.55), shadow, night);
 
     // Key, wrapped a little (the +0.12 / 1.12) so the terminator is not a hard
-    // line on a surface this rough. Overcast wraps much further.
+    // line on a surface this rough. Dawn wraps much further.
     float wrap = mix(0.55, 0.12, night);
     float ndl = saturate((dot(n, sunDir) + wrap) / (1.0 + wrap));
     vec3 diffuse = sunCol * ndl * shadow;
 
-    // Hemispheric fill. Scaled off constants rather than uSky, which is close
-    // to black in linear at dusk and would leave the shadow side with nothing.
-    vec3 fillDusk = mix(uAccent * 0.10 + vec3(0.012), vec3(0.055, 0.068, 0.095),
-                        saturate(n.y * 0.5 + 0.5)) * 2.6;
-    vec3 fillOvercast = mix(vec3(0.150, 0.158, 0.175), vec3(0.400, 0.445, 0.545),
-                            saturate(n.y * 0.5 + 0.5));
-    vec3 ambient = mix(fillOvercast, fillDusk, night);
+    // Sky fill: the dome's own colours, cool from overhead and from the haze
+    // side. Scaled well up at dusk, where the palette is near black in linear
+    // and would otherwise leave the shadow side with nothing.
+    vec3 skyFill = mix(uHorizon * 1.3, mix(uZenith, uHorizon, 0.5),
+                       saturate(n.y * 0.5 + 0.5));
+    vec3 ambient = skyFill * mix(0.42, 2.6, night) + vec3(0.004);
 
-    // Single bounce off the ground plane, backfilling the shadow side.
+    // Single bounce off the glowing ground, backfilling the shadow side.
     float bounceTerm = saturate(-dot(n, sunDir) * 0.5 + 0.5) * saturate(1.0 - n.y);
-    vec3 bounce = uAccent * mix(0.02, 0.06, night) * bounceTerm;
+    vec3 bounce = uGlow * mix(0.02, 0.07, night) * bounceTerm;
 
     col = albedo * (diffuse + ambient + bounce);
 
-    // Grazing-angle sheen. Damp slate is never fully matte and the rim is what
-    // separates one ridge from the next when they overlap. Dry chalk is, so
-    // the light scene gets almost none.
+    // Grazing-angle sheen in the glow colour. It is what separates one ridge
+    // from the next where they overlap, and a rose rim on violet rock is the
+    // scene's signature.
     float rim = fresnel(saturate(dot(n, -rd)), 0.035);
-    col += sunCol * rim * shadow * mix(0.03, 0.13, night)
+    col += mix(uGlow, uSun, 0.3) * rim * shadow * mix(0.04, 0.22, night)
          * saturate(dot(n, sunDir) * 0.5 + 0.5);
 
-    // Contours are additive at dusk (the accent is bright against dark rock)
-    // and subtractive under overcast (the accent is dark against pale rock).
-    // Adding in both directions would make them invisible in the light theme.
+    // Contour ink shifts with elevation, the way a relief map tints by height.
+    // Additive at dusk (bright ink on dark rock), subtractive at dawn (dark ink
+    // on pale rock) — adding in both directions makes them vanish in daylight.
     float c = contourLines(p, n, t);
-    vec3 lineAdditive   = col + uAccent * c * 0.85;
-    vec3 lineSubtactive = mix(col, uAccent * 2.4, c * 0.55);
-    col = mix(lineSubtactive, lineAdditive, night);
+    vec3 ink = mix(uInk, uInkAlt, smoothstep(0.35, 0.85, alt));
+    vec3 lineAdditive    = col + ink * c * 0.25;
+    vec3 lineSubtractive = mix(col, ink * 0.9, c * 0.4);
+    col = mix(lineSubtractive, lineAdditive, night);
 
-    // Height fog with in-scattering toward the sun. exp2 in the height term so
-    // valleys fill and ridges stay clear. Overcast is much hazier.
-    float fogDensity = mix(0.021, 0.011, night);
-    float fogAmount = 1.0 - exp(-t * fogDensity * exp2(-(p.y + 2.0) * 0.16));
-    vec3 fogCol = skyColor(rd, sunDir, 0.0, night);
-    fogCol += uAccent * pow(saturate(dot(rd, sunDir)), 6.0) * mix(0.2, 0.5, night);
-    col = mix(col, fogCol, saturate(fogAmount));
+    col = applyFog(col, rd, sunDir, t, p.y, night);
   }
 
   // Ground mist: a thin band riding just above the valley floors, sampled
   // along the ray rather than at the hit point so it reads as volume.
   if (uQuality > 0.25) {
-    float mistT = min(t < 0.0 ? 110.0 : t, 110.0);
+    float hitT = water ? tw : t;
+    float mistT = min(hitT < 0.0 ? 110.0 : hitT, 110.0);
     vec3 mp = ro + rd * mistT * 0.55;
-    float band = exp(-abs(mp.y - terrainCoarse(mp.xz) - 1.1) * 0.75);
+    float band = exp(-abs(mp.y - max(terrainCoarse(mp.xz), WATER_LEVEL) - 1.1) * 0.75);
     float turb = fbm(mp.xz * 0.09 + vec2(uTime * 0.05, 0.0), 4);
     float mist = saturate(band * turb * 1.5) * saturate(mistT / 40.0);
-    vec3 mistDusk     = mix(uSky * 5.0, uAccent * 1.2, 0.35);
-    vec3 mistOvercast = vec3(0.78, 0.80, 0.85);
-    col = mix(col, mix(mistOvercast, mistDusk, night), mist * mix(0.5, 0.35, night));
+    vec3 mistCol = uMist * mix(0.95, 1.4, night);
+    col = mix(col, mistCol, mist * mix(0.25, 0.3, night));
   }
 
   // -- post ---------------------------------------------------------------
 
   // Exposure, then ACES. The other order crushes the sun disk.
-  col *= mix(0.72, 0.82, night);
+  col *= mix(0.62, 1.0, night);
   col = tonemapACES(col);
 
   // Vignette. Kept mild — this sits behind live text.

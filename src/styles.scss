@@ -32,6 +32,22 @@
   --color-terminal-directive: #000000; /* typing cursor (light theme): black */
   --color-terminal-line: #003300;
   --glow-accent: 0 0 10px rgba(var(--color-accent-rgb)/0.55), 0 0 22px rgba(var(--color-accent-rgb)/0.3);
+
+  /* Renderer palette (gfx/palette.ts reads these into the shaders, so the
+     hero and the page share one source of colour). Built around the accent:
+     analogous violets and roses, with one warm note for the sun. Light theme
+     is a pastel dawn — high-albedo rock under a pale sky, because dark rock
+     against a bright sky reads as a silhouette and swallows the hero copy. */
+  --gfx-sky-zenith: #a9b6f2;
+  --gfx-sky-horizon: #ece6fb;
+  --gfx-sky-glow: #f7b8d2;
+  --gfx-sun: #fff1dc;
+  --gfx-rock-low: #ada1d4;
+  --gfx-rock-high: #f1ebe5;
+  --gfx-rock-strata: #e9b9c9;
+  --gfx-mist: #f1ecfb;
+  --gfx-ink: var(--color-accent);
+  --gfx-ink-alt: #a23b72;
 }
 
 :root[data-theme='dark'] {
@@ -54,6 +70,20 @@
   --glow-accent: 0 0 10px rgba(var(--color-accent-rgb)/0.6), 0 0 24px rgba(var(--color-accent-rgb)/0.35);
   /* Terminal-typing: white text in dark mode */
   --color-terminal-directive: #ffffff;
+
+  /* Renderer palette, dark: the violet hour. Indigo overhead, violet haze at
+     the horizon, a rose glow only toward a peach sun; blue valleys, warm
+     ridges. The hue spread is what keeps it colourful rather than purple. */
+  --gfx-sky-zenith: #0b1233;
+  --gfx-sky-horizon: #3b2a78;
+  --gfx-sky-glow: #f472b6;
+  --gfx-sun: #ffc89a;
+  --gfx-rock-low: #1a2147;
+  --gfx-rock-high: #8b7c85;
+  --gfx-rock-strata: #b56f7e;
+  --gfx-mist: #4b3fb0;
+  --gfx-ink: var(--color-accent-alt);
+  --gfx-ink-alt: #f9a8d4;
 }
 
 /* Global resets and custom styles */
