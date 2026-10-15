@@ -156,3 +156,88 @@ export class ShaderProgram {
     this.locations.clear();
   }
 }
+
+/**
+ * Differences below this (relative above 1) are not worth a frame: far under
+ * one 8-bit colour step, or a tenth of a pixel of a 1000px viewport.
+ */
+const UNIFORM_EPSILON = 1e-4;
+
+function near(a: number, b: number): boolean {
+  if (a === b) return true;
+  // NaN on both sides counts as unchanged; otherwise it would redraw forever.
+  if (a !== a && b !== b) return true;
+  return Math.abs(a - b) <= UNIFORM_EPSILON * Math.max(1, Math.abs(a), Math.abs(b));
+}
+
+function asNumbers(value: UniformValue): ArrayLike<number> | null {
+  return Array.isArray(value) || ArrayBuffer.isView(value) ? (value as ArrayLike<number>) : null;
+}
+
+/**
+ * The uniform values of the last frame drawn, for on-demand rendering: a frame
+ * whose provider returns what is already on screen can be skipped.
+ *
+ * Values are copied, not referenced. Providers commonly mutate one array in
+ * place from frame to frame, and a stored reference would always compare
+ * equal to itself. Numbers and number arrays compare element-wise within
+ * UNIFORM_EPSILON, so an exponential smoother's endless last-digit tail does
+ * not keep the GPU awake; textures compare by identity.
+ */
+export class UniformSnapshot {
+  private readonly values = new Map<string, number | Float64Array | UniformValue>();
+  private captured = false;
+
+  /** True when `uniforms` would draw the same frame as the captured one. */
+  matches(uniforms: Record<string, UniformValue>): boolean {
+    if (!this.captured) return false;
+    let count = 0;
+    for (const key in uniforms) {
+      count++;
+      if (!this.values.has(key)) return false;
+      const previous = this.values.get(key);
+      const next = uniforms[key];
+      if (typeof next === 'number') {
+        if (typeof previous !== 'number' || !near(previous, next)) return false;
+        continue;
+      }
+      const numbers = asNumbers(next);
+      if (numbers) {
+        if (!(previous instanceof Float64Array) || previous.length !== numbers.length) return false;
+        for (let i = 0; i < numbers.length; i++) {
+          if (!near(previous[i], numbers[i])) return false;
+        }
+        continue;
+      }
+      if (previous !== next) return false;
+    }
+    return count === this.values.size;
+  }
+
+  capture(uniforms: Record<string, UniformValue>): void {
+    for (const key of Array.from(this.values.keys())) {
+      if (!(key in uniforms)) this.values.delete(key);
+    }
+    for (const key in uniforms) {
+      const value = uniforms[key];
+      const numbers = typeof value === 'number' ? null : asNumbers(value);
+      if (!numbers) {
+        this.values.set(key, value);
+        continue;
+      }
+      const previous = this.values.get(key);
+      const copy =
+        previous instanceof Float64Array && previous.length === numbers.length
+          ? previous
+          : new Float64Array(numbers.length);
+      copy.set(numbers);
+      this.values.set(key, copy);
+    }
+    this.captured = true;
+  }
+
+  clear(): void {
+    this.values.clear();
+    this.captured = false;
+  }
+}
