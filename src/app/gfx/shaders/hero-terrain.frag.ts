@@ -20,7 +20,8 @@
  *
  * Cost control, in order of how much it matters:
  *   - Step count and octave count both scale off uQuality, which the dynamic
- *     resolution scaler drives.
+ *     resolution scaler drives. At full quality a height query costs 8 noise
+ *     taps (7 octaves plus the warp/crest tap), the same as the original field.
  *   - The height function used by the shadow, mist and shoreline queries is a
  *     3-octave stand-in, not the full field. Shadows do not need the detail
  *     and the silhouette they cast is identical at this scale.
@@ -75,10 +76,13 @@ float terrainHeight(vec2 p, int octaves) {
 }
 
 // Octaves follow the quality the resolution scaler drives: 5 when it is
-// struggling, 8 when there is headroom. The march evaluates this up to 150
-// times a pixel, so octaves are the biggest lever after the step count.
+// struggling, 7 when there is headroom. The march evaluates this up to 150
+// times a pixel, so octaves are the biggest lever after the step count. The
+// ceiling is 7, not 8, to pay for the warp/crest tap: an eighth octave is
+// ~0.05 units of relief, sub-pixel past the foreground, and with it the open
+// vistas benched 15% over the original field.
 float terrainDetail(vec2 p) {
-  return terrainHeight(p, int(mix(5.0, 8.0, uQuality) + 0.5));
+  return terrainHeight(p, int(mix(5.0, 7.0, uQuality) + 0.5));
 }
 
 // Camera placement only, where the extra octaves buy nothing.
@@ -183,7 +187,9 @@ vec3 skyColor(vec3 rd, vec3 sunDir, float quality, float night) {
   col += uGlow * exp(-abs(h) * 24.0) * toward * mix(0.10, 0.30, night);
   vec3 horizon = mix(uHorizon, uGlow, toward * 0.35);
 
-  col += vec3(0.95, 0.92, 1.0) * stars(rd) * night * step(0.01, quality);
+  // Fog and reflections look up the sky at quality 0 and never show stars;
+  // skipping them there skips the hashing too.
+  if (quality > 0.0 && night > 0.0) col += vec3(0.95, 0.92, 1.0) * stars(rd) * night;
 
   col += uSun * pow(sd, 1400.0) * mix(5.0, 12.0, night);                  // disk
   col += mix(uSun, uGlow, 0.45) * pow(sd, 64.0) * mix(0.25, 0.45, night); // inner bloom
@@ -315,11 +321,14 @@ void main() {
   vec3 sunCol = uSun * mix(1.35, 3.2, night);
 
   float tmax = 165.0;
-  float t = marchTerrain(ro, rd, tmax, marchSteps);
 
-  // The water plane wins wherever the ray reaches it before the rock.
+  // The water plane wins wherever the ray reaches it before the rock, so the
+  // march stops at the surface: marching on under the lake to the far shore
+  // made every water pixel pay for terrain it would never show, and cost the
+  // open vistas a fifth of their frame.
   float tw = rd.y < -1e-4 ? (WATER_LEVEL - ro.y) / rd.y : -1.0;
-  bool water = tw > 0.0 && tw < tmax && (t < 0.0 || tw < t);
+  float t = marchTerrain(ro, rd, tw > 0.0 ? min(tmax, tw) : tmax, marchSteps);
+  bool water = t < 0.0 && tw > 0.0 && tw < tmax;
 
   vec3 col;
   if (water) {

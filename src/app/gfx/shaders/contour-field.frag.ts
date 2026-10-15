@@ -64,8 +64,10 @@ void main() {
 
   // Hypsometric ink: the level sets shift from the accent on low ground to the
   // rose on high ground, the way a relief map tints by elevation. Pulled a
-  // fifth of the way to a neutral so the map stays behind the copy.
-  vec3 ink = mix(linearToSRGB(uInk), linearToSRGB(uInkAlt), smoothstep(0.32, 0.72, h));
+  // fifth of the way to a neutral so the map stays behind the copy. Mixed in
+  // linear and converted once: a conversion per palette colour per pixel cost
+  // this pass a tenth of its budget.
+  vec3 ink = linearToSRGB(mix(uInk, uInkAlt, smoothstep(0.32, 0.72, h)));
   vec3 neutral = mix(vec3(0.22, 0.24, 0.32), vec3(0.62, 0.65, 0.76), uTheme);
   ink = mix(neutral, ink, 0.8);
   vec3 reliefCol = mix(vec3(1.0), linearToSRGB(uGlow), 0.45);
