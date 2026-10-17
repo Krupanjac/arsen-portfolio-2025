@@ -17,13 +17,13 @@ npm run verify     # ~1.5 min: i18n check, unit tests, production build + preren
 npm start          # http://localhost:4200. In Wonder, open the Preview instead
 ```
 
-The Wonder run profile for this repo is: setup `npm ci`, run `node node_modules/@angular/cli/bin/ng.js serve`, port `4200`.
+The Wonder run profile for this repo is: setup `npm ci`, run `node scripts/dev-full.mjs` (the full stack, see below), port `4200`.
 
-It calls the Angular CLI directly, not `npm start`. On Windows, npm runs scripts through `cmd.exe` and the `ng.cmd` batch shim. When Wonder stops the app, that batch job asks "Terminate batch job (Y/N)?" and waits, so Wonder can't confirm the server exited.
+Like that script, run commands call node directly rather than `npm start`. On Windows, npm runs scripts through `cmd.exe` and the `ng.cmd` batch shim. When Wonder stops the app, that batch job asks "Terminate batch job (Y/N)?" and waits, so Wonder can't confirm the server exited.
 
 ### What works without the API
 
-`ng serve` serves only the Angular app. Everything renders except the parts that need `/api`:
+Plain `npm start` (`ng serve`) serves only the Angular app. Everything renders except the parts that need `/api`; use the [full stack](#full-stack-locally) for those:
 
 - **Projects and Experience** show their empty states, because `GET /api/posts` returns 404.
 - **The Dashboard login** fails, because `/api/login` isn't there. The Turnstile widget also refuses `localhost` with the production site key.
@@ -62,38 +62,27 @@ The shader check, renderer and bench need no running app. They compile the app's
 
 ## Full stack locally
 
-> This isn't scripted yet; ROADMAP DX-3 will make it one command. The steps follow Cloudflare's documented Wrangler CLI. Always pass `--local` explicitly so nothing touches production.
+One command runs the site with its API: Cloudflare Pages Functions, with a local D1 database and KV namespace.
 
-1. **Secrets.** Copy `.dev.vars.example` to `.dev.vars`, which is git-ignored, and fill it in. Locally, use Turnstile's always-pass test secret. The widget's site key is hardcoded to the production key in `login.component.ts:25`, so for local login temporarily swap it for the test key `1x00000000000000000000AA`, and don't commit that (ROADMAP DX-4).
-2. **Database schema:**
+```bash
+npm run dev:full        # in Wonder, the Preview's run profile does this
+```
 
-   ```bash
-   npx wrangler d1 migrations apply portfolio --local
-   ```
-
-3. **An admin user:**
-
-   ```bash
-   node scripts/gen.js 'pick-a-password'          # prints a bcrypt hash
-   npx wrangler kv key put "user:admin" '<hash>' --binding USERS --local
-   ```
-
-   Keep the hash in single quotes; it contains `$`.
-
-4. **Sample content** (optional):
-
-   ```bash
-   npx wrangler d1 execute portfolio --local --command "INSERT INTO posts (title, description, tags, images, category, created_by, created_at) VALUES ('Sample project', 'Built with **Angular**', '[\"angular\"]', '[]', 'project', 'admin', strftime('%s','now'))"
-   ```
-
-5. **Build and serve with Functions:**
-
-   ```bash
-   npm run build
-   npx wrangler pages dev     # uses pages_build_output_dir and the bindings from wrangler.toml
-   ```
-
-   Open http://localhost:8788. Rebuild after UI changes (or run `npm run watch` in a second terminal).
+- `scripts/dev-full.mjs` starts two servers:
+  - `wrangler pages dev` on 127.0.0.1:8788, for the Functions and local bindings;
+  - `ng serve` on 4200, which proxies `/api` to it (`proxy.conf.json`).
+- Open http://localhost:4200. Hot reload works for the UI, and the Functions reload on save.
+- Both servers start through node directly (Windows batch shims would block clean stops), and stopping the script stops the whole process tree.
+- **The first run seeds the local state** with `scripts/seed-local.mjs` (`npm run seed:local` reruns it):
+  - `.dev.vars`, if missing: a random `JWT_SECRET` and Turnstile's always-pass test secret;
+  - the D1 schema from `migrations/`;
+  - an admin login, whose password it prints;
+  - Projects and Experience copied from the live site's public `GET /api/posts`, or two built-in samples when offline.
+- Flags: `--user`, `--password`, `--posts <file|url>`, and `--force` to replace existing local posts.
+- **Login on localhost** uses Turnstile's test site key, which pairs with that test secret (`login.component.ts`; production hostnames keep the real key).
+- **Image uploads** need a real `IMAGEKIT_PRIVATE_KEY` in `.dev.vars`.
+- **Everything stays in `.wrangler/state`.** Every wrangler call in these scripts passes `--local` (the seed refuses anything else), so nothing touches production.
+- **To start over:** delete `.wrangler/state`, or `.dev.vars` as well, and run `npm run dev:full` again.
 
 ## Deploying
 

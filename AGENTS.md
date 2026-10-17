@@ -16,7 +16,7 @@ Arsen Đurđev's portfolio, **krupanjac.dev**. It's an Angular 19 single-page si
 | Task | Command | Time | Notes |
 |---|---|---|---|
 | Install | `npm ci` | ~30 s | Node 22 LTS (what CI uses); Node 24 works locally |
-| Run the site | Wonder Preview, or `npm start` | | http://localhost:4200. `ng serve` doesn't serve `/api/*`, so Projects/Experience are empty and login fails; see DEVELOPMENT.md |
+| Run the site (full stack) | Wonder Preview, or `npm run dev:full` | ~15 s | http://localhost:4200 with `/api` proxied to `wrangler pages dev` (local D1/KV, seeded on first run). Plain `npm start` is UI-only |
 | **Verify everything** | `npm run verify` | ~1.5 min | i18n check, shader compile check, unit tests, then a production build with prerender. Must pass before every PR; CI runs the same command |
 | i18n check | `npm run check:i18n` | <1 s | Claude Code also runs it after every edit (`.claude/hooks/post-edit.mjs`) |
 | Shader check | `npm run check:shaders` | ~2 s | Compiles and links every `*.frag.ts` in real WebGL2 (headless Chrome, SwiftShader); errors point at the `.ts` line |
@@ -87,5 +87,6 @@ Recipes for recurring jobs live in `.claude/skills/<name>/SKILL.md`. Claude Code
 ## Environment notes
 
 - **Line endings:** the repo stores LF and Windows checkouts get CRLF (`core.autocrlf`). Keep a file's existing line endings when you edit it.
-- **Running the app in Wonder:** use the Preview (run profile: setup `npm ci`, run `node node_modules/@angular/cli/bin/ng.js serve`, port 4200). Calling the CLI directly avoids npm's `cmd.exe` and `ng.cmd` layers on Windows, which kept stops from completing. Don't start `ng serve` from a shell.
+- **Running the app in Wonder:** use the Preview (run profile: setup `npm ci`, run `node scripts/dev-full.mjs`, port 4200). It calls node directly, avoiding npm's `cmd.exe` and `ng.cmd` layers on Windows, which kept stops from completing. Don't start servers from a shell.
+- **Local data:** `npm run seed:local` resets the local D1/KV in `.wrangler/state` and prints the local admin password. It only ever runs wrangler with `--local`.
 - **Branch previews:** Cloudflare Pages builds every pushed branch at `https://<branch>.krupanjac.pages.dev` (PR #8's is `wonder-sottsass.krupanjac.pages.dev`). It's the quickest way to see a change with a working `/api`.

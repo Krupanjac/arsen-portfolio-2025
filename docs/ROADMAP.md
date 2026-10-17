@@ -368,7 +368,7 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
   - Format everything in one commit and list that commit in `.git-blame-ignore-revs`.
   - Add `lint` to `npm run verify`.
 
-**DX-3: Full stack locally in one command.** Med · S
+**DX-3: Full stack locally in one command.** Med · S · ✅ PR #8 (`npm run dev:full`, `npm run seed:local`, Wonder run profile)
 - **Gap:** `ng serve` doesn't serve `/api`, so the Preview never shows real Projects/Experience and login can't be tested.
 - **Fix:**
   - Add `wrangler` as a pinned devDependency.
@@ -376,7 +376,7 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
   - Add a `dev:api` script (`wrangler pages dev`) and a seed SQL file (`scripts/seed-local.sql`).
   - Update the Wonder run profile.
 
-**DX-4: Environment config.** Med · S
+**DX-4: Environment config.** Med · S · Turnstile part ✅ PR #8 (test key on localhost); ImageKit config still hardcoded
 - **Evidence:** the Turnstile site key (`login.component.ts:25`) and the ImageKit public key and endpoint (`imagekit.service.ts:14-15`) are hardcoded.
 - **Fix:** move them into typed environment config, and use Turnstile's test site key (`1x00000000000000000000AA`) on localhost so local login works.
 

@@ -5,8 +5,8 @@
 #   node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 JWT_SECRET=change-me
 
-# Turnstile's always-pass test secret. Pair it with the test site key 1x00000000000000000000AA
-# in login.component.ts while testing locally (ROADMAP DX-4) — don't commit that swap.
+# Turnstile's always-pass test secret. On localhost the login widget uses the matching test
+# site key automatically (login.component.ts). scripts/seed-local.mjs writes this file for you.
 TURNSTILE_SECRET=1x0000000000000000000000000000000AA
 
 # Only needed to test image uploads from the Dashboard (ImageKit → Developer → API keys).

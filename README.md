@@ -12,13 +12,15 @@ npm start          # http://localhost:4200
 npm run verify     # i18n check, unit tests, production build: what CI runs
 ```
 
-Projects and Experience come from the API, which `ng serve` doesn't run. [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) explains the full-stack setup.
+Projects and Experience come from the API, which plain `ng serve` doesn't run. `npm run dev:full` runs both, with local data; see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#full-stack-locally).
 
 ## Scripts
 
 | Script | What it does |
 |---|---|
-| `npm start` / `npm run dev` | Dev server on port 4200 |
+| `npm run dev:full` | The full stack: site on port 4200, with `/api` served by `wrangler pages dev` from local D1/KV |
+| `npm run seed:local` | Resets the local D1/KV and prints a local admin login |
+| `npm start` / `npm run dev` | UI-only dev server on port 4200 |
 | `npm run build` | Production build and prerender into `dist/arsen-portfolio-2025/browser` |
 | `npm run watch` | Development build in watch mode |
 | `npm test` | Karma in watch mode (opens Chrome) |
