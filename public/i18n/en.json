@@ -8,24 +8,31 @@
     "LANG": {
       "EN": "English",
       "SR": "Serbian"
-    }
-  }
-  ,
+    },
+    "SECTIONS_LABEL": "Sections",
+    "MENU_TOGGLE": "Toggle navigation",
+    "DASHBOARD_OPEN": "Open dashboard",
+    "DASHBOARD_CLOSE": "Close",
+    "SWITCH_TO_EN": "Switch language to English",
+    "SWITCH_TO_SR": "Switch language to Serbian",
+    "THEME_TO_LIGHT": "Switch to light theme",
+    "THEME_TO_DARK": "Switch to dark theme"
+  },
   "ABOUT": {
     "LABEL": "About/>",
     "L1": "$echo \"Hello, I'm Arsen Đurđev.\"",
-  "L2": "Software engineering student with electrical engineering roots and a product-first mindset.",
+    "L2": "Rendering engineer with electrical-engineering roots and a product-first mindset.",
     "DOTS": "...",
     "WHOAMI": "$whoami",
-    "ROLE": "I'm a full-stack engineer and systems designer.",
-  "H1": "$highlights",
-  "H1_L1": "Moved from freelance video to frontend; combine creative work and engineering to deliver dependable results.",
-  "H1_L2": "Grew and led an Arma 3 community of 150+; built attendance and ranking systems and coordinated events.",
-  "H1_L3": "Reworked Arma mod loading—reduced total mod load by ~70% and improved client/server load times and runtime performance.",
-  "H2": "$now",
-  "H2_L1": "Build large-scale procedural terrain pipelines from OpenStreetMap data and optimize workflows for very large environments.",
-  "H2_L2": "Built and run armasrbija.rs—combining backend, frontend, and deployment for community and game services.",
-  "H2_L3": "Open to roles and contracts with clear ownership, pipeline optimization, and measurable impact.",
+    "ROLE": "I work on real-time rendering, procedural terrain pipelines and the tooling around them.",
+    "H1": "$highlights",
+    "H1_L1": "Moved from freelance video to frontend; combine creative work and engineering to deliver dependable results.",
+    "H1_L2": "Grew and led an Arma 3 community of 150+; built attendance and ranking systems and coordinated events.",
+    "H1_L3": "Reworked Arma mod loading—reduced total mod load by ~70% and improved client/server load times and runtime performance.",
+    "H2": "$now",
+    "H2_L1": "Build large-scale procedural terrain pipelines from OpenStreetMap data and optimize workflows for very large environments.",
+    "H2_L2": "Built and run armasrbija.rs—combining backend, frontend, and deployment for community and game services.",
+    "H2_L3": "Open to roles and contracts with clear ownership, pipeline optimization, and measurable impact.",
     "SKILLS": "$skills",
     "SKILL_ALGO": "Algorithms",
     "SKILL_DS": "Data Structures",
@@ -34,125 +41,195 @@
     "SKILL_ML": "Machine Learning",
     "SKILL_FRONTEND": "Front-end Development",
     "LANGS": "$languages",
-  "LANGS_INLINE": "Languages: C, C++, Python, Java, C#, TypeScript/JavaScript, SQL",
+    "LANGS_INLINE": "Languages: C, C++, Python, Java, C#, Go, TypeScript/JavaScript, SQL",
     "TOOLS": "$tools",
-  "TOOLS_INLINE": "Tools: Angular, Node.js, Tailwind, Git, Docker, SQLite, Cloudflare, Linux",
+    "TOOLS_INLINE": "Tools: Angular, Svelte, Node.js, Tailwind, Git, Docker, SQLite, Cloudflare, Linux",
     "AI": "Artificial intelligence",
     "CONTACT": "$contact",
     "LINKEDIN": "LinkedIn <--click to view",
     "GITHUB": "GitHub <--click to view",
-    "INSTAGRAM": "Instagram <--click to view"
-  ,
-  "LANG_LIST": {
-    "PYTHON": "Python",
-    "PASCAL": "Pascal",
-    "C": "C",
-    "CPP": "C++",
-    "UML": "UML",
-    "JAVA": "Java",
-    "CSHARP": "C#",
-    "SQL": "SQL",
-    "JAVASCRIPT": "JavaScript..."
-  },
-  "TOOLS_LIST": {
-    "GIT": "Git",
-    "DOCKER": "Docker",
-    "VISUAL_STUDIO": "Visual Studio",
-    "BOOTSTRAP": "Bootstrap"
-  }
+    "INSTAGRAM": "Instagram <--click to view",
+    "LANG_LIST": {
+      "PYTHON": "Python",
+      "PASCAL": "Pascal",
+      "C": "C",
+      "CPP": "C++",
+      "UML": "UML",
+      "JAVA": "Java",
+      "CSHARP": "C#",
+      "SQL": "SQL",
+      "JAVASCRIPT": "JavaScript..."
+    },
+    "TOOLS_LIST": {
+      "GIT": "Git",
+      "DOCKER": "Docker",
+      "VISUAL_STUDIO": "Visual Studio",
+      "BOOTSTRAP": "Bootstrap"
+    },
+    "TITLE": "Electrical-engineering roots, product-first habits.",
+    "P1": "I came to rendering through games and community infrastructure rather than a graphics course. Running a 150-person Arma 3 unit taught me that a frame that hitches on someone else’s machine is a bug, not an opinion, and most of what I build since is in service of that.",
+    "P2": "Novi Sad, Serbia. Remote or hybrid, CET. Open to roles and contracts with clear ownership and a number I can move."
   },
   "CONTACT": {
-  "LABEL": "Contact/>",
-  "TERMINAL_USER": "root@terminal",
-  "HOME_LABEL": "Home/>",
-  "INTRO_1": "$echo \"Let's build something reliable and fast.\"",
-  "INTRO_2": "$contact — preferred channels below",
-  "EMAIL": "E‑mail",
-  "LINKEDIN": "LinkedIn",
-  "GITHUB": "GitHub",
-  "RESPONSE": "$response ~1–2 business days",
-  "AVAILABILITY": "$availability — remote / hybrid · CET",
-  "COPY_HINT": "Click to copy",
-  "OPEN_HINT": "Open",
-  "COMPOSE": "Compose email",
-  "OTHER_LINKS": "You can also find me on",
-  "COPIED": "Copied",
-  "COPY_FAILED": "Failed to copy text."
+    "LABEL": "Contact/>",
+    "TERMINAL_USER": "root@terminal",
+    "HOME_LABEL": "Home/>",
+    "INTRO_1": "$echo \"Let's build something reliable and fast.\"",
+    "INTRO_2": "$contact — preferred channels below",
+    "EMAIL": "E‑mail",
+    "LINKEDIN": "LinkedIn",
+    "GITHUB": "GitHub",
+    "RESPONSE": "$response ~1–2 business days",
+    "AVAILABILITY": "$availability — remote / hybrid · CET",
+    "COPY_HINT": "Click to copy",
+    "OPEN_HINT": "Open",
+    "COMPOSE": "Compose email",
+    "COMPOSE_LABEL": "Compose email to {{email}}",
+    "COPY_LABEL": "Copy email address {{email}} to clipboard",
+    "OTHER_LINKS": "You can also find me on",
+    "COPIED": "Copied",
+    "COPY_FAILED": "Failed to copy text.",
+    "TITLE": "Let’s build something reliable and fast.",
+    "SUBTITLE": "Replies within one to two business days. Remote or hybrid, CET."
   },
   "HOME": {
     "LABEL": "Home/>",
-    "TITLE": "Hello World",
-    "SUBTITLE": "Resourceful software engineer with experience across full-stack development, game systems, and community management. Eager to bring technical depth and creative problem-solving to innovative projects. Skilled in artificial intelligence, performance optimization, terrain building, and delivering web solutions that support real-world user needs.",
+    "TITLE": "The frame budget is the spec.",
+    "SUBTITLE": "Everything below runs inside a fixed time slice, on hardware I do not get to choose. That constraint is the interesting part — it turns rendering, terrain generation and tooling into the same problem wearing three different hats.",
     "STACK": {
       "TITLE": "$stack",
       "SUBTITLE": "Some of the technologies, tools & creative domains I experience with.",
       "GROUPS": {
-  "LANGUAGES": { "TITLE": "$languages" },
-  "FRAMEWORKS": { "TITLE": "$frameworks & runtime" },
-  "PLATFORM": { "TITLE": "$platform / infra & data", "SQLITE": "SQLite", "REL_SQL": "Relational SQL", "CLOUDFLARE": "Cloudflare", "AZURE": "Azure", "GCP": "Google Cloud", "LINUX": "Linux" },
-  "TOOLING": { "TITLE": "$tooling", "GIT": "Git", "PIPELINES": "Pipelines", "ALGO_DS": "Algorithms & Data Structures", "DESIGN_PATTERNS": "Design Patterns" },
-  "AI": { "TITLE": "$ai", "PAIR": "AI Pair Programming", "LLM": "AI / LLM", "OLLAMA": "Ollama" },
-  "CREATIVE": { "TITLE": "$creative", "PHOTO": "Photo Editing", "VIDEO": "Video Editing", "TERRAIN": "World Terrain Editing" }
-      }
-      ,
+        "LANGUAGES": {
+          "TITLE": "$languages"
+        },
+        "FRAMEWORKS": {
+          "TITLE": "$frameworks & runtime"
+        },
+        "PLATFORM": {
+          "TITLE": "$platform / infra & data",
+          "SQLITE": "SQLite",
+          "REL_SQL": "Relational SQL",
+          "CLOUDFLARE": "Cloudflare",
+          "AZURE": "Azure",
+          "GCP": "Google Cloud",
+          "LINUX": "Linux"
+        },
+        "TOOLING": {
+          "TITLE": "$tooling",
+          "GIT": "Git",
+          "PIPELINES": "Pipelines",
+          "ALGO_DS": "Algorithms & Data Structures",
+          "DESIGN_PATTERNS": "Design Patterns"
+        },
+        "AI": {
+          "TITLE": "$ai",
+          "PAIR": "AI Pair Programming",
+          "LLM": "AI / LLM",
+          "OLLAMA": "Ollama"
+        },
+        "CREATIVE": {
+          "TITLE": "$creative",
+          "PHOTO": "Photo Editing",
+          "VIDEO": "Video Editing",
+          "TERRAIN": "World Terrain Editing"
+        }
+      },
       "ITEMS": {
         "C": "C",
         "CPP": "C++",
-  "PYTHON": "Python",
-  "JAVA": "Java",
-  "CSHARP": "C#",
-  "PHP": "PHP",
+        "PYTHON": "Python",
+        "JAVA": "Java",
+        "CSHARP": "C#",
+        "PHP": "PHP",
         "TYPESCRIPT": "TypeScript",
         "JAVASCRIPT": "JavaScript",
-  "SQL": "SQL",
-  "ANGULAR": "Angular",
-  "NODE": "Node.js",
-  "TAILWIND": "Tailwind",
-  "SQLITE": "SQLite",
-  "REL_SQL": "Relational SQL",
-  "CLOUDFLARE": "Cloudflare",
-  "AZURE": "Azure",
-  "GCP": "Google Cloud",
-  "LINUX": "Linux",
-  "GIT": "Git",
-  "PIPELINES": "Pipelines",
-  "ALGO_DS": "Algorithms & Data Structures",
-  "DESIGN_PATTERNS": "Design Patterns",
-  "PAIR": "AI Pair Programming",
-  "LLM": "AI / LLM",
-  "OLLAMA": "Ollama",
-  "PHOTO": "Photo Editing",
-  "VIDEO": "Video Editing",
-  "TERRAIN": "World Terrain Editing"
+        "SQL": "SQL",
+        "ANGULAR": "Angular",
+        "NODE": "Node.js",
+        "TAILWIND": "Tailwind",
+        "SQLITE": "SQLite",
+        "REL_SQL": "Relational SQL",
+        "CLOUDFLARE": "Cloudflare",
+        "AZURE": "Azure",
+        "GCP": "Google Cloud",
+        "LINUX": "Linux",
+        "GIT": "Git",
+        "PIPELINES": "Pipelines",
+        "ALGO_DS": "Algorithms & Data Structures",
+        "DESIGN_PATTERNS": "Design Patterns",
+        "PAIR": "AI Pair Programming",
+        "LLM": "AI / LLM",
+        "OLLAMA": "Ollama",
+        "PHOTO": "Photo Editing",
+        "VIDEO": "Video Editing",
+        "TERRAIN": "World Terrain Editing",
+        "GO": "Go",
+        "SVELTE": "Svelte"
+      }
+    },
+    "CAP": {
+      "RENDER": {
+        "TITLE": "Real-time rendering",
+        "BODY": "Shader authoring, lighting and the profiling loop around them. The hero above is the working example: raymarched, dynamically scaled, and instrumented with the same timer that decides its resolution."
+      },
+      "TERRAIN": {
+        "TITLE": "Procedural terrain",
+        "BODY": "Large-scale terrain built from OpenStreetMap data — heightfield generation, LOD, and the import pipeline that has to survive environments far bigger than memory."
+      },
+      "SYSTEMS": {
+        "TITLE": "Systems & tooling",
+        "BODY": "The unglamorous half. Reworking Arma 3 mod loading cut total load by roughly 70%, which came from measurement and a build step, not from a clever renderer."
       }
     }
   },
   "PROJECTS": {
-    "LABEL": "Projects/>"
+    "LABEL": "Projects/>",
+    "EMPTY": {
+      "TITLE": "Nothing published here yet",
+      "BODY": "Write-ups are added as work becomes shareable — terrain tooling, shader experiments, and the odd optimisation post-mortem. The source for most of it is public in the meantime.",
+      "CTA": "Browse the repositories"
+    }
   },
   "EXPERIENCE": {
-    "LABEL": "Experience/>"
+    "LABEL": "Experience/>",
+    "EMPTY": {
+      "TITLE": "Timeline is being rebuilt",
+      "BODY": "Roles and contracts are moving over to the new format. The résumé has the full history, dates included.",
+      "CTA": "Open the résumé (PDF)"
+    }
   },
   "PLAY": {
-  "TOOLTIP": "Play with the stars",
-  "BUTTON": "Play"
+    "TOOLTIP": "Open the renderer fullscreen",
+    "BUTTON": "Fullscreen renderer"
   },
   "HELP": {
-    "TITLE": "Interactive Commands",
+    "TITLE": "Renderer controls",
     "COMMANDS": {
-      "D": "Toggle Drawing Mode",
-      "C": "Clear All Drawings", 
-      "S": "Add Random Stars (in drawing mode)",
-      "CLICK": "Click to create particles",
-  "SHIFT_CLICK": "Hold Shift + Left Click to draw (in drawing mode)"
+      "MOUSE": "Move the pointer to look around",
+      "SCALE": "Pin internal resolution at 50 / 75 / 100%",
+      "AUTO": "Hand resolution back to the dynamic scaler",
+      "HUD": "Click the readout to expand GPU time, p95 and fill rate",
+      "ESC": "Leave fullscreen"
     },
-    "TIP": "Press any key above to interact!"
+    "TIP": "Watch the frame graph while you change the scale."
+  },
+  "HUD": {
+    "DETECTING": "detecting…",
+    "PLAY": "Play the renderer",
+    "PAUSE": "Pause the renderer",
+    "PAUSED": "paused",
+    "REDUCED_MOTION": "reduced motion"
   },
   "HERO": {
     "MY_NAME_IS": "My name is",
-    "TAGLINE": "Creative solutions for the digital world"
-  }
-  ,
+    "TAGLINE": "Creative solutions for the digital world",
+    "DISCIPLINE": "Real-time rendering / engine programming",
+    "LEDE": "I build the systems that get pixels on screen — procedural terrain pipelines, GPU-side optimisation, and the tooling that keeps a frame inside 16.7 ms.",
+    "SCROLL_HINT": "Scroll",
+    "SCROLL_LABEL": "Scroll to content",
+    "SOCIAL_LABEL": "Social links"
+  },
   "LOGIN": {
     "TITLE": "Login",
     "USERNAME": "Username",
@@ -160,10 +237,9 @@
     "SIGN_IN": "Sign In",
     "LOADING": "Loading...",
     "SUCCESS": "Logged in successfully.",
-  "FAILED": "Login failed",
-  "COMPLETE_CHALLENGE": "Please complete the security challenge to enable login"
-  }
-  ,
+    "FAILED": "Login failed",
+    "COMPLETE_CHALLENGE": "Please complete the security challenge to enable login"
+  },
   "RESUME": {
     "BUTTON": "Resume",
     "MODAL": {
@@ -177,8 +253,7 @@
     "INSTAGRAM": "Instagram",
     "RESUME": "Open Resume",
     "SCROLL": "Scroll to content"
-  }
-  ,
+  },
   "FOOTER": {
     "BACK_TO_TOP": "Back to top",
     "EMAIL": "Email",

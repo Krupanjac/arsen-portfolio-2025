@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { PlayButtonComponent } from './play-button.component';
+import { provideTestDeps } from '../../../testing/test-providers';
 
 describe('PlayButtonComponent', () => {
   let component: PlayButtonComponent;
@@ -7,7 +8,8 @@ describe('PlayButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlayButtonComponent]
+      imports: [PlayButtonComponent],
+      providers: [provideTestDeps()]
     })
     .compileComponents();
 

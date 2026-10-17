@@ -6,6 +6,12 @@
    Supports light (default) & dark via [data-theme="dark"].
    ========================================= */
 :root {
+  /* Type. Display carries the name and section heads; mono is reserved for
+     anything that represents a measurement, a path, or a machine talking. */
+  --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, 'Cascadia Code', monospace;
+
   /* Light theme defaults — darker, non-gray text & stronger dividers for white backgrounds */
   --color-bg: #ffffff; /* plain white page background */
   --color-bg-alt: #fbfdff; /* subtle off-white */
@@ -26,24 +32,58 @@
   --color-terminal-directive: #000000; /* typing cursor (light theme): black */
   --color-terminal-line: #003300;
   --glow-accent: 0 0 10px rgba(var(--color-accent-rgb)/0.55), 0 0 22px rgba(var(--color-accent-rgb)/0.3);
+
+  /* Renderer palette (gfx/palette.ts reads these into the shaders, so the
+     hero and the page share one source of colour). Built around the accent:
+     analogous violets and roses, with one warm note for the sun. Light theme
+     is a pastel dawn — high-albedo rock under a pale sky, because dark rock
+     against a bright sky reads as a silhouette and swallows the hero copy. */
+  --gfx-sky-zenith: #a9b6f2;
+  --gfx-sky-horizon: #ece6fb;
+  --gfx-sky-glow: #f7b8d2;
+  --gfx-sun: #fff1dc;
+  --gfx-rock-low: #ada1d4;
+  --gfx-rock-high: #f1ebe5;
+  --gfx-rock-strata: #e9b9c9;
+  --gfx-mist: #f1ecfb;
+  --gfx-ink: var(--color-accent);
+  --gfx-ink-alt: #a23b72;
 }
 
 :root[data-theme='dark'] {
-  --color-bg: #0d0f17;
-  --color-bg-alt: #161b26;
-  --color-surface: #1e2532;
-  --color-surface-alt: #253042;
-  --color-border: #2a3141;
-  --color-border-strong: #3a4557;
-  --color-text: #e2e8f0;
-  --color-text-muted: #94a3b8;
-  --color-text-faint: #64748b;
+  /* Inky rather than blue-grey: the terrain behind the page is the only thing
+     emitting light, and a lifted background flattens it. */
+  --color-bg: #07080c;
+  --color-bg-alt: #0c0e15;
+  --color-surface: #12151e;
+  --color-surface-alt: #191d29;
+  --color-border: #232735;
+  --color-border-strong: #363c4e;
+  --color-text: #edf0f5;
+  /* Raised from #94a3b8 — that sat at 4.2:1 on the old ground and worse on
+     this one. Secondary copy has to clear 4.5:1 like everything else. */
+  --color-text-muted: #a8b2c4;
+  --color-text-faint: #7c8698;
   --color-accent: #8b5cf6;
   --color-accent-rgb: 139 92 246;
   --color-accent-alt: #a78bfa;
   --glow-accent: 0 0 10px rgba(var(--color-accent-rgb)/0.6), 0 0 24px rgba(var(--color-accent-rgb)/0.35);
   /* Terminal-typing: white text in dark mode */
   --color-terminal-directive: #ffffff;
+
+  /* Renderer palette, dark: the violet hour. Indigo overhead, violet haze at
+     the horizon, a rose glow only toward a peach sun; blue valleys, warm
+     ridges. The hue spread is what keeps it colourful rather than purple. */
+  --gfx-sky-zenith: #0b1233;
+  --gfx-sky-horizon: #3b2a78;
+  --gfx-sky-glow: #f472b6;
+  --gfx-sun: #ffc89a;
+  --gfx-rock-low: #1a2147;
+  --gfx-rock-high: #8b7c85;
+  --gfx-rock-strata: #b56f7e;
+  --gfx-mist: #4b3fb0;
+  --gfx-ink: var(--color-accent-alt);
+  --gfx-ink-alt: #f9a8d4;
 }
 
 /* Global resets and custom styles */
@@ -62,7 +102,9 @@ html, body {
   background-color: var(--color-bg);
   background-size: cover;
   background-position: center;
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   user-select: none;
   color: var(--color-text);
 }
@@ -155,8 +197,8 @@ body::-webkit-scrollbar-thumb:hover { background: var(--color-border-strong); }
 /* Accent glow utility */
 .glow-accent { box-shadow: var(--glow-accent); transition: box-shadow .35s ease; }
 
-/* Decorative gradient only in dark mode */
-:root[data-theme='dark'] body { background: radial-gradient(circle at 30% 20%, #141926, #0d0f17 60%) fixed; }
+/* No decorative body gradient: the hero renderer occupies this layer, and a
+   gradient underneath it only shows through as a colour cast. */
 
 /* Optional: Border shadow style */
 .border-shadow {
@@ -224,4 +266,57 @@ body.modal-open {
   overflow-y: auto;
   position: relative;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+/* =========================================
+   Type utilities
+   ========================================= */
+.font-display { font-family: var(--font-display) !important; }
+.font-body    { font-family: var(--font-body) !important; }
+.font-mono    { font-family: var(--font-mono) !important; }
+
+/* Anything showing a number that a reader might compare against another number
+   gets tabular figures, so digits do not shift width between frames. */
+.tabular { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+
+/* Section headings across the site share one treatment. */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.4vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+/* Content sections sit above the fixed renderer canvas. */
+main, section { position: relative; z-index: 1; }
+
+/* The terminal blocks keep their own monospace identity but pick up the new
+   family so the whole page shares one mono. */
+.terminal-output, .tt-cursor { font-family: var(--font-mono); }
+
+/* Focus visibility: one ring, everywhere, matched to the accent. */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

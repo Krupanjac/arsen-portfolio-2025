@@ -1,120 +1,93 @@
-/* Contact modern card styles (non-terminal) */
-.contact-card {
-	position: relative;
-	width: 100%;
-	border-radius: 14px;
-	border: 1px solid var(--color-border);
-	padding: 14px 16px;
-	text-align: left;
-	background: var(--color-surface);
-	color: var(--color-text);
-	box-shadow: 0 6px 20px -10px rgba(0,0,0,0.2);
-	transition: transform 180ms ease, box-shadow 200ms ease, border-color .25s ease, background-color .25s ease, color .25s ease;
-	display: block;
-	text-decoration: none;
-	cursor: pointer;
-	outline: none;
-}
-.contact-card:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 12px 32px -12px rgba(0,0,0,0.28);
-	border-color: var(--color-border-strong);
-}
-.contact-card:focus-visible {
-	box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.25), 0 6px 20px -10px rgba(0,0,0,0.2);
-	border-color: rgba(var(--color-accent-rgb), 0.6);
+.contact-title {
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.2vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--color-text);
+  text-wrap: balance;
 }
 
-/* CTA variant */
-.contact-card--cta {
-	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.10), rgba(var(--color-accent-rgb), 0.06));
-	border-color: rgba(var(--color-accent-rgb), 0.45);
+/* Primary action: same button as the hero's résumé CTA, same wording rule —
+   one label per intent. */
+.contact-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px 13px 18px;
+  border-radius: 10px;
+  background: var(--color-accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 10px 26px rgba(var(--color-accent-rgb) / 0.3);
 }
-.contact-card--cta:hover {
-	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.14), rgba(var(--color-accent-rgb), 0.08));
-	border-color: rgba(var(--color-accent-rgb), 0.65);
-}
-.contact-card .hint {
-	position: absolute;
-	right: 12px;
-	bottom: 10px;
-	font-size: 12px;
-	opacity: .6;
-}
-
-/* Simple neutral icons */
-.icon { display: inline-block; width: 24px; height: 24px; border-radius: 6px; position: relative; background: linear-gradient(180deg, rgba(var(--color-accent-rgb)/0.18), rgba(var(--color-accent-rgb)/0.10)); border: 1px solid rgba(var(--color-accent-rgb)/0.35); }
-.icon-mail::before { content: '\2709'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 15px; color: var(--color-accent); }
-.icon-linkedin::before { content: 'in'; position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 12px; color: var(--color-accent); }
-.icon-github::before { content: '{}'; position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: var(--color-accent); }
-.icon-file::before { display: none; }
-
-/* Small action chip next to the email card */
-.action-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px 10px;
-	border-radius: 999px;
-	border: 1px solid rgba(var(--color-accent-rgb), 0.4);
-	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.12), rgba(var(--color-accent-rgb), 0.08));
-	color: var(--color-text);
-	text-decoration: none;
-	box-shadow: 0 6px 16px -12px rgba(0,0,0,0.35);
-	transition: transform 150ms ease, border-color .25s ease, background-color .25s ease, box-shadow .25s ease;
-}
-.action-chip:hover {
-	transform: translateY(-1px);
-	border-color: rgba(var(--color-accent-rgb), 0.6);
-	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.16), rgba(var(--color-accent-rgb), 0.10));
-	box-shadow: 0 10px 22px -12px rgba(0,0,0,0.45);
-}
-.action-chip:focus-visible {
-	outline: none;
-	box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.25), 0 8px 20px -12px rgba(0,0,0,0.4);
-}
-.action-chip .icon { width: 18px; height: 18px; border-radius: 50%; }
-.action-chip .icon::before { content: '\2709'; font-size: 12px; color: var(--color-accent); display: grid; place-items: center; position: absolute; inset: 0; }
-.action-chip .label { font-size: 13px; font-weight: 500; }
-
-/* Accent variant for higher contrast */
-.action-chip--accent {
-	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.16), rgba(var(--color-accent-rgb), 0.10));
-	border-color: rgba(var(--color-accent-rgb), 0.55);
-}
-.action-chip--accent:hover {
-	background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.20), rgba(var(--color-accent-rgb), 0.12));
-	border-color: rgba(var(--color-accent-rgb), 0.7);
+.contact-cta svg { width: 18px; height: 18px; }
+.contact-cta:hover {
+  transform: translateY(-2px);
+  background: var(--color-accent-alt);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 16px 34px rgba(var(--color-accent-rgb) / 0.4);
 }
 
-/* Reveal-up animation for cards and sections */
+/* The address itself, as a copy affordance: mono, quiet, a copy glyph on the end. */
+.contact-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  background: none;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.contact-copy svg { width: 16px; height: 16px; color: var(--color-text-faint); transition: color 0.2s ease; }
+.contact-copy:hover {
+  border-color: rgba(var(--color-accent-rgb) / 0.6);
+  background: rgba(var(--color-accent-rgb) / 0.08);
+}
+.contact-copy:hover svg { color: var(--color-accent); }
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.contact-link svg { width: 16px; height: 16px; }
+.contact-link:hover { color: var(--color-accent); }
+
 @keyframes revealUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.reveal-up { opacity: 0; animation: revealUp .5s ease forwards; }
+.reveal-up { opacity: 0; animation: revealUp 0.5s ease forwards; }
 
-/* Toast */
 .toast {
-	position: fixed;
-	left: 50%;
-	bottom: 24px;
-	transform: translateX(-50%);
-	background: rgba(15, 23, 42, 0.92);
-	color: #fff;
-	backdrop-filter: blur(6px);
-	-webkit-backdrop-filter: blur(6px);
-	border: 1px solid rgba(var(--color-accent-rgb), 0.35);
-	padding: 10px 14px;
-	border-radius: 10px;
-	box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-	z-index: 1100;
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  border: 1px solid rgba(var(--color-accent-rgb) / 0.4);
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  z-index: 1100;
 }
 
-/* Small pill on the right of the email card */
-.pill {
-	font-size: 12px;
-	padding: 4px 8px;
-	border-radius: 999px;
-	color: var(--color-accent);
-	border: 1px solid rgba(var(--color-accent-rgb), 0.35);
-	background: linear-gradient(180deg, rgba(var(--color-accent-rgb),0.10), rgba(var(--color-accent-rgb),0.06));
-	white-space: nowrap;
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up { animation: none; opacity: 1; }
 }

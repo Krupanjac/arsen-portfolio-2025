@@ -4,9 +4,18 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "dev": "ng serve",
+    "dev:full": "node scripts/dev-full.mjs",
+    "seed:local": "node scripts/seed-local.mjs",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCI --no-progress",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "check:shaders": "node scripts/check-shaders.mjs",
+    "render:shaders": "node scripts/check-shaders.mjs --render",
+    "bench:shaders": "node scripts/check-shaders.mjs --bench",
+    "verify": "npm run check:i18n && npm run check:shaders && npm run test:ci && npm run build",
     "serve:ssr:arsen-portfolio-2025": "node dist/arsen-portfolio-2025/server/server.mjs",
     "d1:migrate": "wrangler d1 migrations apply portfolio"
   },
@@ -50,6 +59,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "wrangler": "4.151.0"
   }
 }

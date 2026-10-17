@@ -1,0 +1,54 @@
+<div class="stage" [class.stage--fallback]="failed">
+  <!-- Layer 1: the terrain. Runs only while the hero is in view; holds its
+       picture while paused. -->
+  <app-gpu-surface
+    #terrain
+    *ngIf="!failed"
+    class="stage__canvas"
+    [fragmentSource]="fragmentSource"
+    [uniformProvider]="uniformProvider"
+    [targetFps]="60"
+    [maxDpr]="2"
+    [still]="!motion"
+    (stats)="onStats($event)"
+    (ready)="onReady($event, terrain)"
+    (failed)="onFailed($event)"
+  ></app-gpu-surface>
+
+  <!-- Scrim: guarantees the contrast floor under the hero copy, and carries
+       the veil that resolves the terrain into the page background on scroll. -->
+  <div class="stage__scrim" aria-hidden="true"></div>
+
+  <!-- Layer 2: the survey map behind the content sections. Transparent
+       except for its ink, so the page background stays a CSS concern. Fades
+       in as the veil rises; starts parked and stays parked while the hero is
+       on screen. Pinned at 70 % scale: eleven noise taps a pixel need no
+       dynamic resolution, and the softer ink sits better behind text. -->
+  <app-gpu-surface
+    #field
+    *ngIf="!failed"
+    class="stage__field"
+    [fragmentSource]="fieldSource"
+    [uniformProvider]="fieldUniforms"
+    [targetFps]="60"
+    [maxDpr]="1"
+    [active]="false"
+    [qualityLock]="0.7"
+    [still]="!motion"
+  ></app-gpu-surface>
+</div>
+
+<!-- The instrument is a layer of its own, above the hero copy. Inside the
+     stage it would share the stage's stacking context, under the copy, and no
+     click would ever reach it. -->
+<app-frame-hud
+  *ngIf="showHud && !failed"
+  class="stage__hud"
+  [stats]="stats"
+  [caps]="caps"
+  [gpuName]="gpuName"
+  [historyProvider]="historyProvider"
+  [paused]="!motion"
+  [pausedBySystem]="motionHeldBySystem"
+  (motionToggle)="toggleMotion()"
+></app-frame-hud>

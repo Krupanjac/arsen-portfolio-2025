@@ -1,82 +1,57 @@
-<!-- Contact: modern, professional, non-terminal design -->
-<div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr]">
+<!-- Contact: one statement, one primary action. The card that used to hold a
+     heading and a sentence was decoration, so it is gone. -->
+<div class="grid min-h-[70vh] grid-cols-1 md:grid-cols-[20%_1fr]">
   <!-- Mobile label under nav -->
   <div class="md:hidden pt-14 px-4 pb-2 border-b border-divider">
-  <p class="text-base font-semibold uppercase tracking-wide md:tracking-widest text-secondary select-none whitespace-nowrap overflow-hidden text-ellipsis">
+    <p class="section-label whitespace-nowrap overflow-hidden text-ellipsis">
       <span appTerminalTyping data-i18n-key="CONTACT.LABEL">{{ 'CONTACT.LABEL' | translate }}</span>
     </p>
   </div>
 
   <!-- Left rail -->
   <div class="hidden md:flex border-r-2 rail-separator items-start justify-end pr-4 py-4">
-    <p class="text-xl whitespace-nowrap uppercase tracking-widest text-secondary select-none">
+    <p class="section-label whitespace-nowrap">
       <span appTerminalTyping data-i18n-key="CONTACT.LABEL">{{ 'CONTACT.LABEL' | translate }}</span>
     </p>
   </div>
 
-  <!-- Content area -->
-  <div class="flex justify-center items-start py-10 md:-ml-[20%] pl-4">
-    <div class="w-[92%] sm:w-[85%] md:w-[75%] lg:w-[65%] mx-auto my-10">
-      <!-- Hero copy -->
-      <div class="rounded-2xl bg-surface border border-divider p-6 md:p-8 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.25)] reveal-up" style="animation-delay:80ms">
-        <h1 class="text-2xl md:text-3xl font-semibold text-primary">
-          <span appTerminalTyping data-i18n-key="CONTACT.INTRO_1">{{ 'CONTACT.INTRO_1' | translate }}</span>
-        </h1>
-        <p class="mt-2 text-secondary">
-          <span appTerminalTyping data-i18n-key="CONTACT.INTRO_2">{{ 'CONTACT.INTRO_2' | translate }}</span>
-        </p>
-      </div>
+  <!-- Content -->
+  <div class="flex justify-center items-start py-20 md:py-32 md:-ml-[20%] pl-4 pr-4">
+    <div class="w-[92%] sm:w-[86%] md:w-[78%] lg:w-[72%] mx-auto flex flex-col items-start">
+      <h2 class="contact-title reveal-up" style="animation-delay:60ms">{{ 'CONTACT.TITLE' | translate }}</h2>
+      <p class="mt-5 max-w-[52ch] text-base md:text-lg leading-relaxed text-secondary reveal-up" style="animation-delay:120ms">{{ 'CONTACT.SUBTITLE' | translate }}</p>
 
-      <!-- Primary email + small mailto chip -->
-      <div class="mt-4 flex items-center gap-2 md:gap-3 flex-wrap">
-        <!-- Copy email button (narrower, left-aligned) -->
-        <div
-          class="contact-card reveal-up max-w-[260px]"
-          style="animation-delay:140ms"
-          role="button"
-          tabindex="0"
-          (click)="copyToClipboard(email)"
-          (keydown.enter)="copyToClipboard(email)"
-          appTooltip="{{ 'CONTACT.COPY_HINT' | translate }}"
-          tooltipPlacement="top"
-          [attr.aria-label]="'Copy email address ' + email + ' to clipboard'"
-        >
-          <div class="flex items-center gap-3">
-            <span class="icon icon-mail" aria-hidden="true"></span>
-            <div class="flex-1 min-w-0 text-left">
-              <div class="text-primary font-medium truncate"><span appTerminalTyping data-i18n-key="CONTACT.EMAIL">{{ 'CONTACT.EMAIL' | translate }}</span></div>
-              <div class="text-secondary select-text truncate">{{ email }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Compact mailto chip (small addition) -->
-        <a
-          class="action-chip action-chip--accent reveal-up"
-          style="animation-delay:180ms"
-          [href]="'mailto:' + email"
-          appTooltip="{{ 'CONTACT.COMPOSE' | translate }}"
-          tooltipPlacement="top"
-          [attr.aria-label]="'Compose email to ' + email"
-        >
-          <span class="icon" aria-hidden="true"></span>
-          <span class="label"><span appTerminalTyping data-i18n-key="CONTACT.COMPOSE">{{ 'CONTACT.COMPOSE' | translate }}</span></span>
+      <div class="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4 reveal-up" style="animation-delay:180ms">
+        <!-- Primary -->
+        <a class="contact-cta" [href]="'mailto:' + email" [attr.aria-label]="'CONTACT.COMPOSE_LABEL' | translate: { email: email }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2.5" />
+            <path d="m3.5 7 8.5 6 8.5-6" />
+          </svg>
+          <span>{{ 'CONTACT.COMPOSE' | translate }}</span>
         </a>
+
+        <!-- Copy the address: the thing people actually want from a contact page -->
+        <button type="button" class="contact-copy" (click)="copyToClipboard(email)"
+                appTooltip="{{ 'CONTACT.COPY_HINT' | translate }}" tooltipPlacement="top"
+                [attr.aria-label]="'CONTACT.COPY_LABEL' | translate: { email: email }">
+          <span class="select-text">{{ email }}</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="11" height="11" rx="2" />
+            <path d="M5 15V6a2 2 0 0 1 2-2h9" />
+          </svg>
+        </button>
       </div>
 
-      <!-- Secondary links -->
-      <div class="mt-2 reveal-up" style="animation-delay:220ms">
-        <p class="text-sm text-secondary"><span appTerminalTyping data-i18n-key="CONTACT.OTHER_LINKS">{{ 'CONTACT.OTHER_LINKS' | translate }}</span>
-          <a class="text-accent hover:underline ml-2" href="https://www.linkedin.com/in/arsendjurdjev/" target="_blank" rel="noopener noreferrer" appTooltip="TOOLTIP.LINKEDIN" tooltipPlacement="top"><span appTerminalTyping data-i18n-key="CONTACT.LINKEDIN">{{ 'CONTACT.LINKEDIN' | translate }}</span></a>
-          <span class="mx-1 text-secondary">·</span>
-          <a class="text-accent hover:underline" href="https://github.com/Krupanjac" target="_blank" rel="noopener noreferrer" appTooltip="TOOLTIP.GITHUB" tooltipPlacement="top"><span appTerminalTyping data-i18n-key="CONTACT.GITHUB">{{ 'CONTACT.GITHUB' | translate }}</span></a>
-        </p>
-      </div>
-
-      <!-- Meta info -->
-      <div class="mt-6 text-sm text-secondary space-y-1 reveal-up" style="animation-delay:380ms">
-  <div><span appTerminalTyping data-i18n-key="CONTACT.RESPONSE">{{ 'CONTACT.RESPONSE' | translate }}</span></div>
-  <div><span appTerminalTyping data-i18n-key="CONTACT.AVAILABILITY">{{ 'CONTACT.AVAILABILITY' | translate }}</span></div>
+      <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 reveal-up" style="animation-delay:240ms">
+        <a class="contact-link" href="https://github.com/Krupanjac" target="_blank" rel="noopener noreferrer" appTooltip="TOOLTIP.GITHUB" tooltipPlacement="top">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.38 7.86 10.9.58.1.79-.25.79-.55 0-.27-.01-1.15-.02-2.09-3.2.7-3.88-1.36-3.88-1.36-.53-1.33-1.3-1.69-1.3-1.69-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.21 1.78 1.21 1.04 1.78 2.72 1.27 3.38.97.1-.75.41-1.27.75-1.56-2.56-.29-5.26-1.28-5.26-5.72 0-1.26.45-2.3 1.2-3.11-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.19a11.1 11.1 0 0 1 2.9-.39c.98 0 1.96.13 2.88.39 2.2-1.5 3.17-1.19 3.17-1.19.63 1.58.23 2.75.11 3.04.75.81 1.19 1.85 1.19 3.11 0 4.45-2.71 5.42-5.29 5.7.42.36.8 1.08.8 2.18 0 1.58-.01 2.85-.01 3.24 0 .3.21.66.8.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" clip-rule="evenodd"/></svg>
+          <span>github.com/Krupanjac</span>
+        </a>
+        <a class="contact-link" href="https://www.linkedin.com/in/arsendjurdjev/" target="_blank" rel="noopener noreferrer" appTooltip="TOOLTIP.LINKEDIN" tooltipPlacement="top">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7.5 0h3.8v2.06h.05c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.78 2.65 4.78 6.1V23h-4v-7.08c0-1.69-.03-3.87-2.36-3.87-2.36 0-2.72 1.84-2.72 3.74V23h-4V8z"/></svg>
+          <span>in/arsendjurdjev</span>
+        </a>
       </div>
     </div>
   </div>

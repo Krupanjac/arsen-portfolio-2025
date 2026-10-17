@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input, Renderer2, Inject, PLATFORM_ID } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, Renderer2, Inject, PLATFORM_ID, NgZone, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -8,7 +8,7 @@ let tooltipStyleInjected = false;
   selector: '[appTooltip]',
   standalone: true
 })
-export class TooltipDirective {
+export class TooltipDirective implements OnDestroy {
   @Input('appTooltip') text: string = '';
   @Input() tooltipPlacement: 'top' | 'bottom' = 'top';
   private bubble: HTMLElement | null = null;
@@ -18,7 +18,8 @@ export class TooltipDirective {
     private host: ElementRef<HTMLElement>,
     private renderer: Renderer2,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private zone: NgZone
   ) {
     if (isPlatformBrowser(this.platformId)) {
       this.ensureGlobalStyles();
@@ -50,6 +51,13 @@ export class TooltipDirective {
   b.textContent = this.resolveText();
     this.bubble = b;
     document.body.appendChild(b);
+    // Follow the page only while a bubble exists, and outside the zone: as
+    // @HostListeners, every tooltip on the page ran change detection on every
+    // scroll event whether or not anything was showing.
+    this.zone.runOutsideAngular(() => {
+      window.addEventListener('scroll', this.reposition, { passive: true });
+      window.addEventListener('resize', this.reposition, { passive: true });
+    });
     this.positionBubble();
     requestAnimationFrame(() => b.classList.add('visible'));
   }
@@ -65,8 +73,12 @@ export class TooltipDirective {
     b.style.left = `${left}px`;
   }
 
+  private readonly reposition = () => this.positionBubble();
+
   private destroyBubble(immediate = false) {
     if (!this.bubble) return;
+    window.removeEventListener('scroll', this.reposition);
+    window.removeEventListener('resize', this.reposition);
     const b = this.bubble;
     if (immediate) {
       b.remove();
@@ -86,8 +98,11 @@ export class TooltipDirective {
   @HostListener('blur') onBlur() { this.hide(); }
   @HostListener('touchstart') onTouch() { this.toggleTouch(); }
   @HostListener('click') onClick() { this.hide(); }
-  @HostListener('window:scroll') onScroll() { this.positionBubble(); }
-  @HostListener('window:resize') onResize() { this.positionBubble(); }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.hideTimeout);
+    this.destroyBubble(true);
+  }
 
   private show() {
     if (!isPlatformBrowser(this.platformId)) return;

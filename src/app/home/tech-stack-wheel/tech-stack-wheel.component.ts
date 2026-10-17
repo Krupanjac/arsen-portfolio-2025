@@ -49,6 +49,7 @@ export class TechStackWheelComponent implements AfterViewInit, OnDestroy {
         { key: 'PHP', icon: 'php' },
         { key: 'TYPESCRIPT', icon: 'ts' },
         { key: 'JAVASCRIPT', icon: 'js' },
+        { key: 'GO', icon: 'go' },
         { key: 'SQL', icon: 'sql' }
       ]
     },
@@ -58,6 +59,7 @@ export class TechStackWheelComponent implements AfterViewInit, OnDestroy {
       color: '#f59e0b',
       items: [
         { key: 'ANGULAR', icon: 'angular' },
+        { key: 'SVELTE', icon: 'svelte' },
         { key: 'NODE', icon: 'node' },
         { key: 'TAILWIND', icon: 'tailwind' }
       ]

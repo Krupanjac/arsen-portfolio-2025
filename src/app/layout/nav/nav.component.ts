@@ -1,17 +1,16 @@
-import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit, NgZone, Inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TerminalTypingDirective } from '../../shared/terminal-typing.directive';
 import { LoginComponent } from '../../login/login.component';
 import { AdminEditorComponent } from '../../admin-editor/admin-editor.component';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterModule, CommonModule, TranslateModule, FormsModule, TerminalTypingDirective, LoginComponent, AdminEditorComponent],
+  imports: [RouterModule, CommonModule, TranslateModule, FormsModule, LoginComponent, AdminEditorComponent],
   // No custom providers
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
@@ -30,15 +29,38 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
   private scrollAnimationId: number | null = null;
   private isUserInteracting = false;
   theme: 'light' | 'dark' = 'dark';
+  /** Drives the nav's backdrop: transparent over the hero, solid once past it. */
+  scrolled = false;
+  private navScrollListener: (() => void) | null = null;
+
+  /**
+   * Single source of truth for the section links. The template previously
+   * repeated the same 40-utility anchor five times for desktop and five more
+   * for mobile, so a change to one link silently diverged from the other nine.
+   */
+  readonly sections: ReadonlyArray<{ id: string; key: string }> = [
+    { id: 'start', key: 'NAV.START' },
+    { id: 'experience', key: 'NAV.EXPERIENCE' },
+    { id: 'projects', key: 'NAV.PROJECTS' },
+    { id: 'about', key: 'NAV.ABOUT' },
+    { id: 'contact', key: 'NAV.CONTACT' },
+  ];
   private authListener: ((ev: Event) => void) | null = null;
   private keydownListener: ((ev: KeyboardEvent) => void) | null = null;
   private _savedScrollY = 0;
+  private readonly isBrowser: boolean;
 
   toggleNav(): void {
     this.isNavOpen = !this.isNavOpen;
   }
 
-  constructor(private translate: TranslateService, private router: Router) {
+  constructor(
+    private translate: TranslateService,
+    private router: Router,
+    private zone: NgZone,
+    @Inject(PLATFORM_ID) platformId: Object,
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
     // Ensure a language is set at startup
     const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : null;
     const lang = stored || 'en';
@@ -61,6 +83,20 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {
     // check current session on init
     try { this.checkSession(); } catch {}
+    if (this.isBrowser) {
+      // Outside the zone: a listener registered inside it runs change
+      // detection for the whole app on every scroll event (R8-7). The
+      // backdrop only changes when `scrolled` flips, so re-enter only then.
+      const listener = () => {
+        const next = (window.scrollY || 0) > 24;
+        if (next !== this.scrolled) this.zone.run(() => { this.scrolled = next; });
+      };
+      this.navScrollListener = listener;
+      this.zone.runOutsideAngular(() => {
+        window.addEventListener('scroll', listener, { passive: true });
+      });
+      listener();
+    }
   // listen for login events from embedded login component
   this.authListener = () => { try { this.checkSession(); } catch {} };
   try { window.addEventListener('auth:login', this.authListener); } catch {}
@@ -279,7 +315,7 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
    * across browsers and fine-tuned easing.
    */
   private animateScrollTo(targetY: number) {
-    if (typeof window === 'undefined') return;
+    if (!this.isBrowser) return;
 
     // Cancel any existing animation
     if (this.scrollAnimationId !== null) {
@@ -289,7 +325,9 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const startY = window.scrollY;
     const distance = targetY - startY;
-    if (Math.abs(distance) < 2) {
+    // Reduced motion: go straight there instead of animating the page.
+    const reducedMotion = !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (Math.abs(distance) < 2 || reducedMotion) {
       window.scrollTo(0, targetY);
       return;
     }
@@ -318,6 +356,7 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
         this.scrollAnimationId = requestAnimationFrame(step);
       } else {
         this.scrollAnimationId = null;
+        cleanup();
       }
     };
 
@@ -327,14 +366,18 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
     const cleanup = () => {
       interruptEvents.forEach(ev => window.removeEventListener(ev, markInteracting, { passive: true } as any));
     };
-    interruptEvents.forEach(ev => window.addEventListener(ev, markInteracting, { passive: true }));
 
-    this.isUserInteracting = false;
-    this.scrollAnimationId = requestAnimationFrame(step);
+    // Every frame is a scrollTo and nothing Angular renders, so the animation
+    // and its interrupt listeners stay out of the zone (R8-7).
+    this.zone.runOutsideAngular(() => {
+      interruptEvents.forEach(ev => window.addEventListener(ev, markInteracting, { passive: true }));
+      this.isUserInteracting = false;
+      this.scrollAnimationId = requestAnimationFrame(step);
+    });
   }
 
   private initSectionObserver() {
-    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    if (!this.isBrowser) return;
 
     // Determine header height for rootMargin so sections account for fixed header
     const header = document.querySelector('header');
@@ -346,23 +389,29 @@ export class NavComponent implements AfterViewInit, OnInit, OnDestroy {
       threshold: [0.1, 0.25, 0.5, 0.75]
     };
 
-    this.observer = new IntersectionObserver((entries) => {
+    // Same deal as the scroll listener: observe outside the zone and come back
+    // in only when the highlighted section actually changes.
+    this.observer = this.zone.runOutsideAngular(() => new IntersectionObserver((entries) => {
       // Choose the most visible entry that's intersecting
       const visible = entries.filter(e => e.isIntersecting);
       if (visible.length === 0) return;
       visible.sort((a, b) => (b.intersectionRatio - a.intersectionRatio));
       const topEntry = visible[0];
       const id = topEntry.target.getAttribute('id');
-      if (id) {
-        this.activeId = id;
+      if (id && id !== this.activeId) {
+        this.zone.run(() => { this.activeId = id; });
       }
-    }, options);
+    }, options));
 
     const sections = document.querySelectorAll('section[id]');
     sections.forEach(s => this.observer?.observe(s));
   }
 
   ngOnDestroy(): void {
+    if (this.navScrollListener) {
+      try { window.removeEventListener('scroll', this.navScrollListener); } catch {}
+      this.navScrollListener = null;
+    }
     if (this.observer) {
       this.observer.disconnect();
       this.observer = null;

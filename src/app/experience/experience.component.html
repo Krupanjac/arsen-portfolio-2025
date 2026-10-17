@@ -1,13 +1,13 @@
-<div class="grid min-h-screen grid-cols-1 md:grid-cols-[20%_1fr] items-stretch">
+<div class="grid min-h-[70vh] grid-cols-1 md:grid-cols-[20%_1fr] items-stretch">
   <!-- Mobile label under nav -->
   <div class="md:hidden pt-14 px-4 pb-2 border-b border-divider">
-  <p class="text-base font-semibold uppercase tracking-widest text-secondary select-none">
+  <p class="section-label">
       <span appTerminalTyping data-i18n-key="EXPERIENCE.LABEL">{{ 'EXPERIENCE.LABEL' | translate }}</span>
     </p>
   </div>
 
   <!-- Left rail -->
-  <app-rail class="self-stretch" [textClass]="'text-xl whitespace-nowrap uppercase tracking-widest text-secondary select-none'">
+  <app-rail class="self-stretch" [textClass]="'section-label whitespace-nowrap'">
     <span appTerminalTyping data-i18n-key="EXPERIENCE.LABEL">{{ 'EXPERIENCE.LABEL' | translate }}</span>
   </app-rail>
 
@@ -40,8 +40,19 @@
         </div>
 
         <!-- Empty state -->
-        <div *ngIf="workPosts.length === 0" class="pl-8 py-8">
-          <p class="text-secondary text-sm italic">No experience experience entries yet.</p>
+        <div *ngIf="workPosts.length === 0" class="pl-8 py-10 flex flex-col items-start gap-4">
+          <svg class="w-9 h-9 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="7" width="18" height="13" rx="2" />
+            <path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7" />
+            <path d="M3 12.5h18" />
+          </svg>
+          <h3 class="font-display text-xl font-semibold tracking-tight text-primary">{{ 'EXPERIENCE.EMPTY.TITLE' | translate }}</h3>
+          <p class="max-w-[52ch] text-sm leading-relaxed text-secondary">{{ 'EXPERIENCE.EMPTY.BODY' | translate }}</p>
+          <a href="/Arsen_Djurdjev_Resume.pdf" target="_blank" rel="noopener"
+             class="mt-1 inline-flex items-center gap-2 font-mono text-sm text-accent hover:underline underline-offset-4">
+            {{ 'EXPERIENCE.EMPTY.CTA' | translate }}
+            <span aria-hidden="true">&#8599;</span>
+          </a>
         </div>
       </div>
     </div>

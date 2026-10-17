@@ -8,24 +8,31 @@
     "LANG": {
       "EN": "Engleski",
       "SR": "Srpski"
-    }
-  }
-  ,
+    },
+    "SECTIONS_LABEL": "Odeljci",
+    "MENU_TOGGLE": "Otvori ili zatvori navigaciju",
+    "DASHBOARD_OPEN": "Otvori kontrolnu tablu",
+    "DASHBOARD_CLOSE": "Zatvori",
+    "SWITCH_TO_EN": "Prebaci jezik na engleski",
+    "SWITCH_TO_SR": "Prebaci jezik na srpski",
+    "THEME_TO_LIGHT": "Prebaci na svetlu temu",
+    "THEME_TO_DARK": "Prebaci na tamnu temu"
+  },
   "ABOUT": {
     "LABEL": "O meni/>",
     "L1": "$echo \"Zdravo, ja sam Arsen Đurđev.\"",
-  "L2": "Student softverskog inženjerstva sa osnovom u elektrotehnici i produkt-prvim pristupom.",
+    "L2": "Rendering inženjer sa elektrotehničkim korenima i product-first pristupom.",
     "DOTS": "...",
     "WHOAMI": "$whoami",
-    "ROLE": "Full‑stack inženjer i dizajner sistema.",
-  "H1": "$istaknuto",
-  "H1_L1": "Od freelance videa do frontenda; spajam kreativni rad i inženjering za pouzdanu isporuku.",
-  "H1_L2": "Razvio i vodio Arma 3 zajednicu od 150+; izgradio sisteme evidencije i rangiranja i koordinisao događaje.",
-  "H1_L3": "Reprojektovao učitavanje Arma modova — smanjio ukupno opterećenje modova za ~70% i poboljšao vremena učitavanja i performanse.",
-  "H2": "$sada",
-  "H2_L1": "Gradim pipeline‑ove za velikorazmernu proceduralnu izradu terena iz OpenStreetMap podataka i optimizujem tokove rada.",
-  "H2_L2": "Izgradio i vodim armasrbija.rs — backend, frontend i deploy za usluge prema zajednici i igri.",
-  "H2_L3": "Otvoren za uloge i ugovore sa jasnim vlasništvom, optimizacijom procesa i merljivim uticajem.",
+    "ROLE": "Radim na renderingu u realnom vremenu, proceduralnim terrain pipeline-ovima i alatima oko njih.",
+    "H1": "$istaknuto",
+    "H1_L1": "Od freelance videa do frontenda; spajam kreativni rad i inženjering za pouzdanu isporuku.",
+    "H1_L2": "Razvio i vodio Arma 3 zajednicu od 150+; izgradio sisteme evidencije i rangiranja i koordinisao događaje.",
+    "H1_L3": "Reprojektovao učitavanje Arma modova — smanjio ukupno opterećenje modova za ~70% i poboljšao vremena učitavanja i performanse.",
+    "H2": "$sada",
+    "H2_L1": "Gradim pipeline‑ove za velikorazmernu proceduralnu izradu terena iz OpenStreetMap podataka i optimizujem tokove rada.",
+    "H2_L2": "Izgradio i vodim armasrbija.rs — backend, frontend i deploy za usluge prema zajednici i igri.",
+    "H2_L3": "Otvoren za uloge i ugovore sa jasnim vlasništvom, optimizacijom procesa i merljivim uticajem.",
     "SKILLS": "$veštine",
     "SKILL_ALGO": "Algoritmi",
     "SKILL_DS": "Strukture podataka",
@@ -34,125 +41,195 @@
     "SKILL_ML": "Mašinsko učenje",
     "SKILL_FRONTEND": "Frondend razvoj",
     "LANGS": "$jezici",
-  "LANGS_INLINE": "Jezici: C, C++, Python, Java, C#, TypeScript/JavaScript, SQL",
+    "LANGS_INLINE": "Jezici: C, C++, Python, Java, C#, Go, TypeScript/JavaScript, SQL",
     "TOOLS": "$alati",
-  "TOOLS_INLINE": "Alati: Angular, Node.js, Tailwind, Git, Docker, SQLite, Cloudflare, Linux",
+    "TOOLS_INLINE": "Alati: Angular, Svelte, Node.js, Tailwind, Git, Docker, SQLite, Cloudflare, Linux",
     "AI": "Veštačka inteligencija",
     "CONTACT": "$kontakt",
     "LINKEDIN": "LinkedIn <--klikni za prikaz",
     "GITHUB": "GitHub <--klikni za prikaz",
-    "INSTAGRAM": "Instagram <--klikni za prikaz"
-  ,
-  "LANG_LIST": {
-    "PYTHON": "Python",
-    "PASCAL": "Pascal",
-    "C": "C",
-    "CPP": "C++",
-    "UML": "UML",
-    "JAVA": "Java",
-    "CSHARP": "C#",
-    "SQL": "SQL",
-    "JAVASCRIPT": "JavaScript..."
-  },
-  "TOOLS_LIST": {
-    "GIT": "Git",
-    "DOCKER": "Docker",
-    "VISUAL_STUDIO": "Visual Studio",
-    "BOOTSTRAP": "Bootstrap"
-  }
+    "INSTAGRAM": "Instagram <--klikni za prikaz",
+    "LANG_LIST": {
+      "PYTHON": "Python",
+      "PASCAL": "Pascal",
+      "C": "C",
+      "CPP": "C++",
+      "UML": "UML",
+      "JAVA": "Java",
+      "CSHARP": "C#",
+      "SQL": "SQL",
+      "JAVASCRIPT": "JavaScript..."
+    },
+    "TOOLS_LIST": {
+      "GIT": "Git",
+      "DOCKER": "Docker",
+      "VISUAL_STUDIO": "Visual Studio",
+      "BOOTSTRAP": "Bootstrap"
+    },
+    "TITLE": "Elektrotehnički koreni, navike okrenute proizvodu.",
+    "P1": "Do renderinga sam došao kroz igre i infrastrukturu zajednice, ne kroz kurs grafike. Vođenje Arma 3 jedinice od 150 ljudi naučilo me je da frejm koji zastaje na tuđoj mašini nije mišljenje nego bag, i većina onoga što od tada gradim služi tome.",
+    "P2": "Novi Sad, Srbija. Remote ili hibridno, CET. Otvoren za uloge i ugovore sa jasnim vlasništvom i brojem koji mogu da pomerim."
   },
   "CONTACT": {
-  "LABEL": "Kontakt/>",
-  "TERMINAL_USER": "root@terminal",
-  "HOME_LABEL": "Kontakt/>",
-  "INTRO_1": "$echo \"Hajde da napravimo nešto pouzdano i brzo.\"",
-  "INTRO_2": "$kontakt — preferirani kanali ispod",
-  "EMAIL": "E‑mail",
-  "LINKEDIN": "LinkedIn",
-  "GITHUB": "GitHub",
-  "RESPONSE": "$odgovor ~1–2 radna dana",
-  "AVAILABILITY": "$dostupnost — remote / hibrid · CET",
-  "COPY_HINT": "Klik za kopiranje",
-  "OPEN_HINT": "Otvori",
-  "COMPOSE": "Napiši poruku",
-  "OTHER_LINKS": "Takođe sam i na",
-  "COPIED": "Kopirano",
-  "COPY_FAILED": "Kopiranje nije uspelo."
+    "LABEL": "Kontakt/>",
+    "TERMINAL_USER": "root@terminal",
+    "HOME_LABEL": "Kontakt/>",
+    "INTRO_1": "$echo \"Hajde da napravimo nešto pouzdano i brzo.\"",
+    "INTRO_2": "$kontakt — preferirani kanali ispod",
+    "EMAIL": "E‑mail",
+    "LINKEDIN": "LinkedIn",
+    "GITHUB": "GitHub",
+    "RESPONSE": "$odgovor ~1–2 radna dana",
+    "AVAILABILITY": "$dostupnost — remote / hibrid · CET",
+    "COPY_HINT": "Klik za kopiranje",
+    "OPEN_HINT": "Otvori",
+    "COMPOSE": "Napiši poruku",
+    "COMPOSE_LABEL": "Napiši poruku na adresu {{email}}",
+    "COPY_LABEL": "Kopiraj adresu {{email}}",
+    "OTHER_LINKS": "Takođe sam i na",
+    "COPIED": "Kopirano",
+    "COPY_FAILED": "Kopiranje nije uspelo.",
+    "TITLE": "Hajde da napravimo nešto pouzdano i brzo.",
+    "SUBTITLE": "Odgovor u roku od jednog do dva radna dana. Remote ili hibridno, CET."
   },
   "HOME": {
     "LABEL": "Početna/>",
-    "TITLE": "Zdravo Svete",
-    "SUBTITLE": "Snalažljiv softverski inženjer sa iskustvom u full-stack razvoju, razvoju igračkih sistema i upravljanju zajednicom. Spreman da pruži tehničku dubinu i kreativno rešavanje problema u inovativnim projektima. Vešt u veštačkoj inteligenciji, optimizaciji performansi, izgradnji terena i isporuci web rešenja koja podržavaju stvarne potrebe korisnika.",
+    "TITLE": "Budžet frejma je specifikacija.",
+    "SUBTITLE": "Sve ispod radi unutar fiksnog vremenskog isečka, na hardveru koji ne biram ja. To ograničenje je zanimljiv deo — pretvara rendering, generisanje terena i alate u isti problem sa tri različite kape.",
     "STACK": {
       "TITLE": "$stek",
       "SUBTITLE": "Neke od tehnologija, alata i kreativnih oblasti sa kojima radim.",
       "GROUPS": {
-  "LANGUAGES": { "TITLE": "$jezici" },
-  "FRAMEWORKS": { "TITLE": "$frameworki i runtime" },
-  "PLATFORM": { "TITLE": "$platforma / infra & podaci", "SQLITE": "SQLite", "REL_SQL": "Relacijski SQL", "CLOUDFLARE": "Cloudflare", "AZURE": "Azure", "GCP": "Google Cloud", "LINUX": "Linux" },
-  "TOOLING": { "TITLE": "$alati", "GIT": "Git", "PIPELINES": "Pipelines", "ALGO_DS": "Algoritmi i strukture podataka", "DESIGN_PATTERNS": "Dizajn paterni" },
-  "AI": { "TITLE": "$ai", "PAIR": "AI pair programiranje", "LLM": "AI / LLM", "OLLAMA": "Ollama" },
-  "CREATIVE": { "TITLE": "$kreativno", "PHOTO": "Obrada fotografija", "VIDEO": "Video montaža", "TERRAIN": "Uređivanje terena svetova" }
-      }
-      ,
+        "LANGUAGES": {
+          "TITLE": "$jezici"
+        },
+        "FRAMEWORKS": {
+          "TITLE": "$frameworki i runtime"
+        },
+        "PLATFORM": {
+          "TITLE": "$platforma / infra & podaci",
+          "SQLITE": "SQLite",
+          "REL_SQL": "Relacijski SQL",
+          "CLOUDFLARE": "Cloudflare",
+          "AZURE": "Azure",
+          "GCP": "Google Cloud",
+          "LINUX": "Linux"
+        },
+        "TOOLING": {
+          "TITLE": "$alati",
+          "GIT": "Git",
+          "PIPELINES": "Pipelines",
+          "ALGO_DS": "Algoritmi i strukture podataka",
+          "DESIGN_PATTERNS": "Dizajn paterni"
+        },
+        "AI": {
+          "TITLE": "$ai",
+          "PAIR": "AI pair programiranje",
+          "LLM": "AI / LLM",
+          "OLLAMA": "Ollama"
+        },
+        "CREATIVE": {
+          "TITLE": "$kreativno",
+          "PHOTO": "Obrada fotografija",
+          "VIDEO": "Video montaža",
+          "TERRAIN": "Uređivanje terena svetova"
+        }
+      },
       "ITEMS": {
         "C": "C",
         "CPP": "C++",
-  "PYTHON": "Python",
-  "JAVA": "Java",
-  "CSHARP": "C#",
-  "PHP": "PHP",
+        "PYTHON": "Python",
+        "JAVA": "Java",
+        "CSHARP": "C#",
+        "PHP": "PHP",
         "TYPESCRIPT": "TypeScript",
         "JAVASCRIPT": "JavaScript",
-  "SQL": "SQL",
-  "ANGULAR": "Angular",
-  "NODE": "Node.js",
-  "TAILWIND": "Tailwind",
-  "SQLITE": "SQLite",
-  "REL_SQL": "Relacijski SQL",
-  "CLOUDFLARE": "Cloudflare",
-  "AZURE": "Azure",
-  "GCP": "Google Cloud",
-  "LINUX": "Linux",
-  "GIT": "Git",
-  "PIPELINES": "Pipelines",
-  "ALGO_DS": "Algoritmi i strukture podataka",
-  "DESIGN_PATTERNS": "Dizajn paterni",
-  "PAIR": "AI pair programiranje",
-  "LLM": "AI / LLM",
-  "OLLAMA": "Ollama",
-  "PHOTO": "Obrada fotografija",
-  "VIDEO": "Video montaža",
-  "TERRAIN": "Uređivanje terena svetova"
+        "SQL": "SQL",
+        "ANGULAR": "Angular",
+        "NODE": "Node.js",
+        "TAILWIND": "Tailwind",
+        "SQLITE": "SQLite",
+        "REL_SQL": "Relacijski SQL",
+        "CLOUDFLARE": "Cloudflare",
+        "AZURE": "Azure",
+        "GCP": "Google Cloud",
+        "LINUX": "Linux",
+        "GIT": "Git",
+        "PIPELINES": "Pipelines",
+        "ALGO_DS": "Algoritmi i strukture podataka",
+        "DESIGN_PATTERNS": "Dizajn paterni",
+        "PAIR": "AI pair programiranje",
+        "LLM": "AI / LLM",
+        "OLLAMA": "Ollama",
+        "PHOTO": "Obrada fotografija",
+        "VIDEO": "Video montaža",
+        "TERRAIN": "Uređivanje terena svetova",
+        "GO": "Go",
+        "SVELTE": "Svelte"
+      }
+    },
+    "CAP": {
+      "RENDER": {
+        "TITLE": "Rendering u realnom vremenu",
+        "BODY": "Pisanje šejdera, osvetljenje i profiling petlja oko njih. Hero iznad je radni primer: raymarching, dinamičko skaliranje rezolucije i instrumentacija istim tajmerom koji tu rezoluciju određuje."
+      },
+      "TERRAIN": {
+        "TITLE": "Proceduralni teren",
+        "BODY": "Teren velikih razmera građen iz OpenStreetMap podataka — generisanje heightfield-a, LOD i import pipeline koji mora da preživi okruženja daleko veća od memorije."
+      },
+      "SYSTEMS": {
+        "TITLE": "Sistemi i alati",
+        "BODY": "Neglamurozna polovina. Prerada učitavanja Arma 3 modova smanjila je ukupno učitavanje za oko 70%, i to je došlo iz merenja i build koraka, ne iz pametnog renderera."
       }
     }
   },
   "PROJECTS": {
-    "LABEL": "Projekti/>"
+    "LABEL": "Projekti/>",
+    "EMPTY": {
+      "TITLE": "Ovde još nema objava",
+      "BODY": "Tekstovi se dodaju kako rad postaje deljiv — alati za teren, eksperimenti sa šejderima i poneki post-mortem optimizacije. U međuvremenu, izvorni kod većine toga je javan.",
+      "CTA": "Pogledaj repozitorijume"
+    }
   },
   "EXPERIENCE": {
-    "LABEL": "Iskustvo/>"
+    "LABEL": "Iskustvo/>",
+    "EMPTY": {
+      "TITLE": "Vremenska linija se prepravlja",
+      "BODY": "Uloge i ugovori se prebacuju u novi format. Biografija ima punu istoriju, sa datumima.",
+      "CTA": "Otvori biografiju (PDF)"
+    }
   },
   "PLAY": {
-  "TOOLTIP": "Igraj se sa zvezdama",
-  "BUTTON": "Igraj"
+    "TOOLTIP": "Otvori renderer preko celog ekrana",
+    "BUTTON": "Renderer preko ekrana"
   },
   "HELP": {
-    "TITLE": "Interaktivne komande",
+    "TITLE": "Kontrole renderera",
     "COMMANDS": {
-      "D": "Uključi/isključi crtanje",
-      "C": "Obriši sva crtanja", 
-      "S": "Dodaj nasumične zvezde (u crtanju)",
-      "CLICK": "Klik za čestice",
-  "SHIFT_CLICK": "Drži Shift + levi klik za crtanje (u modu crtanja)"
+      "MOUSE": "Pomeraj pokazivač da se osvrneš",
+      "SCALE": "Zaključaj internu rezoluciju na 50 / 75 / 100%",
+      "AUTO": "Vrati rezoluciju dinamičkom skaleru",
+      "HUD": "Klikni na očitavanje za GPU vreme, p95 i fill rate",
+      "ESC": "Izađi iz celog ekrana"
     },
-    "TIP": "Pritisni bilo koji taster iznad za interakciju!"
+    "TIP": "Gledaj graf frejmova dok menjaš skalu."
+  },
+  "HUD": {
+    "DETECTING": "otkrivanje…",
+    "PLAY": "Pokreni renderer",
+    "PAUSE": "Pauziraj renderer",
+    "PAUSED": "pauza",
+    "REDUCED_MOTION": "manje pokreta"
   },
   "HERO": {
     "MY_NAME_IS": "Moje ime je",
-    "TAGLINE": "Kreativna rešenja za digitalni svet"
-  }
-  ,
+    "TAGLINE": "Kreativna rešenja za digitalni svet",
+    "DISCIPLINE": "Rendering u realnom vremenu / programiranje endžina",
+    "LEDE": "Gradim sisteme koji izbacuju piksele na ekran — proceduralne terrain pipeline-ove, optimizaciju na GPU strani i alate koji drže frejm ispod 16.7 ms.",
+    "SCROLL_HINT": "Skroluj",
+    "SCROLL_LABEL": "Skroluj do sadržaja",
+    "SOCIAL_LABEL": "Društvene mreže"
+  },
   "LOGIN": {
     "TITLE": "Prijava",
     "USERNAME": "Korisničko ime",
@@ -160,10 +237,9 @@
     "SIGN_IN": "Prijavi se",
     "LOADING": "Učitavanje...",
     "SUCCESS": "Uspešno prijavljeni.",
-  "FAILED": "Prijava neuspešna",
-  "COMPLETE_CHALLENGE": "Kompletirajte bezbednosni izazov da biste omogućili prijavu"
-  }
-  ,
+    "FAILED": "Prijava neuspešna",
+    "COMPLETE_CHALLENGE": "Kompletirajte bezbednosni izazov da biste omogućili prijavu"
+  },
   "RESUME": {
     "BUTTON": "CV",
     "MODAL": {
@@ -177,8 +253,7 @@
     "INSTAGRAM": "Instagram",
     "RESUME": "Otvori CV",
     "SCROLL": "Skrol do sadržaja"
-  }
-  ,
+  },
   "FOOTER": {
     "BACK_TO_TOP": "Nazad na vrh",
     "EMAIL": "E‑pošta",
