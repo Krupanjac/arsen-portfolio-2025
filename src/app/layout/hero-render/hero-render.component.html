@@ -1,5 +1,6 @@
 <div class="stage" [class.stage--fallback]="failed">
-  <!-- Layer 1: the terrain. Runs only while the hero is in view. -->
+  <!-- Layer 1: the terrain. Runs only while the hero is in view; holds its
+       picture while paused. -->
   <app-gpu-surface
     #terrain
     *ngIf="!failed"
@@ -8,6 +9,7 @@
     [uniformProvider]="uniformProvider"
     [targetFps]="60"
     [maxDpr]="2"
+    [still]="!motion"
     (stats)="onStats($event)"
     (ready)="onReady($event, terrain)"
     (failed)="onFailed($event)"
@@ -32,14 +34,21 @@
     [maxDpr]="1"
     [active]="false"
     [qualityLock]="0.7"
+    [still]="!motion"
   ></app-gpu-surface>
-
-  <app-frame-hud
-    *ngIf="showHud && !failed"
-    class="stage__hud"
-    [stats]="stats"
-    [caps]="caps"
-    [gpuName]="gpuName"
-    [historyProvider]="historyProvider"
-  ></app-frame-hud>
 </div>
+
+<!-- The instrument is a layer of its own, above the hero copy. Inside the
+     stage it would share the stage's stacking context, under the copy, and no
+     click would ever reach it. -->
+<app-frame-hud
+  *ngIf="showHud && !failed"
+  class="stage__hud"
+  [stats]="stats"
+  [caps]="caps"
+  [gpuName]="gpuName"
+  [historyProvider]="historyProvider"
+  [paused]="!motion"
+  [pausedBySystem]="motionHeldBySystem"
+  (motionToggle)="toggleMotion()"
+></app-frame-hud>

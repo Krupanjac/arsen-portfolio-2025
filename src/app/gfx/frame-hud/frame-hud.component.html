@@ -1,19 +1,50 @@
-<div class="hud" [class.hud--expanded]="expanded">
-  <button
-    type="button"
-    class="hud__bar"
-    (click)="toggle()"
-    [attr.aria-expanded]="expanded"
-    aria-controls="hud-detail"
-  >
-    <span class="hud__dot" [class.hud__dot--warn]="(stats?.p95Ms ?? 0) > 20"></span>
-    <span class="hud__fps">{{ format(stats?.fps ?? 0, 0) }}</span>
-    <span class="hud__unit">fps</span>
-    <span class="hud__sep">/</span>
-    <span class="hud__ms">{{ format(stats?.frameMs ?? 0, 2) }}</span>
-    <span class="hud__unit">ms</span>
-    <span class="hud__chev" aria-hidden="true">{{ expanded ? '−' : '+' }}</span>
-  </button>
+<div class="hud" [class.hud--expanded]="expanded" [class.hud--paused]="paused">
+  <div class="hud__head">
+    <!-- Play/pause (WCAG 2.2.2). Starts paused under prefers-reduced-motion. -->
+    <button
+      type="button"
+      class="hud__motion"
+      (click)="motionToggle.emit()"
+      [attr.aria-label]="(paused ? 'HUD.PLAY' : 'HUD.PAUSE') | translate"
+      [appTooltip]="paused ? 'HUD.PLAY' : 'HUD.PAUSE'"
+    >
+      <svg *ngIf="paused; else pauseIcon" viewBox="0 0 12 12" aria-hidden="true">
+        <path d="M3.2 1.7v8.6L10.2 6z" />
+      </svg>
+      <ng-template #pauseIcon>
+        <svg viewBox="0 0 12 12" aria-hidden="true">
+          <path d="M2.6 1.8h2.4v8.4H2.6zM7 1.8h2.4v8.4H7z" />
+        </svg>
+      </ng-template>
+    </button>
+
+    <button
+      type="button"
+      class="hud__bar"
+      (click)="toggle()"
+      [attr.aria-expanded]="expanded"
+      aria-controls="hud-detail"
+    >
+      <span
+        class="hud__dot"
+        [class.hud__dot--warn]="!paused && (stats?.p95Ms ?? 0) > 20"
+        [class.hud__dot--off]="paused"
+      ></span>
+      <ng-container *ngIf="!paused; else pausedReadout">
+        <span class="hud__fps">{{ format(stats?.fps ?? 0, 0) }}</span>
+        <span class="hud__unit">fps</span>
+        <span class="hud__sep">/</span>
+        <span class="hud__ms">{{ format(stats?.frameMs ?? 0, 2) }}</span>
+        <span class="hud__unit">ms</span>
+      </ng-container>
+      <!-- A paused renderer draws no frames, so it has no frame rate to show. -->
+      <ng-template #pausedReadout>
+        <span class="hud__state">{{ 'HUD.PAUSED' | translate }}</span>
+        <span *ngIf="pausedBySystem" class="hud__reason">{{ 'HUD.REDUCED_MOTION' | translate }}</span>
+      </ng-template>
+      <span class="hud__chev" aria-hidden="true">{{ expanded ? '−' : '+' }}</span>
+    </button>
+  </div>
 
   <canvas #graph class="hud__graph" aria-hidden="true"></canvas>
 

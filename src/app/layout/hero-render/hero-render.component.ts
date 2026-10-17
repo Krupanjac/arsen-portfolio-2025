@@ -16,7 +16,7 @@ import { GpuSurfaceComponent } from '../../gfx/gpu-surface/gpu-surface.component
 import { FrameHudComponent } from '../../gfx/frame-hud/frame-hud.component';
 import { HERO_TERRAIN_FRAGMENT } from '../../gfx/shaders/hero-terrain.frag';
 import { CONTOUR_FIELD_FRAGMENT } from '../../gfx/shaders/contour-field.frag';
-import { prefersReducedMotion } from '../../gfx/render-loop';
+import { MotionPreference } from '../../gfx/motion-preference';
 import { PlayStateService } from '../../play-state.service';
 import { readThemeColor, srgbToLinear, type Rgb } from '../../gfx/color';
 import { readPalette, type PaletteUniforms } from '../../gfx/palette';
@@ -24,13 +24,15 @@ import type { FrameStats, GpuCapabilities } from '../../gfx/shader-surface';
 import type { UniformValue } from '../../gfx/shader';
 
 const ACCENT_FALLBACK: Rgb = [0.55, 0.36, 0.96];
-/** Camera input under reduced motion: centred and still. */
-const STILL: [number, number] = [0, 0];
 
 /**
  * The hero background: a raymarched terrain driven by pointer and scroll,
  * with the frame-time HUD reading off the same timer that drives its dynamic
  * resolution.
+ *
+ * The HUD's play/pause control decides whether the scene moves. Until the
+ * visitor uses it, prefers-reduced-motion does (see MotionPreference).
+ * Paused, both surfaces hold their picture.
  *
  * Falls back to a static CSS gradient when WebGL2 is unavailable or the shader
  * fails to compile — the hero copy has to stay legible either way.
@@ -52,7 +54,12 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
 
   readonly fragmentSource = HERO_TERRAIN_FRAGMENT;
   readonly fieldSource = CONTOUR_FIELD_FRAGMENT;
-  private readonly reducedMotion = prefersReducedMotion();
+
+  /** False holds both surfaces on their current frame. */
+  motion = true;
+  /** Motion is off only because the system asks for reduced motion; the HUD says so. */
+  motionHeldBySystem = false;
+  private readonly motionPreference: MotionPreference | null = null;
 
   stats: FrameStats | null = null;
   caps: GpuCapabilities | null = null;
@@ -73,6 +80,8 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
   private scroll = 0;
   /** Unbounded scroll in viewport heights — the field's parallax input. */
   private scrollVh = 0;
+  /** scrollVh as the field last drew it; it holds while paused. */
+  private fieldScroll = 0;
   private fieldActive = false;
 
   private themeObserver: MutationObserver | null = null;
@@ -87,6 +96,15 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
     private playState: PlayStateService,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
+    if (this.isBrowser) {
+      // Settled before the first render, so a surface that should start held
+      // never draws a moving frame first.
+      this.motionPreference = new MotionPreference(() => {
+        this.syncMotion();
+        this.cdr.markForCheck();
+      });
+      this.syncMotion();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -98,6 +116,10 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
       window.addEventListener('scroll', this.onScroll, { passive: true });
       window.addEventListener('keydown', this.onKeyDown);
       this.onScroll();
+      // A page opened part-way down starts from there rather than easing in,
+      // and a paused one holds the right picture for it.
+      this.scroll = this.scrollTarget;
+      this.fieldScroll = this.scrollVh;
     });
     // The theme toggle flips a data attribute on <html>; the shader needs to
     // hear about it without polling a computed style every frame.
@@ -178,26 +200,46 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
     }
   };
 
-  /** Shared per-frame smoothing for inputs both layers consume. */
+  /** The HUD's play/pause control. */
+  toggleMotion(): void {
+    this.motionPreference?.toggle();
+    this.syncMotion();
+  }
+
+  private syncMotion(): void {
+    const preference = this.motionPreference;
+    if (!preference) return;
+    this.motion = preference.enabled;
+    this.motionHeldBySystem = preference.heldBySystem;
+  }
+
+  /**
+   * Shared per-frame smoothing for inputs both layers consume.
+   *
+   * Paused, nothing advances: every input that moves the camera or the map
+   * holds where it was, so the uniforms stop changing and the surfaces stop
+   * redrawing (the paused surfaces' clocks hold too). A theme switch still
+   * changes the palette and gets one fresh frame. Playing again picks up from
+   * the held values, so nothing jumps.
+   */
   private advance(delta: number): void {
+    if (!this.motion) return;
     // Frame-rate independent smoothing: 1 - e^(-k·dt) rather than a fixed lerp
     // factor, so the camera feels identical at 60Hz and 144Hz.
     const k = delta > 0 ? 1 - Math.exp(-9 * delta) : 1;
     this.pointer[0] += (this.pointerTarget[0] - this.pointer[0]) * k;
     this.pointer[1] += (this.pointerTarget[1] - this.pointer[1]) * k;
     this.scroll += (this.scrollTarget - this.scroll) * k;
+    this.fieldScroll = this.scrollVh;
   }
 
-  // Under reduced motion every input that moves the camera or the map is held
-  // still, so the uniforms stop changing and the surface stops redrawing; a
-  // theme switch still changes the palette and gets one fresh frame.
   readonly fieldUniforms = (elapsed: number, delta: number): Record<string, UniformValue> => {
     this.advance(delta);
     return {
       ...this.palette,
-      uTime: this.reducedMotion ? 0 : elapsed,
-      uMouse: this.reducedMotion ? STILL : this.pointer,
-      uScroll: this.reducedMotion ? 0 : this.scrollVh,
+      uTime: elapsed,
+      uMouse: this.pointer,
+      uScroll: this.fieldScroll,
       uAccent: this.accent,
       uTheme: this.theme,
     };
@@ -208,9 +250,9 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
 
     return {
       ...this.palette,
-      uTime: this.reducedMotion ? 0 : elapsed,
-      uMouse: this.reducedMotion ? STILL : this.pointer,
-      uScroll: this.reducedMotion ? 0 : this.scroll,
+      uTime: elapsed,
+      uMouse: this.pointer,
+      uScroll: this.scroll,
       uAccent: this.accent,
       uTheme: this.theme,
       // Quality tracks the resolution scaler: when the scaler has already
@@ -256,5 +298,6 @@ export class HeroRenderComponent implements AfterViewInit, OnDestroy {
     window.removeEventListener('scroll', this.onScroll);
     window.removeEventListener('keydown', this.onKeyDown);
     this.themeObserver?.disconnect();
+    this.motionPreference?.dispose();
   }
 }

@@ -3,11 +3,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Inject,
   Input,
   NgZone,
   OnChanges,
   OnDestroy,
+  Output,
   PLATFORM_ID,
   Renderer2,
   SimpleChanges,
@@ -15,6 +17,7 @@ import {
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { TooltipDirective } from '../../shared/tooltip.directive';
 import type { FrameStats, GpuCapabilities } from '../shader-surface';
 
 /**
@@ -32,14 +35,18 @@ const HIDDEN_OPACITY = 0.05;
  * where the extension exists, and the graph is frame time against the 60Hz
  * budget rather than a smoothed FPS counter that hides every hitch.
  *
+ * It also carries the renderer's play/pause control (WCAG 2.2.2). While the
+ * renderer is paused, the readout says so instead of showing the frame rate of
+ * frames that are no longer being drawn.
+ *
  * The graph only draws while the HUD can be seen: every frame normally, or
- * once per stats update under prefers-reduced-motion. Once the hero has faded
- * it out, the HUD is inert and hidden from assistive tech until it returns.
+ * once per stats update while paused. Once the hero has faded it out, the HUD
+ * is inert and hidden from assistive tech until it returns.
  */
 @Component({
   selector: 'app-frame-hud',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, TooltipDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './frame-hud.component.html',
   styleUrls: ['./frame-hud.component.scss'],
@@ -52,16 +59,23 @@ export class FrameHudComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() gpuName = '';
   /** Fills the passed buffer with recent frame times; returns the count. */
   @Input() historyProvider: ((out: Float32Array) => number) | null = null;
+  /** The renderer is holding its picture. */
+  @Input() paused = false;
+  /** Paused only because the system asks for reduced motion; the readout names the reason. */
+  @Input() pausedBySystem = false;
+  /** The play/pause control was pressed; the owner decides what that means. */
+  @Output() motionToggle = new EventEmitter<void>();
 
   expanded = false;
 
   private readonly buffer = new Float32Array(120);
-  /** The pending draw: the per-frame loop, or a single reduced-motion redraw. */
+  /** The pending draw: the per-frame loop, or a single redraw while paused. */
   private raf = 0;
+  /** `raf` belongs to the per-frame loop rather than a single redraw. */
+  private looping = false;
   private visibilityRaf = 0;
   private visible = true;
   private viewReady = false;
-  private readonly reducedMotion: boolean;
   private readonly isBrowser: boolean;
 
   constructor(
@@ -71,8 +85,6 @@ export class FrameHudComponent implements OnChanges, AfterViewInit, OnDestroy {
     private renderer: Renderer2,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
-    this.reducedMotion =
-      this.isBrowser && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   }
 
   toggle(): void {
@@ -80,9 +92,14 @@ export class FrameHudComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // No continuous loop under reduced motion: the graph follows the stats
-    // instead, which the renderer reports a few times a second at most.
-    if (changes['stats'] && this.reducedMotion) this.requestDraw();
+    if (changes['paused']) {
+      this.syncLoop();
+      // The graph stops where the frames did; bring it up to date once.
+      if (this.paused) this.requestDraw();
+    }
+    // No continuous loop while paused: the graph follows the stats instead,
+    // which a paused renderer only reports when it draws.
+    if (changes['stats'] && this.paused) this.requestDraw();
   }
 
   ngAfterViewInit(): void {
@@ -98,7 +115,7 @@ export class FrameHudComponent implements OnChanges, AfterViewInit, OnDestroy {
       this.scheduleVisibilityCheck();
     });
     this.syncLoop();
-    if (this.reducedMotion) this.requestDraw();
+    if (this.paused) this.requestDraw();
   }
 
   private readonly onViewportChange = () => this.scheduleVisibilityCheck();
@@ -142,27 +159,29 @@ export class FrameHudComponent implements OnChanges, AfterViewInit, OnDestroy {
     }
     this.syncLoop();
     // The graph went stale while hidden; bring it up to date once.
-    if (visible && this.reducedMotion) this.requestDraw();
+    if (visible && this.paused) this.requestDraw();
   }
 
-  /** Runs the per-frame loop only while it is visible and motion is welcome. */
+  /** Runs the per-frame loop only while it is visible and the renderer is playing. */
   private syncLoop(): void {
-    const shouldRun = this.viewReady && this.visible && !this.reducedMotion;
-    if (shouldRun && !this.raf) {
-      this.zone.runOutsideAngular(() => {
-        const tick = () => {
-          this.draw();
-          this.raf = requestAnimationFrame(tick);
-        };
+    const shouldRun = this.viewReady && this.visible && !this.paused;
+    if (shouldRun === this.looping) return;
+    // Either way, whatever is pending is the wrong kind of draw now: a single
+    // redraw would otherwise keep the loop from starting.
+    if (this.raf) cancelAnimationFrame(this.raf);
+    this.raf = 0;
+    this.looping = shouldRun;
+    if (!shouldRun) return;
+    this.zone.runOutsideAngular(() => {
+      const tick = () => {
+        this.draw();
         this.raf = requestAnimationFrame(tick);
-      });
-    } else if (!shouldRun && this.raf) {
-      cancelAnimationFrame(this.raf);
-      this.raf = 0;
-    }
+      };
+      this.raf = requestAnimationFrame(tick);
+    });
   }
 
-  /** A single redraw on the next frame, for the reduced-motion path. */
+  /** A single redraw on the next frame, for the paused path. */
   private requestDraw(): void {
     if (!this.isBrowser || !this.visible || this.raf) return;
     this.zone.runOutsideAngular(() => {
@@ -255,6 +274,7 @@ export class FrameHudComponent implements OnChanges, AfterViewInit, OnDestroy {
     if (this.raf) cancelAnimationFrame(this.raf);
     if (this.visibilityRaf) cancelAnimationFrame(this.visibilityRaf);
     this.raf = 0;
+    this.looping = false;
     this.visibilityRaf = 0;
   }
 }

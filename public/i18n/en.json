@@ -215,7 +215,11 @@
     "TIP": "Watch the frame graph while you change the scale."
   },
   "HUD": {
-    "DETECTING": "detecting…"
+    "DETECTING": "detecting…",
+    "PLAY": "Play the renderer",
+    "PAUSE": "Pause the renderer",
+    "PAUSED": "paused",
+    "REDUCED_MOTION": "reduced motion"
   },
   "HERO": {
     "MY_NAME_IS": "My name is",

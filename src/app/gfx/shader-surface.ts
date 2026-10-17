@@ -18,9 +18,10 @@ import { GLSL_COMMON } from './shaders/common.glsl';
 export interface ShaderSurfaceOptions {
   fragmentSource: string;
   /**
-   * Called every animation frame; return the uniforms for that frame. Under
-   * reduced motion the clock is frozen (elapsed holds, delta is 0) and a frame
-   * is only drawn when the values returned differ from the last frame drawn.
+   * Called every animation frame; return the uniforms for that frame. While
+   * the surface is still (reduced motion, or setStill(true)) the clock is
+   * frozen (elapsed holds, delta is 0) and a frame is only drawn when the
+   * values returned differ from the last frame drawn.
    */
   uniforms: (elapsed: number, delta: number) => Record<string, UniformValue>;
   onStats?: (stats: FrameStats) => void;
@@ -77,7 +78,11 @@ export class ShaderSurface {
   private generation = 0;
   /** The owner's setActive(); kept here so a context restore cannot undo a park. */
   private active = true;
-  /** Reduced motion: frames are drawn on demand, not continuously. */
+  /** The owner's setStill(); null follows the system's prefers-reduced-motion. */
+  private stillOverride: boolean | null = null;
+  /** prefers-reduced-motion, kept current by a listener. */
+  private systemStill: boolean;
+  /** Frames are drawn on demand with the clock held, not continuously. */
   private still: boolean;
   /** The next frame must draw: first frame, resize, context restore, lock or mode change. */
   private dirty = true;
@@ -91,12 +96,13 @@ export class ShaderSurface {
     private readonly canvas: HTMLCanvasElement,
     private readonly options: ShaderSurfaceOptions,
   ) {
-    this.still = prefersReducedMotion();
+    this.systemStill = prefersReducedMotion();
+    this.still = this.systemStill;
     this.scaler = new ResolutionScaler({ targetMs: 1000 / (options.targetFps ?? 60) });
   }
 
-  /** True while the user prefers reduced motion and the surface draws on demand. */
-  get reducedMotion(): boolean {
+  /** True while the surface holds its picture and draws on demand. */
+  get isStill(): boolean {
     return this.still;
   }
 
@@ -227,13 +233,19 @@ export class ShaderSurface {
   }
 
   private readonly onMotionChange = (event: MediaQueryListEvent): void => {
-    if (event.matches === this.still) return;
-    this.still = event.matches;
-    this.loop?.setClockFrozen(this.still);
+    this.systemStill = event.matches;
+    this.applyStill();
+  };
+
+  private applyStill(): void {
+    const still = this.stillOverride ?? this.systemStill;
+    if (still === this.still) return;
+    this.still = still;
+    this.loop?.setClockFrozen(still);
     this.dirty = true;
     // Whatever was measured before the switch says nothing about the next frame.
     this.drewLastFrame = false;
-  };
+  }
 
   private resize(): void {
     const rect = this.canvas.getBoundingClientRect();
@@ -269,9 +281,9 @@ export class ShaderSurface {
     const uniforms = this.options.uniforms(elapsed, delta);
     let scale: number;
     if (this.still) {
-      // Reduced motion: nothing moves by itself, so a frame is only worth
-      // drawing when its inputs changed (a theme switch, say). Skipped frames
-      // issue no draw and no timer query.
+      // Still: nothing moves by itself, so a frame is only worth drawing when
+      // its inputs changed (a theme switch, say). Skipped frames issue no draw
+      // and no timer query.
       if (!this.dirty && this.drawn.matches(uniforms)) {
         // The last still frame's GPU time may have just come in.
         if (timer.poll()) this.report(now);
@@ -328,6 +340,17 @@ export class ShaderSurface {
   setActive(active: boolean): void {
     this.active = active;
     this.loop?.setActive(active);
+  }
+
+  /**
+   * Holds the picture (true) or animates (false) whatever the system prefers;
+   * null, the default, follows prefers-reduced-motion. A held surface keeps
+   * its clock where it stopped and draws only when its uniforms change, so
+   * letting go carries on from the same frame. Safe to call before init().
+   */
+  setStill(still: boolean | null): void {
+    this.stillOverride = still;
+    this.applyStill();
   }
 
   /** Recent frame times, oldest first. Returns the number of valid entries. */

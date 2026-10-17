@@ -86,6 +86,19 @@ export class GpuSurfaceComponent implements AfterViewInit, OnDestroy {
     this.setQualityLock(value);
   }
 
+  /**
+   * Same as setStill(), declaratively: true holds the picture, false animates,
+   * null (the default) follows prefers-reduced-motion. Safe to bind before
+   * the surface exists.
+   */
+  @Input()
+  get still(): boolean | null {
+    return this.stillState;
+  }
+  set still(value: boolean | null) {
+    this.setStill(value);
+  }
+
   @Output() stats = new EventEmitter<FrameStats>();
   @Output() ready = new EventEmitter<GpuCapabilities>();
   @Output() failed = new EventEmitter<Error>();
@@ -93,6 +106,7 @@ export class GpuSurfaceComponent implements AfterViewInit, OnDestroy {
   private surface: ShaderSurface | null = null;
   private activeState = true;
   private lockState: number | null = null;
+  private stillState: boolean | null = null;
   private readonly isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: Object, private zone: NgZone) {
@@ -120,6 +134,7 @@ export class GpuSurfaceComponent implements AfterViewInit, OnDestroy {
       // first frame.
       surface.setActive(this.activeState);
       if (this.lockState !== null) surface.setQualityLock(this.lockState);
+      if (this.stillState !== null) surface.setStill(this.stillState);
       this.surface = surface;
       surface.init();
     });
@@ -143,6 +158,12 @@ export class GpuSurfaceComponent implements AfterViewInit, OnDestroy {
   setQualityLock(scale: number | null): void {
     this.lockState = scale;
     this.surface?.setQualityLock(scale);
+  }
+
+  /** Hold or release the picture. See ShaderSurface.setStill. Remembered if called early. */
+  setStill(still: boolean | null): void {
+    this.stillState = still;
+    this.surface?.setStill(still);
   }
 
   get gpuName(): string {

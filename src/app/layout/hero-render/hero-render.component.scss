@@ -1,16 +1,17 @@
+/* No box of its own: the stage and the HUD are separate fixed layers, so the
+   HUD can sit above the hero copy while the stage stays underneath it. */
 :host {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+  display: block;
   /* Driven from the scroll handler: 0 in the hero, 1 once the reader has left. */
   --stage-veil: 0;
 }
 
 .stage {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  z-index: 0;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .stage__canvas {
@@ -97,10 +98,11 @@
 }
 
 .stage__hud {
-  position: absolute;
+  position: fixed;
   right: 20px;
   bottom: 20px;
-  z-index: 2;
+  /* Above the hero copy (z-10); below the play button, the nav and dialogs. */
+  z-index: 20;
   pointer-events: auto;
   /* Track the veil: the instrument belongs to the hero, not to the page. */
   opacity: calc(1 - var(--stage-veil));

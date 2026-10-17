@@ -12,25 +12,6 @@ function frames(count: number): Promise<void> {
   });
 }
 
-/** Answers the reduced-motion media query with `reduce`; every other query goes to the browser. */
-function fakeReducedMotion(reduce: boolean): void {
-  const real = window.matchMedia.bind(window);
-  spyOn(window, 'matchMedia').and.callFake((query: string) =>
-    query.includes('prefers-reduced-motion')
-      ? ({
-          matches: reduce,
-          media: query,
-          onchange: null,
-          addEventListener: () => {},
-          removeEventListener: () => {},
-          addListener: () => {},
-          removeListener: () => {},
-          dispatchEvent: () => false,
-        } as MediaQueryList)
-      : real(query),
-  );
-}
-
 const STATS: FrameStats = {
   frameMs: 16.7,
   cpuMs: 1.2,
@@ -51,11 +32,12 @@ describe('FrameHudComponent', () => {
   /** The HUD reads the frame history once per draw, so this counts draws. */
   let draws: jasmine.Spy<(out: Float32Array) => number>;
 
-  function create(): void {
+  function create(inputs: { paused?: boolean; pausedBySystem?: boolean; stats?: FrameStats } = {}): void {
     fixture = TestBed.createComponent(FrameHudComponent);
     host = fixture.nativeElement;
     draws = jasmine.createSpy('historyProvider').and.returnValue(0);
     fixture.componentRef.setInput('historyProvider', draws);
+    for (const [name, value] of Object.entries(inputs)) fixture.componentRef.setInput(name, value);
     fixture.detectChanges();
   }
 
@@ -89,7 +71,6 @@ describe('FrameHudComponent', () => {
   });
 
   it('draws every frame while visible and stops while hidden (R8-5)', async () => {
-    fakeReducedMotion(false);
     create();
     await frames(3);
     expect(draws).toHaveBeenCalled();
@@ -103,9 +84,8 @@ describe('FrameHudComponent', () => {
     expect(draws).toHaveBeenCalled();
   });
 
-  it('under reduced motion, draws only when new stats arrive (R8-4)', async () => {
-    fakeReducedMotion(true);
-    create();
+  it('while paused, draws only when new stats arrive (R8-4)', async () => {
+    create({ paused: true });
     await frames(2);
     draws.calls.reset();
     await frames(3);
@@ -118,8 +98,7 @@ describe('FrameHudComponent', () => {
   });
 
   it('skips stats-driven redraws while hidden', async () => {
-    fakeReducedMotion(true);
-    create();
+    create({ paused: true });
     await fadeTo(0);
     draws.calls.reset();
 
@@ -127,5 +106,50 @@ describe('FrameHudComponent', () => {
     fixture.detectChanges();
     await frames(2);
     expect(draws).not.toHaveBeenCalled();
+  });
+
+  it('draws every frame again on play, even with a paused redraw still pending (R8-10)', async () => {
+    create({ paused: true });
+    await frames(2);
+    // New stats queue a single redraw, and play arrives before it has run.
+    fixture.componentRef.setInput('stats', STATS);
+    fixture.detectChanges();
+    fixture.componentRef.setInput('paused', false);
+    fixture.detectChanges();
+    draws.calls.reset();
+    await frames(4);
+    expect(draws.calls.count()).toBeGreaterThanOrEqual(3);
+  });
+
+  it('says it is paused instead of showing a stale frame rate, and why when the system asked (R8-10)', () => {
+    create({ paused: true, pausedBySystem: true, stats: STATS });
+    const bar = host.querySelector('.hud__bar')!;
+    expect(bar.textContent).toContain('HUD.PAUSED');
+    expect(bar.textContent).toContain('HUD.REDUCED_MOTION');
+    expect(bar.querySelector('.hud__fps')).toBeNull();
+
+    // Paused by the visitor: no reason to give.
+    fixture.componentRef.setInput('pausedBySystem', false);
+    fixture.detectChanges();
+    expect(bar.textContent).not.toContain('HUD.REDUCED_MOTION');
+
+    fixture.componentRef.setInput('paused', false);
+    fixture.detectChanges();
+    expect(bar.querySelector('.hud__fps')?.textContent).toBe('60');
+  });
+
+  it('labels the control for what it will do, and reports a press (R8-10)', () => {
+    create({ paused: true });
+    const button = host.querySelector<HTMLButtonElement>('.hud__motion')!;
+    expect(button.getAttribute('aria-label')).toBe('HUD.PLAY');
+
+    const pressed = jasmine.createSpy('motionToggle');
+    fixture.componentInstance.motionToggle.subscribe(pressed);
+    button.click();
+    expect(pressed).toHaveBeenCalledTimes(1);
+
+    fixture.componentRef.setInput('paused', false);
+    fixture.detectChanges();
+    expect(button.getAttribute('aria-label')).toBe('HUD.PAUSE');
   });
 });

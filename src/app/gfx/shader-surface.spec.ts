@@ -136,7 +136,7 @@ describe('ShaderSurface', () => {
     reduced = true;
     const s = create();
     expect(s.init()).toBeTrue();
-    expect(s.reducedMotion).toBeTrue();
+    expect(s.isStill).toBeTrue();
 
     frame(1000);
     expect(draws).toHaveBeenCalledTimes(1);
@@ -171,7 +171,7 @@ describe('ShaderSurface', () => {
     expect(draws).toHaveBeenCalledTimes(1);
 
     setReducedMotion(false);
-    expect(s.reducedMotion).toBeFalse();
+    expect(s.isStill).toBeFalse();
     frame(1033);
     frame(1050);
     expect(draws).toHaveBeenCalledTimes(3);
@@ -181,6 +181,36 @@ describe('ShaderSurface', () => {
     frame(1066); // redraws once in the new mode…
     frame(1083); // …then stays still
     expect(draws).toHaveBeenCalledTimes(4);
+  });
+
+  it('lets the owner hold or release the picture whatever the system prefers (R8-10)', () => {
+    reduced = true;
+    const s = create();
+    s.setStill(false); // before init, as a template binding arrives
+    s.init();
+    expect(s.isStill).toBeFalse();
+    frame(1000);
+    frame(1016);
+    expect(draws).toHaveBeenCalledTimes(2);
+
+    s.setStill(true);
+    frame(1033); // the held picture is drawn once…
+    frame(1050); // …and then left alone
+    expect(draws).toHaveBeenCalledTimes(3);
+    const held = provided[provided.length - 1][0];
+
+    setReducedMotion(false); // the system no longer objects, but the owner still does
+    frame(1066);
+    expect(draws).toHaveBeenCalledTimes(3);
+
+    s.setStill(null); // back to the system, which now allows motion
+    frame(1083);
+    frame(1100);
+    expect(draws).toHaveBeenCalledTimes(5);
+    // The clock carries on from where it was held instead of jumping.
+    const elapsed = provided[provided.length - 1][0];
+    expect(elapsed).toBeGreaterThan(held);
+    expect(elapsed - held).toBeLessThan(0.1);
   });
 
   it('reports a still frame right away, labelled as such', () => {

@@ -215,7 +215,11 @@
     "TIP": "Gledaj graf frejmova dok menjaš skalu."
   },
   "HUD": {
-    "DETECTING": "otkrivanje…"
+    "DETECTING": "otkrivanje…",
+    "PLAY": "Pokreni renderer",
+    "PAUSE": "Pauziraj renderer",
+    "PAUSED": "pauza",
+    "REDUCED_MOTION": "manje pokreta"
   },
   "HERO": {
     "MY_NAME_IS": "Moje ime je",

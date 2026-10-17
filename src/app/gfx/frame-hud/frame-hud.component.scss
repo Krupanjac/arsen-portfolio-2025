@@ -26,12 +26,53 @@
   border-color: rgba(var(--color-accent-rgb) / 0.5);
 }
 
+.hud__head {
+  display: flex;
+  align-items: center;
+}
+
+/* Play/pause. Square and quiet, so the numbers stay the loudest thing here. */
+.hud__motion {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin: 2px 0 0 8px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #b9c0cc;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.hud__motion:hover,
+.hud__motion:focus-visible {
+  color: #e6e9ef;
+  border-color: rgba(var(--color-accent-rgb) / 0.6);
+  background: rgba(var(--color-accent-rgb) / 0.14);
+}
+
+.hud__motion:focus-visible {
+  outline: 2px solid rgba(var(--color-accent-rgb) / 0.8);
+  outline-offset: 1px;
+}
+
+.hud__motion svg {
+  width: 10px;
+  height: 10px;
+  fill: currentColor;
+}
+
 .hud__bar {
   display: flex;
+  flex: 1;
+  min-width: 0;
   align-items: baseline;
   gap: 5px;
-  width: 100%;
-  padding: 8px 10px 6px;
+  padding: 8px 10px 6px 8px;
   background: none;
   border: 0;
   color: inherit;
@@ -54,6 +95,29 @@
 .hud__dot--warn {
   background: #f0cd78;
   box-shadow: 0 0 8px #f0cd78;
+}
+
+.hud__dot--off {
+  background: #5b6270;
+  box-shadow: none;
+}
+
+/* Paused readout: same baseline as the numbers it replaces. */
+.hud__state {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #e6e9ef;
+}
+
+.hud__reason {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: #78808f;
 }
 
 .hud__fps {
@@ -93,6 +157,12 @@
   display: block;
   width: 100%;
   height: 34px;
+  transition: opacity 0.25s ease;
+}
+
+/* The history stops with the frames; dim it so it reads as a record, not live. */
+.hud--paused .hud__graph {
+  opacity: 0.45;
 }
 
 .hud__detail {
@@ -178,7 +248,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hud,
-  .hud__dot {
+  .hud__dot,
+  .hud__motion,
+  .hud__graph {
     transition: none;
   }
 }

@@ -117,6 +117,24 @@ describe('GpuSurfaceComponent', () => {
       expect(component.qualityLock).toBeNull();
     });
 
+    it('holds the picture when bound with [still]="true" before the surface existed (R8-10)', () => {
+      const draws = spyOn(WebGL2RenderingContext.prototype, 'drawArrays').and.callThrough();
+      component.still = true;
+      component.ngAfterViewInit();
+      frame(1000);
+      frame(1016);
+      frame(1033);
+      // One held frame, at full resolution, and nothing after it.
+      expect(draws).toHaveBeenCalledTimes(1);
+      expect(canvas.width).toBe(Math.round(64 * dpr));
+
+      component.setStill(false);
+      expect(component.still).toBeFalse();
+      frame(1050);
+      frame(1066);
+      expect(draws).toHaveBeenCalledTimes(3);
+    });
+
     it('only re-enters the zone for stats when somebody listens', () => {
       component.ngAfterViewInit();
       zone.run.calls.reset();
