@@ -42,8 +42,8 @@ PR #8 replaces the 2D star field with a WebGL2 terrain renderer, a frame-time HU
 
 1. **Merge the harness first.** PR #9, CI green; waiting on the merge.
 2. **Bring the harness into PR #8.** ✅ Done as a merge of the harness branch into `wonder/Sottsass`, so there was no force-push. `README.md` got the new structure with PR #8's Renderer section, and `background.component.spec.ts` was deleted with its component. `package.json` merged cleanly.
-3. **Let CI run `npm run verify` on the PR.** ✅ 119 tests: 89 for the engine (scaler, frame timer, loop, colour, uniforms, real-WebGL2 surfaces) and 14 for the HUD, hero, nav and contact. Plus the new shader compile check (DX-11).
-4. **Fix the review findings.** ✅ R8-1 to R8-8 below. R8-9 stays open until someone tests on real hardware.
+3. **Let CI run `npm run verify` on the PR.** ✅ 132 tests: 99 for the engine (scaler, frame timer, loop, colour, uniforms, motion preference, real-WebGL2 surfaces) and 17 for the HUD, hero, nav and contact. Plus the new shader compile check (DX-11).
+4. **Fix the review findings.** ✅ R8-1 to R8-8 and R8-10 below. R8-9 stays open until someone tests on real hardware.
 
 | ID | Finding | Status |
 |---|---|---|
@@ -55,7 +55,8 @@ PR #8 replaces the 2D star field with a WebGL2 terrain renderer, a frame-time HU
 | R8-6 | The HUD took focus at opacity 0, some aria-labels were hardcoded English, and the `<h1>` text changed every 2.6 s | ✅ HUD `inert` while hidden; 13 new en/sr keys; stable `sr-only` heading name |
 | R8-7 | Scroll listeners inside Angular's zone ran change detection on every scroll | ✅ Nav, hero and tooltip listeners run outside the zone |
 | R8-8 | Octaves didn't scale with quality, despite the shader comment | ✅ 5 to 7, plus the warp/crest tap |
-| R8-9 | All measurements so far come from SwiftShader | Open: test on a 60 Hz and a 120 Hz display, an integrated-GPU laptop and a mid-range phone, and tune the scaler thresholds |
+| R8-9 | All measurements so far come from SwiftShader | Open: test on a 60 Hz and a 120 Hz display, an integrated-GPU laptop and a mid-range phone, and tune the scaler thresholds. First real-GPU data, an RTX 3060 at 144 Hz and 1512×982: about 6.5 ms of GPU time at 100 % scale, a steady 144 fps, and the scaler reaches 100 % within a second |
+| R8-10 | With reduced motion on (Windows' "Animation effects" off is enough), R8-4's fix froze the hero on one frame. Nothing could start it, and the HUD showed a stale fps. Nothing could pause the scene either (WCAG 2.2.2). The HUD sat under the hero copy, so no click reached it | ✅ HUD play/pause: starts paused under reduced motion, and the visitor's choice wins and is remembered (`motion-preference.ts`). Pausing holds the picture and playing resumes from the same frame. The HUD reads "paused · reduced motion" and is its own layer above the copy |
 
 5. **Merge.** The docs already describe the renderer: the ARCHITECTURE Renderer section and the README Renderer section.
 6. **Delete the stale branches** (DX-10).
@@ -331,7 +332,7 @@ Do the framework work before the larger SEO and performance work in Phase 4, whi
 
 ### Accessibility
 
-**A11Y-1: Reduced motion.** High · M · renderer, HUD, hero and nav ✅ in PR #8; the typing effect, footer scroll and `@angular/animations` still ignore it
+**A11Y-1: Reduced motion.** High · M · renderer, HUD, hero and nav ✅ in PR #8, and the renderer has a play/pause control (R8-10); the typing effect, footer scroll and `@angular/animations` still ignore it
 - **Evidence:** on `master`, only `experience.component.scss` checks `prefers-reduced-motion`. The canvas, glitch, typing, wheel physics and scroll animations all ignore it. PR #8 adds a global CSS rule, but its renderer logic is inverted (R8-4).
 - **Fix:** one `MotionService` (a signal over `matchMedia`) consumed by every animated piece.
 

@@ -48,7 +48,7 @@ Common failures:
 | The build fails while "Prerendering", with `window`/`document`/`localStorage is not defined` | Guard the code with `isPlatformBrowser(this.platformId)`, or move it to `ngAfterViewInit` behind the guard |
 | `check:i18n` says `sr: missing X` | Add the key to `public/i18n/sr.json` in the same place as in `en.json` |
 | `check:i18n` says `src/... references X, which en.json does not define` | Add the key to both catalogs, or fix the typo |
-| "bundle initial exceeded maximum budget" **warning** | Expected until ROADMAP PERF-1: 788 kB against 500 kB. Only an **error** (over 1 MB) fails the build |
+| "bundle initial exceeded maximum budget" **warning** | Expected until ROADMAP PERF-1: 793 kB against 500 kB. Only an **error** (over 1 MB) fails the build |
 
 Claude Code also runs the i18n check after every file edit (`.claude/hooks/post-edit.mjs`) and reports failures back to the agent right away.
 
@@ -137,3 +137,5 @@ To make a strong secret: `node -e "console.log(require('crypto').randomBytes(48)
 - **The whole file shows as changed on Windows:** the repo stores LF and `core.autocrlf` checks files out as CRLF. Keep each file's existing endings (ROADMAP DX-5 adds `.gitattributes`).
 - **`npm ci` warns about `inflight`, `glob` or `rimraf`:** these come from Karma's dependency tree and are harmless.
 - **Projects or Experience are empty locally:** expected without the API; see [What works without the API](#what-works-without-the-api).
+- **The hero renderer is frozen and the HUD reads "paused · reduced motion":** the system asks for reduced motion. On Windows that's "Animation effects" turned off. Press ▶ in the HUD (remembered on that device), or turn the setting back on.
+- **The Preview is stuck on a bare "Error" page:** the dev server answered 500 while it was rebuilding. This happened once while `npm run verify` was building alongside it. That page has no live-reload client, so it never recovers on its own: restart the Preview.

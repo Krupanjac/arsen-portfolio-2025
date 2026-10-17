@@ -43,6 +43,8 @@ Projects and Experience come from the API, which plain `ng serve` doesn't run. `
 
 The hero is a WebGL2 raymarched terrain (`src/app/gfx/`). Its live frame-time HUD reads from the same timer that drives the dynamic resolution scaling. Below the hero, a cheaper contour-field shader runs behind the content sections, and the terrain is parked once it scrolls out of view.
 
+The HUD's play/pause button starts and stops the scene. Under `prefers-reduced-motion` it starts paused, and the visitor's choice is remembered. On Windows, turning off "Animation effects" counts as reduced motion.
+
 ### Fullscreen mode
 
 The **Fullscreen renderer** control under the tech stack hides the page and leaves only the renderer and HUD.
@@ -62,6 +64,7 @@ The **Fullscreen renderer** control under the tech stack hides the page and leav
 - `gfx/frame-timer.ts`: CPU time, GPU time via `EXT_disjoint_timer_query_webgl2`, p95 over a ring buffer
 - `gfx/resolution-scaler.ts`: dynamic resolution, driven by GPU time when the timer query exists and by dropped frames against the measured refresh rate otherwise
 - `gfx/render-loop.ts`: rAF driver that runs only while the owner, the IntersectionObserver and page visibility all allow it
+- `gfx/motion-preference.ts`: play or pause: the visitor's choice, else `prefers-reduced-motion`
 - `gfx/shader-surface.ts`: a full-canvas fragment pass with all of the above wired in
 - `gfx/shaders/`: `common.glsl.ts` (noise, fBm, ACES), `hero-terrain.frag.ts`, `contour-field.frag.ts`
 
