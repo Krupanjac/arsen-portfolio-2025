@@ -22,7 +22,14 @@ export class LoginComponent {
   // Turnstile token supplied by widget
   turnstileToken: string | null = null;
   private _widgetId: any = null;
-  private readonly siteKey = '0x4AAAAAABulTpKICOIfLXfy';
+  // The production widget rejects hostnames it isn't configured for, so local
+  // development uses Turnstile's always-pass test key. It pairs with the test
+  // secret scripts/seed-local.mjs writes to .dev.vars; the production secret
+  // rejects its tokens, so it can't open the live site.
+  private readonly siteKey =
+    typeof location !== 'undefined' && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)
+      ? '1x00000000000000000000AA'
+      : '0x4AAAAAABulTpKICOIfLXfy';
 
   constructor(
     private loginService: LoginService,
